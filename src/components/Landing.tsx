@@ -130,9 +130,9 @@ function Floats() {
                 height: y1 - y0,
                 scale: String(sc),
                 transformOrigin: `${f.cx - x0}px ${f.cy - y0}px`,
-                // entrance: starts behind the swap card (centre ≈ 720, 450 on the frame) and flies out
+                // entrance: starts behind the swap card (centre ≈ 720, 418 on the frame) and flies out
                 '--ex': `${720 - f.cx - dx}px`,
-                '--ey': `${450 - f.cy}px`,
+                '--ey': `${418 - f.cy}px`,
                 '--pd': `${0.45 + i * 0.07}s`,
                 '--fd': `${f.d}s`,
               } as React.CSSProperties
