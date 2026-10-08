@@ -206,7 +206,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       vt.finished?.finally(() => {
         if (root.dataset.vt === kind) delete root.dataset.vt
       })
-    } else apply()
+    } else {
+      apply()
+      // browsers without View Transitions (older Safari): still land at the top of the new screen
+      if (kind === 'view') requestAnimationFrame(() => window.scrollTo(0, 0))
+    }
   }, [])
 
   const dismissToast = useCallback((id: number) => setS((o) => ({ ...o, toasts: o.toasts.filter((t) => t.id !== id) })), [])

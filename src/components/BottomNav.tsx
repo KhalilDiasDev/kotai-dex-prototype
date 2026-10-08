@@ -5,7 +5,9 @@ import { Coin, Icon } from './ui'
 export function BottomNav() {
   const a = useApp()
   const go = (v: 'home' | 'swap') => {
-    a.set({ view: v, modal: null, chart: 'off' })
+    // tapping the current screen again scrolls it back to the top
+    if (a.view === v && !a.modal) window.scrollTo({ top: 0, behavior: 'smooth' })
+    else a.set({ view: v, modal: null, chart: 'off' })
   }
   const menuOpen = a.modal === 'navMenu'
   const ktiOn = a.modal === 'coin' && a.coinToken === 'KTI'
