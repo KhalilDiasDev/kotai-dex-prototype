@@ -1876,3 +1876,19 @@
   height: 28px;
   color: #9fb9e0;
 }
+
+/* ───────── One surface colour for everything that opens on top (desktop = mobile sheets) ───────── */
+:root {
+  --surface-overlay: #0a1424;
+}
+.modal,
+.dropdown,
+.popover,
+.net-filter,
+.s-results,
+.hist,
+.nav-pop,
+.ts-list,
+.help-tip {
+  background: var(--surface-overlay) !important;
+}

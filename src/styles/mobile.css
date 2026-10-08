@@ -109,16 +109,8 @@
     padding: 0;
   }
 
-  /* every sheet, select and list on mobile shares the sheet background */
-  .modal,
-  .modal .dropdown,
-  .modal .popover,
-  .search-wrap,
-  .hist,
-  .net-filter,
-  .nav-pop,
-  .ts-list {
-    background: #0a1424 !important;
+  .search-wrap {
+    background: var(--surface-overlay) !important;
   }
 
   /* bottom sheets */
