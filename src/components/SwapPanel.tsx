@@ -292,7 +292,8 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                   ))}
                 </div>
               )}
-              <span className="muted">{a.connected ? `${from.balance.toFixed(4)} ${a.from}` : 'Connect wallet to see balance'}</span>
+              {/* the balance itself lives once, in the card's bottom row */}
+              {!a.connected && <span className="muted">Connect wallet to see balance</span>}
             </div>
           </div>
           <div className="field-mid">
