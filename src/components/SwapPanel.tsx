@@ -522,16 +522,13 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
         </div>
       </div>
 
-      <p className="assure">
-        <Icon n="shield" size={16} />
-        <span>
-          {!a.connected && !(a.wasConnected && hasAmt)
-            ? "Connecting doesn't move funds. Nothing leaves your wallet without your approval."
-            : hasAmt
-              ? 'You review everything before signing. Nothing leaves your wallet without your confirmation.'
-              : 'Wallet connected. Nothing leaves it without your approval.'}
-        </span>
-      </p>
+      {/* reassurance line: only before an amount is typed (with an amount, the quote details speak for themselves) */}
+      {!(hasAmt && (a.connected || a.wasConnected)) && (
+        <p className="assure">
+          <Icon n="shield" size={16} />
+          <span>{!a.connected ? "Connecting doesn't move funds. Nothing leaves your wallet without your approval." : 'Wallet connected. Nothing leaves it without your approval.'}</span>
+        </p>
+      )}
     </div>
   )
 }
