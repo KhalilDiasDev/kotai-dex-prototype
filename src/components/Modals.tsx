@@ -435,17 +435,20 @@ function CoinModal() {
           <b>{c.net}</b>
         </div>
       </div>
-      <button
-        className="btn white block cm-swap"
-        onClick={() => {
-          const t = c.swap
-          if (t) a.set({ view: 'swap', modal: null, to: t === a.from ? a.to : t === 'ETH' ? 'KTI' : t, from: t === 'ETH' ? 'ETH' : a.from === t ? 'ETH' : a.from })
-          else a.toast({ tone: 'info', title: `${c.name} isn't available yet`, body: 'This token is not part of the prototype list' })
-          window.scrollTo({ top: 0, behavior: 'smooth' })
-        }}
-      >
-        Swap {c.id}
-      </button>
+      {/* the KTI Coin modal is informational: no swap shortcut here (other coins keep it) */}
+      {c.id !== 'KTI' && (
+        <button
+          className="btn white block cm-swap"
+          onClick={() => {
+            const t = c.swap
+            if (t) a.set({ view: 'swap', modal: null, to: t === a.from ? a.to : t === 'ETH' ? 'KTI' : t, from: t === 'ETH' ? 'ETH' : a.from === t ? 'ETH' : a.from })
+            else a.toast({ tone: 'info', title: `${c.name} isn't available yet`, body: 'This token is not part of the prototype list' })
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }}
+        >
+          Swap {c.id}
+        </button>
+      )}
       {/* KTI lives in Kotai Wallet — same download hook as the Kotai Wallet modal */}
       {c.id === 'KTI' && <KotaiDownload />}
     </Modal>
