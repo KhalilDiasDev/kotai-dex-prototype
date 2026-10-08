@@ -1306,7 +1306,7 @@ function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
       ) : null
     case 'help':
       return m ? (
-        <Modal className="sheet-pop" onScrim={a.close}>
+        <Modal title="Help" className="sheet-pop" onScrim={a.close} onClose={a.close}>
           <HelpTip onClose={a.close} />
         </Modal>
       ) : null
@@ -1321,7 +1321,7 @@ function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
     case 'walletMenu':
     case 'walletNet':
       return m ? (
-        <Modal className="sheet-pop wallet-sheet" onScrim={a.close}>
+        <Modal title="Wallet" className="sheet-pop wallet-sheet" onScrim={a.close} onClose={a.close}>
           <WalletMenuBody />
         </Modal>
       ) : null
