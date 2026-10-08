@@ -214,7 +214,7 @@ export function Header() {
   const toggle = (k: ModalKind) => (a.modal === k ? a.close() : a.open(k))
   const sysOpen = a.modal === 'system' || a.modal === 'language' || a.modal === 'currency'
   const walletOpen = a.modal === 'walletMenu' || a.modal === 'walletNet'
-  // right after a wallet connects (or switches), the network + wallet selects blink green: "configure here"
+  // right after a wallet connects (or switches), the wallet select blinks green: "configure here"
   const [flash, setFlash] = useState(false)
   const first = useRef(true)
   useEffect(() => {
@@ -283,7 +283,7 @@ export function Header() {
           </Anchor>
           {a.connected && (
             <Anchor kinds={['network']} pop={<NetworkDropdown />}>
-              <button className={'pill-btn hide-m' + (a.modal === 'network' ? ' on' : '') + (flash ? ' flash' : '')} onClick={() => toggle('network')}>
+              <button className={'pill-btn hide-m' + (a.modal === 'network' ? ' on' : '')} onClick={() => toggle('network')}>
                 <Net id={a.networkId} size={20} />
                 {net.name}
                 <Icon n="chevron" size={16} className="chev" />
@@ -292,7 +292,7 @@ export function Header() {
           )}
           {a.connected ? (
             <Anchor kinds={['walletMenu', 'walletNet']} pop={<div className="dropdown dd-wallet" role="menu"><WalletMenuBody /></div>}>
-              <button className={'pill-btn' + (walletOpen ? ' on' : '') + (flash ? ' flash d2' : '')} onClick={() => (walletOpen ? a.close() : a.open('walletMenu'))}>
+              <button className={'pill-btn' + (walletOpen ? ' on' : '') + (flash ? ' flash' : '')} onClick={() => (walletOpen ? a.close() : a.open('walletMenu'))}>
                 <Icon n="wallet" size={18} />
                 <span className="mono">{ADDRESS}</span>
                 <Icon n="chevron" size={16} className="chev hide-m" />

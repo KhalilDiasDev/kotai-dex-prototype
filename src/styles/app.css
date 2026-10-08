@@ -538,12 +538,9 @@ button.gb:hover:not(:disabled):is(.on, .active, .coin, :not(.tab, .nav-item))::b
   display: none;
 }
 
-/* header selects blink green right after a wallet connects — points at where to configure */
+/* the wallet select blinks green right after a wallet connects — points at where to configure */
 .pill-btn.flash {
   animation: selFlash 0.9s ease-in-out 3;
-}
-.pill-btn.flash.d2 {
-  animation-delay: 0.15s;
 }
 @keyframes selFlash {
   0%,
