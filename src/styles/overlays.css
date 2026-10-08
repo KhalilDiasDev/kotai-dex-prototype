@@ -611,7 +611,7 @@
 .proto {
   position: fixed;
   right: 16px;
-  bottom: 16px;
+  bottom: 88px; /* sits above hosting badges pinned to the bottom-right corner (e.g. Netlify) */
   z-index: 90;
   font-size: 12px;
 }

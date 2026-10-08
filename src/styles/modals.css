@@ -1810,3 +1810,15 @@
     }
   }
 }
+
+/* scrolling inside a dialog/list never chains to the page behind it */
+.scrim,
+.modal,
+.search-wrap,
+.s-results,
+.hist,
+.net-filter,
+.dropdown,
+.popover {
+  overscroll-behavior: contain;
+}

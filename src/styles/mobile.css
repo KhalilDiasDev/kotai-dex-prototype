@@ -307,7 +307,7 @@
 
   .proto {
     right: 12px;
-    bottom: 12px;
+    bottom: 80px;
   }
   .proto.under-modal {
     display: none;

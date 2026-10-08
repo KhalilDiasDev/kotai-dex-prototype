@@ -166,6 +166,26 @@ export function usePresence(open: boolean, ms = 200) {
   return { render: open || mounted, closing: !open && mounted }
 }
 
+/** While any overlay is open the page underneath can't scroll (wheel/touch stay in the dialog).
+    Counter-based, so dialogs replacing each other don't unlock in between; the scrollbar gap is padded so nothing shifts. */
+let scrollLocks = 0
+export function useScrollLock() {
+  useEffect(() => {
+    const root = document.documentElement
+    if (scrollLocks++ === 0) {
+      const gap = window.innerWidth - root.clientWidth
+      root.style.overflow = 'hidden'
+      if (gap > 0) root.style.paddingRight = gap + 'px'
+    }
+    return () => {
+      if (--scrollLocks === 0) {
+        root.style.overflow = ''
+        root.style.paddingRight = ''
+      }
+    }
+  }, [])
+}
+
 /* ───────── Modal / bottom sheet ───────── */
 /* When one dialog replaces another in the same commit (review → signing → processing → done…),
    the new one skips the scrim fade and pop-in so it reads as the same modal updating in place. */
@@ -198,6 +218,7 @@ export function Modal({
   const handleRef = useRef<() => void>()
   handleRef.current = onScrim ?? onClose
   const [inPlace] = useState(() => liveModals > 0 && !under)
+  useScrollLock()
   useEffect(() => {
     liveModals++
     return () => {

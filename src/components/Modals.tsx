@@ -3,7 +3,7 @@ import { ADDRESS, NETWORKS, TOKENS, TOKEN_LIST, WALLETS, fmt, usd, type TokenId 
 import { useApp, type ModalKind } from '../store'
 import { NetworkList, SystemBody, WalletMenuBody } from './Header'
 import { HelpTip } from './SwapPanel'
-import { Banner, Coin, Icon, Modal, Net, Spinner, WalletLogo, usePresence, type CoinId } from './ui'
+import { Banner, Coin, Icon, Modal, Net, Spinner, WalletLogo, usePresence, useScrollLock, type CoinId } from './ui'
 
 /* ───────────── QR code · component "QR code" (25×25 modules, rounded) ───────────── */
 const QR_ROWS = [
@@ -517,6 +517,7 @@ function NetFilter({ sel, setSel, onClose }: { sel: Set<string>; setSel: (s: Set
 
 function SearchOverlay() {
   const a = useApp()
+  useScrollLock()
   const [q, setQ] = useState('')
   const [tab, setTab] = useState('All')
   const [filter, setFilter] = useState(false)
@@ -630,6 +631,7 @@ function SearchOverlay() {
 /* ───────────── History (I9) ───────────── */
 function HistoryPanel() {
   const a = useApp()
+  useScrollLock()
   return (
     <div className="scrim hist-scrim" onMouseDown={(e) => e.target === e.currentTarget && a.close()}>
       <div className="hist-wrap">
