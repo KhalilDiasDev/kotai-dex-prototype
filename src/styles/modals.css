@@ -314,17 +314,19 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr)); /* equal columns whatever the name length */
   gap: 12px;
+  padding-top: 8px; /* room for the Recommended tag on the first row */
 }
-/* every tile: same size, logo + name on the same lines (the Recommended badge sits below the name) */
+/* every tile: same size, logo + name centred */
 .w-tile {
   height: 122px;
   min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 10px;
-  padding: 24px 8px 0;
+  padding: 0 8px;
+  position: relative;
   border-radius: 16px;
   background: var(--bg-raised);
   border: 1px solid var(--ink-700);
@@ -343,8 +345,15 @@
   font-weight: 600;
   color: var(--text-secondary);
 }
+/* Recommended sits on the tile's top edge, so the Kotai logo + name stay centred like every other tile */
 .w-tile .rec-badge {
-  margin-top: -4px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  background: #0d2a26;
 }
 .w-tile:hover {
   background: var(--bg-hover);
