@@ -82,6 +82,21 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
   // card swap: the two fields trade places (FLIP — content swaps, then each card slides in from the other's slot)
   const sendRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const recvInputRef = useRef<HTMLInputElement>(null)
+  // "You receive" is editable too: typing the amount you want back-solves what you need to send
+  const [recvText, setRecvText] = useState<string | null>(null)
+  const typeReceive = (v: string) => {
+    const clean = v.replace(/,/g, '.').replace(/[^0-9.]/g, '')
+    if ((clean.match(/\./g) ?? []).length > 1) return
+    setRecvText(clean)
+    const want = parseFloat(clean)
+    const need = want > 0 && a.quote.rate > 0 ? want / a.quote.rate : 0
+    a.setAmount(need > 0 ? String(+need.toFixed(need < 1 ? 8 : 6)) : '')
+  }
+  const focusReceive = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest('button, input, a')) return
+    recvInputRef.current?.focus({ preventScroll: true })
+  }
   // the whole card is a hit area for the amount; the field starts focused, ready to type (desktop — no surprise keyboard on mobile)
   const focusAmount = (e?: React.MouseEvent) => {
     if (e && (e.target as HTMLElement).closest('button, input, a')) return
@@ -228,7 +243,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
         </div>
 
         {/* You receive */}
-        <div ref={recvRef} onClick={focusAmount} className="field">
+        <div ref={recvRef} onClick={focusReceive} className={'field' + (recvText !== null ? ' gb focus' : '')}>
           <div className={'field-top' + (hasAmt ? ' tall' : '')}>
             <span className="f-label">
               {a.isMobile && <Icon n="download" size={16} />}You receive (estimated)
@@ -245,7 +260,17 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
           </div>
           <div className="field-mid">
             <div className="amount-wrap">
-              <input className={'amount ro' + (!hasAmt || noRoute ? ' zero' : '') + (a.quoting ? ' updating' : '')} readOnly tabIndex={-1} value={outText} aria-label="Amount to receive" />
+              <input
+                ref={recvInputRef}
+                className={'amount' + (recvText === null && (!hasAmt || noRoute) ? ' zero' : '') + (recvText === null && a.quoting ? ' updating' : '')}
+                inputMode="decimal"
+                placeholder="0"
+                value={recvText ?? (hasAmt ? outText : '')}
+                onFocus={() => setRecvText(hasAmt && !noRoute ? String(+a.quote.out.toFixed(a.quote.out < 1 ? 6 : 2)) : '')}
+                onBlur={() => setRecvText(null)}
+                onChange={(e) => typeReceive(e.target.value)}
+                aria-label="Amount to receive"
+              />
             </div>
             <TokenSelect id={a.to} onClick={() => a.set({ tokenSide: 'to', modal: 'tokenSelect', modalStack: [] })} />
           </div>

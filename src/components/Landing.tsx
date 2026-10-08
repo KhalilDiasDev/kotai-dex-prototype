@@ -83,43 +83,70 @@ const MARKET: Record<string, [string, number]> = {
 }
 
 /* tooltip opens away from the swap card, unless the coin sits too close to the frame edge */
-const tipSide = (cx: number) => {
-  const outward = cx < 720 ? 'left' : 'right'
-  const room = cx < 720 ? cx : 1440 - cx
+const tipSide = (x: number, vw: number) => {
+  const outward = x < vw / 2 ? 'left' : 'right'
+  const room = x < vw / 2 ? x : vw - x
   return room > 230 ? outward : outward === 'left' ? 'right' : 'left'
+}
+
+/* hero coins keep their Figma spots at 1440; on narrower windows the gap between the swap card and the edge
+   shrinks proportionally (and the coins with it), so they never get cut off or hidden */
+function useViewportWidth() {
+  const [vw, setVw] = useState(() => window.innerWidth)
+  useEffect(() => {
+    const h = () => setVw(window.innerWidth)
+    window.addEventListener('resize', h)
+    return () => window.removeEventListener('resize', h)
+  }, [])
+  return vw
 }
 
 function Floats() {
   const a = useApp()
+  const vw = useViewportWidth()
+  const k = Math.max(0, Math.min(1, (vw / 2 - 250) / (720 - 250)))
+  const sc = vw >= 1440 ? 1 : Math.max(0.55, 0.45 + k * 0.55)
   return (
     <div className="lp-floats">
       {FLOATS.map((f, i) => {
         const s = f.img / 4
         const [gx, gy, gs, gc] = f.glow
         const [tx, ty, ts] = f.tr
+        // each coin lives in a real box (coin + glow + badge) — a zero-size box gets culled once its float animation goes to the GPU
+        const x0 = Math.min(gx, f.cx - s / 2, tx)
+        const y0 = Math.min(gy, f.cy - s / 2, ty)
+        const x1 = Math.max(gx + gs, f.cx + s / 2, tx + ts)
+        const y1 = Math.max(gy + gs, f.cy + s / 2, ty + ts)
+        const off = f.cx - 720
+        const dx = Math.sign(off) * (250 + (Math.abs(off) - 250) * k) - off
         return (
           <div
             key={f.id}
             style={
               {
-                transformOrigin: `${f.cx - 720}px ${f.cy}px`,
+                left: `calc(50% - 720px + ${x0 + dx}px)`,
+                top: y0,
+                width: x1 - x0,
+                height: y1 - y0,
+                scale: String(sc),
+                transformOrigin: `${f.cx - x0}px ${f.cy - y0}px`,
                 // entrance: starts behind the swap card (centre ≈ 720, 450 on the frame) and flies out
-                '--ex': `${720 - f.cx}px`,
+                '--ex': `${720 - f.cx - dx}px`,
                 '--ey': `${450 - f.cy}px`,
                 '--pd': `${0.45 + i * 0.07}s`,
                 '--fd': `${f.d}s`,
               } as React.CSSProperties
             }
           >
-            <span className="fl-glow" style={{ left: gx - 720, top: gy, width: gs, height: gs, background: gc, filter: `blur(${gs * 0.27}px)` }} />
+            <span className="fl-glow" style={{ left: gx - x0, top: gy - y0, width: gs, height: gs, background: gc, filter: `blur(${gs * 0.27}px)` }} />
             <button
               className="fl-btn"
               onClick={() => a.openCoin(f.id.toUpperCase() as never)}
               aria-label={`${NAMES[f.id][0]} price`}
-              style={{ left: f.cx - s / 2 - 720, top: f.cy - s / 2, width: s, height: s }}
+              style={{ left: f.cx - s / 2 - x0, top: f.cy - s / 2 - y0, width: s, height: s }}
             >
               <img className="fl-img" src={`img/f-${f.id}.png`} alt="" />
-              <span className={'fl-tip ' + tipSide(f.cx)}>
+              <span className={'fl-tip ' + tipSide(Math.min(vw, 1440) / 2 + off + dx, Math.min(vw, 1440))}>
                 <span className="fl-tip-head">
                   <img src={`img/coin/${f.id}.${f.id === 'kti' ? 'png' : 'svg'}`} alt="" onError={(e) => (e.currentTarget.style.display = 'none')} />
                   <b>{NAMES[f.id][0]}</b>
@@ -134,8 +161,8 @@ function Floats() {
             <span
               className={'fl-trend fl-trend-' + f.id}
               style={{
-                left: tx - 720,
-                top: ty,
+                left: tx - x0,
+                top: ty - y0,
                 width: ts,
                 height: ts,
                 background: f.up ? '#17c785' : '#ff082e',

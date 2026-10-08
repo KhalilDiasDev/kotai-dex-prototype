@@ -901,11 +901,6 @@
   }
 }
 @media (max-width: 1100px) {
-  .lp-floats .fl-btn,
-  .lp-floats .fl-glow,
-  .lp-floats .fl-trend {
-    display: none;
-  }
   .lp-feature,
   .lp-feature.rev {
     flex-direction: column;
@@ -1081,10 +1076,6 @@
 /* each coin + its glow + its badge float as one unit; on first load they fly out from behind the swap card */
 .lp-floats > div {
   position: absolute;
-  left: 50%;
-  top: 0;
-  width: 0;
-  height: 0;
   animation: floatY 7s ease-in-out var(--fd, 0s) infinite;
 }
 .lp.intro .lp-floats > div {
