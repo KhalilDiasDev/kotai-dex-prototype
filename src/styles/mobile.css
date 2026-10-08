@@ -962,3 +962,17 @@ select {
 .lpm-cards > .reveal:nth-child(even) {
   --rdm: 50ms;
 }
+/* narrow phones: the hero coins shrink as a group (anchored top-right) so they never reach the title */
+.lpm-floats {
+  transform-origin: top right;
+}
+@media (max-width: 380px) {
+  .lpm-floats {
+    transform: scale(0.82);
+  }
+}
+@media (max-width: 340px) {
+  .lpm-floats {
+    transform: scale(0.68);
+  }
+}

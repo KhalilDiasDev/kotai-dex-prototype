@@ -28,11 +28,10 @@ export function LandingMobile() {
         <div className="lpm-floats" aria-hidden>
           {(
             [
-              // [coin, right, top, size] — kept clear of the title lines; the Kotai coin is the featured one
-              ['eth', 50, 0, 28, '#627eea', 0.6],
-              ['sol', 2, 18, 28, '#9945ff', 2.1],
-              ['kti', 22, 48, 58, '#2fe0c0', 0],
-              ['btc', 98, 68, 30, '#f7931a', 1.2],
+              // [coin, right, top, size] — three coins only, sized and placed to stay clear of the title, subtitle and buttons
+              ['kti', 16, 22, 42, '#2fe0c0', 0],
+              ['btc', 98, 60, 24, '#f7931a', 1.2],
+              ['eth', 8, 86, 24, '#627eea', 0.6],
             ] as const
           ).map(([id, right, top, size, glow, d]) => (
             <span key={id} className={'lpm-fl' + (id === 'kti' ? ' hl' : '')} style={{ right, top, width: size, height: size, animationDelay: `${d}s`, ['--g' as string]: glow }}>
