@@ -972,7 +972,13 @@ select {
   }
 }
 @media (max-width: 340px) {
+  /* very small phones: the group drops beside the title's second line */
   .lpm-floats {
-    transform: scale(0.68);
+    top: 46px;
+    transform: scale(0.62);
+  }
+  /* no room for the middle coin without touching the subtitle */
+  .lpm-fl:nth-child(2) {
+    display: none;
   }
 }
