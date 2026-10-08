@@ -41,8 +41,8 @@
   height: 520px;
   border-radius: 50%;
   background: var(--lp-glow);
-  filter: blur(110px);
-  opacity: 0.2;
+  filter: blur(95px);
+  opacity: 0.15;
 }
 .lp-bg .glow-swap {
   position: absolute;
@@ -52,8 +52,8 @@
   height: 520px;
   border-radius: 50%;
   background: #03357f;
-  filter: blur(75px);
-  opacity: 0.2;
+  filter: blur(65px);
+  opacity: 0.18;
 }
 .lp-bg .blob {
   position: absolute;
@@ -61,12 +61,12 @@
   filter: blur(85px);
 }
 .lp-bg .blob.v {
-  background: radial-gradient(closest-side, rgba(43, 107, 232, 0.549), rgba(43, 107, 232, 0));
-  opacity: 0.5;
+  background: radial-gradient(closest-side, rgba(43, 107, 232, 0.68), rgba(43, 107, 232, 0));
+  opacity: 0.42;
 }
 .lp-bg .blob.b {
-  background: radial-gradient(closest-side, rgba(104, 61, 204, 0.42), rgba(104, 61, 204, 0));
-  opacity: 0.5;
+  background: radial-gradient(closest-side, rgba(104, 61, 204, 0.55), rgba(104, 61, 204, 0));
+  opacity: 0.42;
 }
 .lp-bg .blob.t {
   background: radial-gradient(closest-side, rgba(43, 107, 232, 0.22), rgba(43, 107, 232, 0));
@@ -77,7 +77,7 @@
   position: absolute;
   border-radius: 50%;
   border: 1px solid transparent;
-  background: linear-gradient(90deg, rgba(106, 164, 251, 0), rgba(118, 172, 251, 0.55) 50%, rgba(106, 164, 251, 0)) border-box;
+  background: linear-gradient(90deg, rgba(106, 164, 251, 0), rgba(130, 182, 255, 0.7) 50%, rgba(106, 164, 251, 0)) border-box;
   -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;

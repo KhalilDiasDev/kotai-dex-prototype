@@ -30,32 +30,32 @@
     top: -140px;
     width: 180%;
     height: 340px;
-    filter: blur(80px);
-    opacity: 0.32;
+    filter: blur(70px);
+    opacity: 0.24;
   }
   .bg .blob.top {
     left: 30%;
     top: -80px;
     width: 120%;
     height: 220px;
-    filter: blur(50px);
-    opacity: 0.5;
+    filter: blur(45px);
+    opacity: 0.42;
   }
   .bg .blob.violet {
     left: -60%;
     bottom: -40px;
     width: 160%;
     height: 300px;
-    filter: blur(60px);
-    opacity: 0.8;
+    filter: blur(50px);
+    opacity: 0.68;
   }
   .bg .blob.blue {
     left: 10%;
     bottom: -70px;
     width: 150%;
     height: 280px;
-    filter: blur(60px);
-    opacity: 0.75;
+    filter: blur(50px);
+    opacity: 0.64;
   }
   .bg .arc.l {
     left: -60%;
