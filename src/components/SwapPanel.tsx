@@ -280,17 +280,20 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
             <span className="f-label">
               <Icon n="upload" size={16} />You send
             </span>
-            {showChips ? (
-              <div className="shortcuts">
-                {[0.25, 0.5, 0.75, 1].map((p) => (
-                  <button key={p} className={'chip' + (chip === p && a.amountNum === from.balance * p ? ' on' : '')} onMouseDown={(e) => e.preventDefault()} onClick={() => pct(p)}>
-                    {p === 1 ? 'Max' : p * 100 + '%'}
-                  </button>
-                ))}
-              </div>
-            ) : (
+            {/* desktop: the % shortcuts replace the balance text only while the card is hovered or focused (cleaner at rest);
+                touch: they show while typing, as before */}
+            <div className={'top-r' + (showChips ? ' show' : '')}>
+              {a.connected && (
+                <div className="shortcuts">
+                  {[0.25, 0.5, 0.75, 1].map((p) => (
+                    <button key={p} className={'chip' + (chip === p && a.amountNum === from.balance * p ? ' on' : '')} onMouseDown={(e) => e.preventDefault()} onClick={() => pct(p)}>
+                      {p === 1 ? 'Max' : p * 100 + '%'}
+                    </button>
+                  ))}
+                </div>
+              )}
               <span className="muted">{a.connected ? `${from.balance.toFixed(4)} ${a.from}` : 'Connect wallet to see balance'}</span>
-            )}
+            </div>
           </div>
           <div className="field-mid">
             <div className="amount-wrap">

@@ -993,3 +993,52 @@
     width: min(260px, calc(100vw - 72px));
   }
 }
+
+/* ───────── Shortcuts on demand: % chips and quick token picks appear on hover / focus ───────── */
+.top-r {
+  display: grid;
+  justify-items: end;
+  align-items: center;
+}
+.top-r > * {
+  grid-area: 1 / 1;
+}
+.swap-card .field-top {
+  min-height: 34px; /* room for the chips, so the card never jumps when they appear */
+}
+.top-r .shortcuts,
+.top-r .muted,
+.swap-card .quick {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+@media (hover: hover) {
+  .top-r .shortcuts,
+  .swap-card .quick {
+    opacity: 0;
+    transform: translateY(2px);
+    pointer-events: none;
+  }
+  .swap-card .field:hover .top-r .shortcuts,
+  .swap-card .field:focus-within .top-r .shortcuts,
+  .swap-card .field:hover .quick,
+  .swap-card .field:focus-within .quick {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  .swap-card .field:hover .top-r:has(.shortcuts) .muted,
+  .swap-card .field:focus-within .top-r:has(.shortcuts) .muted {
+    opacity: 0;
+  }
+}
+@media (hover: none) {
+  .top-r .shortcuts {
+    display: none;
+  }
+  .top-r.show .shortcuts {
+    display: flex;
+  }
+  .top-r.show:has(.shortcuts) .muted {
+    display: none;
+  }
+}
