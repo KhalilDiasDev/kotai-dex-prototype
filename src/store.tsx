@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { flushSync } from 'react-dom'
-import { ADDRESS, HISTORY, NETWORKS, TOKENS, type HistoryItem, type TokenId } from './data'
+import { ADDRESS, HISTORY, NETWORKS, TOKENS, WALLETS, type HistoryItem, type TokenId } from './data'
 
 export type View = 'home' | 'swap'
 export type Tab = 'swap' | 'limit' | 'buy'
@@ -392,7 +392,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (o.view === 'home') window.scrollTo({ top: 0 })
         return { ...o, walletId: id, connected: true, wasConnected: true, modal: null, modalStack: [], view: 'swap' }
       })
-      const name = id === 'kotai' ? 'Kotai Wallet' : id === 'other' ? 'WalletConnect' : id[0].toUpperCase() + id.slice(1)
+      const name = WALLETS.find((w) => w.id === id)?.name ?? (id === 'other' ? 'WalletConnect' : id[0].toUpperCase() + id.slice(1))
       toast({ tone: 'success', title: 'Wallet connected', body: `${name} · ${ADDRESS}` })
     },
     [toast],

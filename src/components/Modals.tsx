@@ -182,25 +182,28 @@ function KotaiWalletModal() {
   )
 }
 
-/* ───────────── 01b · Other wallets (QR) ───────────── */
+/* ───────────── 01b · Wallet QR — one per wallet (MetaMask, Coinbase…), each with its own logo; "More wallets" = WalletConnect ───────────── */
 function OtherWalletsModal() {
   const a = useApp()
-  const { busy, go } = useAutoConnect('other')
+  const id = a.walletId && a.walletId !== 'kotai' ? a.walletId : 'walletconnect'
+  const generic = id === 'walletconnect'
+  const name = WALLETS.find((w) => w.id === id)?.name ?? 'your wallet'
+  const { busy, go } = useAutoConnect(id)
   return (
     <Modal
-      title="Other wallets"
-      icon={<WalletLogo id="walletconnect" size={32} />}
+      title={generic ? 'Other wallets' : name}
+      icon={<WalletLogo id={id} size={32} radius={id === 'ledger' ? 9 : undefined} />}
       onBack={a.back}
       onClose={() => a.push('cancelConnect')}
       onScrim={() => a.push('cancelConnect')}
-      sub="Scan the code with any compatible wallet. Connecting doesn’t give access to your funds: every transaction needs your approval."
+      sub={`Scan the code with ${generic ? 'any compatible wallet' : name}. Connecting doesn’t give access to your funds: every transaction needs your approval.`}
       className="gap24"
     >
       <div className="qr-box">
-        <QR logo={<Coin id="KTI" size={28} />} onScan={go} />
-        <b>{busy ? 'Connecting…' : 'Scan with your wallet'}</b>
+        <QR logo={<img src={`img/wallet/${id}.png`} alt="" width={28} height={28}/>} onScan={go} />
+        <b>{busy ? 'Connecting…' : generic ? 'Scan with your wallet' : `Scan with ${name}`}</b>
       </div>
-      <p className="m-text">Works with MetaMask, Trust Wallet, Rainbow and 300+ WalletConnect-compatible wallets.</p>
+      {generic && <p className="m-text">Works with MetaMask, Trust Wallet, Rainbow and 300+ WalletConnect-compatible wallets.</p>}
       <div className="m-row2">
         <button className="btn secondary" onClick={() => a.toast({ tone: 'success', title: 'Link copied', body: 'Paste it in your wallet to connect' })}>
           <Icon n="copy" size={18} /> Copy link
