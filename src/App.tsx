@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { BottomNav } from './components/BottomNav'
 import { ChartPanel } from './components/ChartPanel'
 import { Header } from './components/Header'
@@ -51,8 +51,22 @@ function Toasts({ list }: { list: Toast[] }) {
   )
 }
 
+/* tablets (≤1100px) don't have room for the top nav, so they get the phone's bottom bar */
+function useCompactNav() {
+  const q = '(max-width: 1100px)'
+  const [on, setOn] = useState(() => window.matchMedia(q).matches)
+  useEffect(() => {
+    const m = window.matchMedia(q)
+    const h = () => setOn(m.matches)
+    m.addEventListener('change', h)
+    return () => m.removeEventListener('change', h)
+  }, [])
+  return on
+}
+
 function Shell() {
   const a = useApp()
+  const compactNav = useCompactNav()
   const chart = a.view === 'swap' && a.chart !== 'off' && !a.isMobile
 
   useEffect(() => {
@@ -61,7 +75,8 @@ function Shell() {
 
   return (
     <>
-      <Background plain={a.view === 'home'} />
+      {/* desktop Home paints its own backdrop; mobile Home has none, so it keeps the app gradient */}
+      <Background plain={a.view === 'home' && !a.isMobile} />
       <div className="app">
         <Header />
         {a.view === 'swap' ? (
@@ -73,7 +88,7 @@ function Shell() {
           <Landing />
         )}
       </div>
-      {a.isMobile && <BottomNav />}
+      {compactNav && <BottomNav />}
       <Modals />
       {/* every notification lands top-right, under the header */}
       <Toasts list={a.toasts} />

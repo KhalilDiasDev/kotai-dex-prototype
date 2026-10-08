@@ -235,6 +235,7 @@ img.coin {
 }
 .nav-item {
   position: relative;
+  white-space: nowrap;
   height: 36px;
   padding: 8px 16px;
   border-radius: var(--radius-full);
@@ -630,5 +631,29 @@ html[data-vt='chart']::view-transition-new(swap-card):only-child {
   to {
     opacity: 0;
     transform: translateX(-16px) scale(0.98);
+  }
+}
+
+/* ───────── Header · narrower desktops and tablets ───────── */
+@media (max-width: 1280px) {
+  .header-in {
+    padding: 0 32px;
+  }
+  .nav-item {
+    padding: 8px 12px;
+  }
+  .header .pill-btn .pill-name {
+    display: none;
+  }
+}
+@media (max-width: 1100px) {
+  .nav {
+    display: none;
+  }
+  .app {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+  .proto {
+    bottom: calc(84px + env(safe-area-inset-bottom));
   }
 }

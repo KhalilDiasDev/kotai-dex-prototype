@@ -86,7 +86,12 @@
   .scrim:has(> .modal.done-modal),
   .scrim:has(> .modal.review-modal) {
     align-items: flex-start;
-    padding-top: max(16px, 9vh);
+    padding-top: clamp(16px, 9vh, 88px);
+  }
+  .scrim:has(> .modal.flow-modal) > .modal,
+  .scrim:has(> .modal.done-modal) > .modal,
+  .scrim:has(> .modal.review-modal) > .modal {
+    max-height: calc(100vh - clamp(16px, 9vh, 88px) - 16px);
   }
 }
 /* text that changes between steps just cross-fades in place */
@@ -307,17 +312,19 @@
 /* 01a · wallet grid */
 .wallet-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* equal columns whatever the name length */
   gap: 12px;
 }
+/* every tile: same size, logo + name on the same lines (the Recommended badge sits below the name) */
 .w-tile {
   height: 122px;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 10px;
-  padding: 0 8px;
+  padding: 24px 8px 0;
   border-radius: 16px;
   background: var(--bg-raised);
   border: 1px solid var(--ink-700);
@@ -327,10 +334,17 @@
   transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .w-tile .nm {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 13px;
   line-height: 16px;
   font-weight: 600;
   color: var(--text-secondary);
+}
+.w-tile .rec-badge {
+  margin-top: -4px;
 }
 .w-tile:hover {
   background: var(--bg-hover);
@@ -1891,4 +1905,27 @@
 .ts-list,
 .help-tip {
   background: var(--surface-overlay) !important;
+}
+
+/* short laptop screens: tighter swap-flow dialogs so the buttons stay in view */
+@media (min-width: 721px) and (max-height: 760px) {
+  .scrim:has(> .modal.flow-modal),
+  .scrim:has(> .modal.done-modal),
+  .scrim:has(> .modal.review-modal) {
+    padding-top: 24px;
+  }
+  .scrim:has(> .modal.flow-modal) > .modal,
+  .scrim:has(> .modal.done-modal) > .modal,
+  .scrim:has(> .modal.review-modal) > .modal {
+    max-height: calc(100vh - 40px);
+  }
+  .modal.flow-modal,
+  .modal.review-modal,
+  .modal.done-modal {
+    gap: 14px;
+    padding: 20px 24px;
+  }
+  .modal.flow-modal .step .sc {
+    padding-bottom: 16px;
+  }
 }

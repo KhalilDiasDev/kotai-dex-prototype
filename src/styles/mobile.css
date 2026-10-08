@@ -18,26 +18,55 @@
     display: none !important;
   }
 
-  /* background · "Brilho inferior" + brand glow */
+  /* background · same gradient language as desktop, re-fitted to a 390 frame:
+     brand glow at the top, blue + violet glows at the bottom, one faint arc */
   .bg-in {
-    width: 390px;
-  }
-  .bg .blob.violet {
-    left: -185px;
-    bottom: -196px;
-    width: 760px;
-    height: 380px;
-    filter: none;
-    opacity: 0.7;
-  }
-  .bg .blob.blue,
-  .bg .blob.top,
-  .bg .arc,
-  .bg .spark {
-    display: none;
+    width: 100%;
+    left: 0;
+    transform: none;
   }
   .bg .brand {
-    left: -255px;
+    left: -40%;
+    top: -140px;
+    width: 180%;
+    height: 340px;
+    filter: blur(80px);
+    opacity: 0.32;
+  }
+  .bg .blob.top {
+    left: 30%;
+    top: -80px;
+    width: 120%;
+    height: 220px;
+    filter: blur(50px);
+    opacity: 0.5;
+  }
+  .bg .blob.violet {
+    left: -60%;
+    bottom: -40px;
+    width: 160%;
+    height: 300px;
+    filter: blur(60px);
+    opacity: 0.8;
+  }
+  .bg .blob.blue {
+    left: 10%;
+    bottom: -70px;
+    width: 150%;
+    height: 280px;
+    filter: blur(60px);
+    opacity: 0.75;
+  }
+  .bg .arc.l {
+    left: -60%;
+    bottom: -560px;
+    width: 220%;
+    height: 760px;
+    opacity: 0.45;
+  }
+  .bg .arc.r,
+  .bg .spark {
+    display: none;
   }
 
   /* header */
@@ -146,8 +175,15 @@
     border-radius: 2px;
     background: rgba(255, 255, 255, 0.35);
   }
+  .wallet-grid {
+    gap: 8px;
+  }
   .wallet-grid .w-tile {
-    height: 122px;
+    height: 118px;
+    padding-top: 16px;
+  }
+  .w-tile .nm {
+    font-size: 12px;
   }
   .m-row2 .btn {
     padding: 0 8px;
@@ -331,9 +367,47 @@
   padding: 16px 16px 40px;
 }
 .lpm-hero {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+.lpm-hero h1,
+.lpm-hero p {
+  position: relative;
+  z-index: 1;
+}
+.lpm-floats {
+  position: absolute;
+  inset: 0 0 auto auto;
+  width: 180px;
+  height: 140px;
+  pointer-events: none;
+}
+.lpm-fl {
+  position: absolute;
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+.lpm-fl::before {
+  content: '';
+  position: absolute;
+  inset: 10%;
+  border-radius: 50%;
+  background: var(--g);
+  filter: blur(14px);
+  opacity: 0.45;
+}
+.lpm-fl img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.6);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.3));
+}
+.lpm.intro .lpm-fl {
+  animation: lpPop 0.7s cubic-bezier(0.3, 1.4, 0.4, 1) backwards, float 6s ease-in-out infinite;
 }
 .lpm-hero h1 {
   margin: 0;

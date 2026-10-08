@@ -233,6 +233,21 @@ function LandingMobile() {
   return (
     <div className={'lpm' + intro} ref={root}>
       <section className="lpm-hero">
+        {/* the desktop hero's floating coins, scaled down for the phone */}
+        <div className="lpm-floats" aria-hidden>
+          {(
+            [
+              // [coin, right, top, size] — kept clear of the title lines
+              ['sol', 4, 2, 30, '#9945ff', 2.1],
+              ['eth', 24, 50, 48, '#627eea', 0],
+              ['btc', 92, 62, 32, '#f7931a', 1.2],
+            ] as const
+          ).map(([id, right, top, size, glow, d]) => (
+            <span key={id} className="lpm-fl" style={{ right, top, width: size, height: size, animationDelay: `${d}s`, ['--g' as string]: glow }}>
+              <img src={`img/f-${id}.png`} alt="" />
+            </span>
+          ))}
+        </div>
         <h1>Swap from your wallet.</h1>
         <p>Every cost shown before you sign.</p>
       </section>

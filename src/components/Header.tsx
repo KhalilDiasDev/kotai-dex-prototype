@@ -282,7 +282,7 @@ export function Header() {
             <Anchor kinds={['network']} pop={<NetworkDropdown />}>
               <button className={'pill-btn hide-m' + (a.modal === 'network' ? ' on' : '')} onClick={() => toggle('network')}>
                 <Net id={a.networkId} size={20} />
-                {net.name}
+                <span className="pill-name">{net.name}</span>
                 <Icon n="chevron" size={16} className="chev" />
               </button>
             </Anchor>
