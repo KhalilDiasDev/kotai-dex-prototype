@@ -60,7 +60,7 @@ function Qr() {
 }
 
 /* ───────── floating tokens (positions from the Figma frame, 1440 grid) ───────── */
-type Fl = { id: string; cx: number; cy: number; img: number; glow: [number, number, number, string]; tr: [number, number, number]; up: boolean; faint?: boolean; d: number }
+type Fl = { id: string; cx: number; cy: number; img: number; glow: [number, number, number, string]; tr: [number, number, number]; up: boolean; d: number }
 const FLOATS: Fl[] = [
   { id: 'xrp', cx: 1354, cy: 659, img: 275, glow: [1329, 636, 51, '#7f96b8'], tr: [1364, 631, 20], up: true, d: 0 },
   { id: 'bnb', cx: 1057, cy: 380, img: 297, glow: [1029, 355, 55, '#f3ba2f'], tr: [1069, 350, 20], up: false, d: 1.2 },
@@ -69,7 +69,7 @@ const FLOATS: Fl[] = [
   { id: 'usdc', cx: 170, cy: 125, img: 231, glow: [149, 106, 43, '#2775ca'], tr: [176, 101, 20], up: true, d: 1.7 },
   { id: 'btc', cx: 308, cy: 410, img: 330, glow: [277, 382, 61, '#f7931a'], tr: [323, 377, 20], up: true, d: 0.9 },
   { id: 'eth', cx: 360, cy: 648, img: 418, glow: [321, 613, 78, '#627eea'], tr: [381, 607, 23], up: true, d: 2.6 },
-  { id: 'kti', cx: 145, cy: 301, img: 528, glow: [96, 257, 98, '#2fe0c0'], tr: [171, 249, 29], up: true, faint: true, d: 1.4 },
+  { id: 'kti', cx: 145, cy: 301, img: 528, glow: [96, 257, 98, '#2fe0c0'], tr: [171, 249, 29], up: true, d: 1.4 },
 ]
 
 const NAMES: Record<string, [string, string]> = {
@@ -166,7 +166,6 @@ function Floats() {
                 width: ts,
                 height: ts,
                 background: f.up ? '#17c785' : '#ff082e',
-                opacity: f.faint ? 0.14 : 1,
               }}
             >
               <svg viewBox="0 0 10 10" width={ts / 2} height={ts / 2} fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
