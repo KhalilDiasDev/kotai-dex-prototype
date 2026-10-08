@@ -169,7 +169,7 @@ function KotaiWalletModal() {
         </div>
       )}
       <ol className="m-steps">
-        {(a.isMobile ? ['Tap “Open Kotai Wallet” below', 'Approve the connection in the app', 'Come back here: we’ll continue automatically'] : steps).map((t, i) => (
+        {(a.isMobile ? ['Tap “Open Kotai Wallet” above', 'Approve the connection in the app', 'Come back here: we’ll continue automatically'] : steps).map((t, i) => (
           <li key={t}>
             <span>{i + 1}</span>
             {t}
@@ -189,6 +189,11 @@ function OtherWalletsModal() {
   const generic = id === 'walletconnect'
   const name = WALLETS.find((w) => w.id === id)?.name ?? 'your wallet'
   const { busy, go } = useAutoConnect(id)
+  // phones open the wallet app directly; the QR is only an option for a wallet on another device
+  const [qr, setQr] = useState(false)
+  const showQr = !a.isMobile || qr
+  const app = id === 'ledger' ? 'Ledger Live' : generic ? 'your wallet app' : name
+  const copy = () => a.toast({ tone: 'success', title: 'Link copied', body: 'Paste it in your wallet to connect' })
   return (
     <Modal
       title={generic ? 'Other wallets' : name}
@@ -196,22 +201,65 @@ function OtherWalletsModal() {
       onBack={a.back}
       onClose={() => a.push('cancelConnect')}
       onScrim={() => a.push('cancelConnect')}
-      sub={`Scan the code with ${generic ? 'any compatible wallet' : name}. Connecting doesn’t give access to your funds: every transaction needs your approval.`}
+      sub={
+        showQr
+          ? `Scan the code with ${generic ? 'any compatible wallet' : name}. Connecting doesn’t give access to your funds: every transaction needs your approval.`
+          : `Open ${app} to approve the connection. Connecting doesn’t give access to your funds: every transaction needs your approval.`
+      }
       className="gap24"
     >
-      <div className="qr-box">
-        <QR logo={<img src={`img/wallet/${id}.png`} alt="" width={28} height={28}/>} onScan={go} />
-        <b>{busy ? 'Connecting…' : generic ? 'Scan with your wallet' : `Scan with ${name}`}</b>
-      </div>
+      {showQr ? (
+        <div className="qr-box">
+          <QR logo={<img src={`img/wallet/${id}.png`} alt="" width={28} height={28} />} onScan={go} />
+          <b>{busy ? 'Connecting…' : generic ? 'Scan with your wallet' : `Scan with ${name}`}</b>
+        </div>
+      ) : (
+        <>
+          <button className="btn accent block" onClick={go} disabled={busy}>
+            {busy ? (
+              <>
+                <Spinner size={18} /> Waiting for approval…
+              </>
+            ) : (
+              `Open ${app === 'your wallet app' ? 'wallet app' : app}`
+            )}
+          </button>
+          <ol className="m-steps">
+            {[`Tap “Open ${app === 'your wallet app' ? 'wallet app' : app}” above`, 'Approve the connection in the app', 'Come back here: we’ll continue automatically'].map((t, i) => (
+              <li key={t}>
+                <span>{i + 1}</span>
+                {t}
+              </li>
+            ))}
+          </ol>
+        </>
+      )}
       {generic && <p className="m-text">Works with MetaMask, Trust Wallet, Rainbow and 300+ WalletConnect-compatible wallets.</p>}
-      <div className="m-row2">
-        <button className="btn secondary" onClick={() => a.toast({ tone: 'success', title: 'Link copied', body: 'Paste it in your wallet to connect' })}>
-          <Icon n="copy" size={18} /> Copy link
-        </button>
-        <button className="btn secondary" onClick={go} disabled={busy}>
-          {busy ? <Spinner size={18} /> : <Icon n="phone" size={18} />} Open on phone
-        </button>
-      </div>
+      {a.isMobile ? (
+        <div className="m-row2">
+          <button className="btn secondary" onClick={copy}>
+            <Icon n="copy" size={18} /> Copy link
+          </button>
+          <button className="btn secondary" onClick={() => setQr((v) => !v)}>
+            {qr ? (
+              <>
+                <Icon n="phone" size={18} /> Open the app
+              </>
+            ) : (
+              'Show QR code'
+            )}
+          </button>
+        </div>
+      ) : (
+        <div className="m-row2">
+          <button className="btn secondary" onClick={copy}>
+            <Icon n="copy" size={18} /> Copy link
+          </button>
+          <button className="btn secondary" onClick={go} disabled={busy}>
+            {busy ? <Spinner size={18} /> : <Icon n="phone" size={18} />} Open on phone
+          </button>
+        </div>
+      )}
       <Foot />
     </Modal>
   )
