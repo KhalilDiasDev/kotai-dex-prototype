@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useApp } from '../store'
 import { SwapPanel } from './SwapPanel'
 import { Tilt, TiltContent } from './animate-ui/tilt'
@@ -102,7 +102,7 @@ function Floats() {
             key={f.id}
             style={
               {
-                transformOrigin: `calc(50% - 720px + ${f.cx}px) ${f.cy}px`,
+                transformOrigin: `${f.cx - 720}px ${f.cy}px`,
                 // entrance: starts behind the swap card (centre ≈ 720, 450 on the frame) and flies out
                 '--ex': `${720 - f.cx}px`,
                 '--ey': `${450 - f.cy}px`,
@@ -111,12 +111,12 @@ function Floats() {
               } as React.CSSProperties
             }
           >
-            <span className="fl-glow" style={{ left: `calc(50% - 720px + ${gx}px)`, top: gy, width: gs, height: gs, background: gc, filter: `blur(${gs * 0.27}px)` }} />
+            <span className="fl-glow" style={{ left: gx - 720, top: gy, width: gs, height: gs, background: gc, filter: `blur(${gs * 0.27}px)` }} />
             <button
               className="fl-btn"
               onClick={() => a.openCoin(f.id.toUpperCase() as never)}
               aria-label={`${NAMES[f.id][0]} price`}
-              style={{ left: `calc(50% - 720px + ${f.cx - s / 2}px)`, top: f.cy - s / 2, width: s, height: s }}
+              style={{ left: f.cx - s / 2 - 720, top: f.cy - s / 2, width: s, height: s }}
             >
               <img className="fl-img" src={`img/f-${f.id}.png`} alt="" />
               <span className={'fl-tip ' + tipSide(f.cx)}>
@@ -134,7 +134,7 @@ function Floats() {
             <span
               className={'fl-trend fl-trend-' + f.id}
               style={{
-                left: `calc(50% - 720px + ${tx}px)`,
+                left: tx - 720,
                 top: ty,
                 width: ts,
                 height: ts,
@@ -202,8 +202,9 @@ const M_WHY: [string, string][] = [
 function LandingMobile() {
   const root = useRef<HTMLDivElement>(null)
   useReveal(root)
+  const intro = useIntroOnce()
   return (
-    <div className="lpm intro" ref={root}>
+    <div className={'lpm' + intro} ref={root}>
       <section className="lpm-hero">
         <h1>Swap from your wallet.</h1>
         <p>Every cost shown before you sign.</p>
@@ -269,6 +270,16 @@ function useReveal(root: React.RefObject<HTMLElement>) {
   }, [root])
 }
 
+/* the entrance runs only the first time Home appears; coming back from Swap just cross-fades */
+let introPlayed = false
+function useIntroOnce() {
+  const [intro] = useState(() => !introPlayed)
+  useEffect(() => {
+    introPlayed = true
+  }, [])
+  return intro ? ' intro' : ''
+}
+
 /* ───────── page ───────── */
 export function Landing() {
   const a = useApp()
@@ -280,6 +291,7 @@ function LandingDesktop() {
   const a = useApp()
   const root = useRef<HTMLDivElement>(null)
   useReveal(root)
+  const intro = useIntroOnce()
   const go = () => {
     a.set({ view: 'swap' })
     window.scrollTo({ top: 0 })
@@ -287,7 +299,7 @@ function LandingDesktop() {
   const docs = () => a.toast({ tone: 'info', title: 'Docs', body: 'Opens the documentation in the real product' })
 
   return (
-    <div className="lp intro" ref={root}>
+    <div className={'lp' + intro} ref={root}>
       <Backdrop />
 
       {/* Hero */}

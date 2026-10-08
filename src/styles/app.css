@@ -566,10 +566,10 @@ html[data-vt] .header {
   view-transition-name: site-header;
 }
 html[data-vt='view']::view-transition-old(root) {
-  animation: vtOut 0.22s cubic-bezier(0.4, 0, 1, 1) both;
+  animation: vtOut 0.18s cubic-bezier(0.4, 0, 1, 1) both;
 }
 html[data-vt='view']::view-transition-new(root) {
-  animation: vtIn 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.06s both;
+  animation: vtIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.04s both;
 }
 ::view-transition-group(site-header) {
   animation-duration: 0.3s;
@@ -577,21 +577,21 @@ html[data-vt='view']::view-transition-new(root) {
 @keyframes vtOut {
   to {
     opacity: 0;
-    transform: translateY(-10px);
   }
 }
 @keyframes vtIn {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(8px);
   }
 }
 
 /* price chart: swap card glides between centred / beside the chart; the chart fades + slides in and out */
-html[data-vt] .swap-col {
+/* the swap card only morphs for chart open/close — between screens a plain cross-fade is smoother */
+html[data-vt='chart'] .swap-col {
   view-transition-name: swap-card;
 }
-html[data-vt] .chart-panel {
+html[data-vt='chart'] .chart-panel {
   view-transition-name: chart-panel;
 }
 html[data-vt='chart']::view-transition-group(*) {

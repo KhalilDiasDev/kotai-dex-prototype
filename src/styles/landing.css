@@ -1057,7 +1057,6 @@
   from {
     opacity: 0;
     transform: translateY(28px);
-    filter: blur(6px);
   }
 }
 @keyframes lpPop {
@@ -1079,13 +1078,13 @@
 .lpm.intro > .swap-col {
   animation: lpRise 0.9s 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 }
-.lp.intro .lp-bg {
-  animation: lpFade 1.4s ease backwards;
-}
 /* each coin + its glow + its badge float as one unit; on first load they fly out from behind the swap card */
 .lp-floats > div {
   position: absolute;
-  inset: 0;
+  left: 50%;
+  top: 0;
+  width: 0;
+  height: 0;
   animation: floatY 7s ease-in-out var(--fd, 0s) infinite;
 }
 .lp.intro .lp-floats > div {
@@ -1113,14 +1112,11 @@
 .reveal {
   opacity: 0;
   transform: translateY(32px);
-  filter: blur(4px);
-  transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) var(--rd, 0ms), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) var(--rd, 0ms),
-    filter 0.8s ease var(--rd, 0ms);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) var(--rd, 0ms), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) var(--rd, 0ms);
 }
 .reveal.in {
   opacity: 1;
   transform: none;
-  filter: none;
 }
 .lp-trail.reveal .line {
   transform: scaleX(0);

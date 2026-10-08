@@ -198,7 +198,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (kind && doc.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const root = document.documentElement
       root.dataset.vt = kind
-      const vt = doc.startViewTransition(() => flushSync(apply)) as { finished?: Promise<void> }
+      const vt = doc.startViewTransition(() => {
+        flushSync(apply)
+        // new screen always starts at the top, inside the same frame (no visible jump)
+        if (kind === 'view') window.scrollTo(0, 0)
+      }) as { finished?: Promise<void> }
       vt.finished?.finally(() => {
         if (root.dataset.vt === kind) delete root.dataset.vt
       })
