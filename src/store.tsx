@@ -346,8 +346,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (s.scenario === 'offline') return { label: 'Waiting for network', disabled: true, kind: 'disabled', action: none }
     if (s.scenario === 'noRoute') return { label: 'No route available', disabled: true, kind: 'dim', action: none }
     if (banner && banner.text.startsWith('Not enough ETH')) return { label: 'Not enough ETH for fees', disabled: true, kind: 'disabled', action: none }
-    return { label: 'Review swap', disabled: false, kind: 'primary', action: () => open('review') }
-  }, [s.connected, s.scenario, s.quoting, amountNum, fieldError, banner, open])
+    return {
+      label: 'Review swap',
+      disabled: false,
+      kind: 'primary',
+      action: () => {
+        // starting a swap from the Home card moves to the Swap screen (amounts kept) and opens the review there
+        if (sRef.current.view === 'home') {
+          set({ view: 'swap', chart: 'off' })
+          window.setTimeout(() => open('review'), 420)
+        } else open('review')
+      },
+    }
+  }, [s.connected, s.scenario, s.quoting, amountNum, fieldError, banner, open, set])
 
   const requote = () => {
     window.clearTimeout(quoteTimer.current)
