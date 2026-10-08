@@ -109,6 +109,18 @@
     padding: 0;
   }
 
+  /* every sheet, select and list on mobile shares the sheet background */
+  .modal,
+  .modal .dropdown,
+  .modal .popover,
+  .search-wrap,
+  .hist,
+  .net-filter,
+  .nav-pop,
+  .ts-list {
+    background: #0a1424 !important;
+  }
+
   /* bottom sheets */
   .scrim {
     align-items: flex-end;
@@ -256,7 +268,6 @@
     top: 16px;
     width: 34px;
     height: 34px;
-    border-radius: 10px;
   }
   .hist-row {
     height: auto;
@@ -530,4 +541,70 @@
 }
 .np-go {
   color: var(--text-tertiary);
+}
+
+/* ───────── Mobile · Swap / Limit / Buy select ───────── */
+.tab-select {
+  position: relative;
+}
+.ts-btn {
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px 0 18px;
+  border-radius: var(--radius-full);
+  background: rgba(10, 20, 36, 0.75);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.ts-btn .chev {
+  transition: transform 0.2s;
+}
+.ts-btn.on .chev {
+  transform: rotate(180deg);
+}
+.ts-list {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  z-index: 30;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid rgba(46, 69, 115, 0.8);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  transform-origin: top left;
+  animation: dropIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ts-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: left;
+}
+.ts-opt .grow {
+  flex: 1;
+}
+.ts-opt small {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+.ts-opt.on {
+  color: var(--text-primary);
+  background: rgba(77, 155, 255, 0.14);
+}
+.ts-opt.on svg {
+  color: #7fb6ff;
 }

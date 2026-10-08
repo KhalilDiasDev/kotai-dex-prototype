@@ -75,6 +75,44 @@ function SlidersIcon() {
   )
 }
 
+/* Mobile: Swap / Limit / Buy as a compact select, so the row never crowds the chart + settings buttons */
+const TAB_LABEL: Record<Tab, string> = { swap: 'Swap', limit: 'Limit', buy: 'Buy' }
+function TabSelect() {
+  const a = useApp()
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!open) return
+    const h = (e: PointerEvent) => ref.current && !ref.current.contains(e.target as Node) && setOpen(false)
+    document.addEventListener('pointerdown', h)
+    return () => document.removeEventListener('pointerdown', h)
+  }, [open])
+  const pick = (t: Tab) => {
+    setOpen(false)
+    if (t !== 'swap') a.toast({ tone: 'info', title: t === 'limit' ? 'Limit orders' : 'Buy crypto', body: 'Not part of this prototype' })
+    else a.set({ tab: t })
+  }
+  return (
+    <div className="tab-select" ref={ref}>
+      <button className={'ts-btn gb' + (open ? ' on' : '')} onClick={() => setOpen((v) => !v)} aria-haspopup="listbox" aria-expanded={open}>
+        {TAB_LABEL[a.tab]}
+        <Icon n="chevron" size={16} className="chev" />
+      </button>
+      {open && (
+        <div className="ts-list" role="listbox">
+          {(['swap', 'limit', 'buy'] as Tab[]).map((t) => (
+            <button key={t} role="option" aria-selected={a.tab === t} className={'ts-opt' + (a.tab === t ? ' on' : '')} onClick={() => pick(t)}>
+              <span className="grow">{TAB_LABEL[t]}</span>
+              {t !== 'swap' && <small>Soon</small>}
+              {a.tab === t && <Icon n="check" size={16} sw={2.5} />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function SwapPanel({ compact }: { compact?: boolean }) {
   const a = useApp()
   const [focus, setFocus] = useState(false)
@@ -145,22 +183,26 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
     <div className="swap-col">
       <div className="swap-card">
         <div className="swap-top">
-          <div className="tabs" role="tablist">
-            {(['swap', 'limit', 'buy'] as Tab[]).map((t) => (
-              <button
-                key={t}
-                role="tab"
-                aria-selected={a.tab === t}
-                className={'tab gb' + (a.tab === t ? ' on' : '')}
-                onClick={() => {
-                  if (t !== 'swap') a.toast({ tone: 'info', title: t === 'limit' ? 'Limit orders' : 'Buy crypto', body: 'Not part of this prototype' })
-                  else a.set({ tab: t })
-                }}
-              >
-                {t[0].toUpperCase() + t.slice(1)}
-              </button>
-            ))}
-          </div>
+          {a.isMobile ? (
+            <TabSelect />
+          ) : (
+            <div className="tabs" role="tablist">
+              {(['swap', 'limit', 'buy'] as Tab[]).map((t) => (
+                <button
+                  key={t}
+                  role="tab"
+                  aria-selected={a.tab === t}
+                  className={'tab gb' + (a.tab === t ? ' on' : '')}
+                  onClick={() => {
+                    if (t !== 'swap') a.toast({ tone: 'info', title: t === 'limit' ? 'Limit orders' : 'Buy crypto', body: 'Not part of this prototype' })
+                    else a.set({ tab: t })
+                  }}
+                >
+                  {t[0].toUpperCase() + t.slice(1)}
+                </button>
+              ))}
+            </div>
+          )}
           <Anchor kinds={['settings']} pop={<div className="popover settings" role="dialog" aria-label="Swap settings"><SettingsBody onClose={a.close} /></div>}>
           <div className="tools">
             <button

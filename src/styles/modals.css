@@ -1825,3 +1825,54 @@
 .popover {
   overscroll-behavior: contain;
 }
+
+/* ───────── Close / back buttons · one round style everywhere ───────── */
+.sq-btn,
+.pop-head button,
+.s-close,
+.cp-round,
+.toast .x {
+  border-radius: 50% !important;
+  background: var(--bg-raised);
+  border: 1px solid var(--ink-700);
+  color: var(--text-primary);
+}
+.sq-btn,
+.pop-head button {
+  width: 34px;
+  height: 34px;
+  margin-right: 0;
+}
+.sq-btn:hover,
+.pop-head button:hover,
+.s-close:hover,
+.cp-round:hover,
+.toast .x:hover {
+  background: var(--bg-hover);
+  border-color: var(--ink-600);
+  transform: none;
+}
+/* the X itself gives a quarter turn on hover */
+.sq-btn[aria-label^='Close'] svg,
+.pop-head button svg,
+.s-close svg,
+.cp-round[aria-label^='Close'] svg,
+.toast .x svg {
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.sq-btn[aria-label^='Close']:hover svg,
+.pop-head button:hover svg,
+.s-close:hover svg,
+.cp-round[aria-label^='Close']:hover svg,
+.toast .x:hover svg {
+  transform: rotate(90deg);
+}
+.modal-head .sq-btn:last-child svg {
+  width: 16px;
+  height: 16px;
+}
+.toast .x {
+  width: 28px;
+  height: 28px;
+  color: #9fb9e0;
+}
