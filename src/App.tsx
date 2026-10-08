@@ -1,14 +1,50 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useSyncExternalStore, type ComponentType } from 'react'
 import { BottomNav } from './components/BottomNav'
-import { ChartPanel } from './components/ChartPanel'
 import { Header } from './components/Header'
 import { IconTips } from './components/IconTips'
-import { Landing } from './components/Landing'
+import { LandingMobile } from './components/LandingMobile'
 import { Modals } from './components/Modals'
 import { ProtoControls } from './components/ProtoControls'
 import { SwapPanel } from './components/SwapPanel'
 import { Icon } from './components/ui'
 import { AppProvider, useApp, type Toast } from './store'
+
+/* Desktop-only code (the long landing with the 3D card tilt + `motion`, and the side chart) lives in its own chunks,
+   so phones never download it. On wider screens it is requested right away. Unlike React.lazy, once a chunk has
+   arrived the component renders synchronously — a screen switch never shows an empty frame. */
+function onDemand<P extends object>(load: () => Promise<ComponentType<P>>) {
+  let Loaded: ComponentType<P> | null = null
+  let started = false
+  const subs = new Set<() => void>()
+  const preload = () => {
+    if (started) return
+    started = true
+    void load().then((c) => {
+      Loaded = c
+      subs.forEach((f) => f())
+    })
+  }
+  const subscribe = (cb: () => void) => {
+    subs.add(cb)
+    preload()
+    return () => {
+      subs.delete(cb)
+    }
+  }
+  function Comp(props: P) {
+    const C = useSyncExternalStore(subscribe, () => Loaded)
+    return C ? <C {...props} /> : null
+  }
+  return { Comp, preload }
+}
+const landing = onDemand(() => import('./components/Landing').then((m) => m.default))
+const chartPanel = onDemand(() => import('./components/ChartPanel').then((m) => m.ChartPanel))
+const LandingDesktop = landing.Comp
+const ChartPanel = chartPanel.Comp
+if (typeof window !== 'undefined' && window.matchMedia('(min-width: 721px)').matches) {
+  landing.preload()
+  chartPanel.preload()
+}
 
 function Background({ plain }: { plain: boolean }) {
   return (
@@ -85,7 +121,11 @@ function Shell() {
             {!(chart && a.chart === 'full') && <SwapPanel />}
           </main>
         ) : (
-          <Landing />
+          a.isMobile ? (
+            <LandingMobile />
+          ) : (
+            <LandingDesktop />
+          )
         )}
       </div>
       {compactNav && <BottomNav />}

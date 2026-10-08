@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useIntroOnce, useReveal } from './landingShared'
 import { useApp } from '../store'
 import { SwapPanel } from './SwapPanel'
 import { Tilt, TiltContent } from './animate-ui/tilt'
@@ -145,10 +146,10 @@ function Floats() {
               aria-label={`${NAMES[f.id][0]} price`}
               style={{ left: f.cx - s / 2 - x0, top: f.cy - s / 2 - y0, width: s, height: s }}
             >
-              <img className="fl-img" src={`img/f-${f.id}.png`} alt="" />
+              <img className="fl-img" src={`img/f-${f.id}.webp`} alt="" />
               <span className={'fl-tip ' + tipSide(Math.min(vw, 1440) / 2 + off + dx, Math.min(vw, 1440))}>
                 <span className="fl-tip-head">
-                  <img src={`img/coin/${f.id}.${f.id === 'kti' ? 'png' : 'svg'}`} alt="" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                  <img src={`img/coin/${f.id}.${f.id === 'kti' ? 'webp' : 'svg'}`} alt="" onError={(e) => (e.currentTarget.style.display = 'none')} />
                   <b>{NAMES[f.id][0]}</b>
                   <span>{NAMES[f.id][1]}</span>
                 </span>
@@ -213,123 +214,8 @@ function Backdrop() {
   )
 }
 
-/* ───────── mobile page · "Landing mobile · Home" (390 frame) ───────── */
-const M_CARDS: [string, string][] = [
-  ['Non-custodial', 'Your keys, your funds'],
-  ['Transparent fees', 'Every cost before you sign'],
-  ['7 networks', '100+ tokens in one place'],
-  ['Best route', 'We compare pools for you'],
-]
-const M_WHY: [string, string][] = [
-  ['100+ tokens on 7 networks', 'The main tokens and networks in one place, with live prices and no platform switching.'],
-  ['Cross-chain swaps', 'Move value between networks without going through an exchange.'],
-  ['Limit orders', 'Set your price and the swap runs when the market gets there.'],
-]
-function LandingMobile() {
-  const root = useRef<HTMLDivElement>(null)
-  useReveal(root)
-  const intro = useIntroOnce()
-  return (
-    <div className={'lpm' + intro} ref={root}>
-      <section className="lpm-hero">
-        {/* the desktop hero's floating coins, scaled down for the phone */}
-        <div className="lpm-floats" aria-hidden>
-          {(
-            [
-              // [coin, right, top, size] — kept clear of the title lines; the Kotai coin is the featured one
-              ['eth', 50, 0, 28, '#627eea', 0.6],
-              ['sol', 2, 18, 28, '#9945ff', 2.1],
-              ['kti', 22, 48, 58, '#2fe0c0', 0],
-              ['btc', 98, 68, 30, '#f7931a', 1.2],
-            ] as const
-          ).map(([id, right, top, size, glow, d]) => (
-            <span key={id} className={'lpm-fl' + (id === 'kti' ? ' hl' : '')} style={{ right, top, width: size, height: size, animationDelay: `${d}s`, ['--g' as string]: glow }}>
-              <img src={`img/f-${id}.png`} alt="" />
-            </span>
-          ))}
-        </div>
-        <h1>Swap from your wallet.</h1>
-        <p>Every cost shown before you sign.</p>
-      </section>
-      <SwapPanel compact />
-      <section className="lpm-cards">
-        {M_CARDS.map(([t, d]) => (
-          <article key={t} className="lpm-card">
-            <b>{t}</b>
-            <span>{d}</span>
-          </article>
-        ))}
-        <span className="lpm-eyebrow">Why KOTAI DEX</span>
-        <h2>Everything you need to swap</h2>
-        {M_WHY.map(([t, d]) => (
-          <article key={t} className="lpm-card">
-            <b>{t}</b>
-            <span>{d}</span>
-          </article>
-        ))}
-      </section>
-    </div>
-  )
-}
-
-/* ───────── entrance · each block rises in as it scrolls into view (siblings staggered) ───────── */
-const REVEAL = [
-  '.lp-statement > :not(.lp-glow)',
-  '.lp-steps .lp-head',
-  '.lp-trail',
-  '.lp-step-grid > *',
-  '.lp-step-cta',
-  '.lp-feature > .lp-panel',
-  '.lp-feature-txt > *',
-  '.lp-bento .lp-head',
-  '.lp-bento-row > *',
-  '.lp-banner',
-  '.lpm-cards > *',
-].join(',')
-
-function useReveal(root: React.RefObject<HTMLElement>) {
-  useEffect(() => {
-    const el = root.current
-    if (!el) return
-    const items = Array.from(el.querySelectorAll<HTMLElement>(REVEAL))
-    if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    items.forEach((n) => {
-      const sibs = Array.from(n.parentElement!.children).filter((c) => c.matches(REVEAL))
-      n.style.setProperty('--rd', `${Math.min(sibs.indexOf(n), 6) * 90}ms`)
-      n.classList.add('reveal')
-    })
-    const io = new IntersectionObserver(
-      (es) =>
-        es.forEach((e) => {
-          if (!e.isIntersecting) return
-          e.target.classList.add('in')
-          io.unobserve(e.target)
-        }),
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
-    )
-    items.forEach((n) => io.observe(n))
-    return () => io.disconnect()
-  }, [root])
-}
-
-/* the entrance runs only the first time Home appears; coming back from Swap just cross-fades */
-let introPlayed = false
-function useIntroOnce() {
-  const [intro] = useState(() => !introPlayed)
-  useEffect(() => {
-    introPlayed = true
-  }, [])
-  return intro ? ' intro' : ''
-}
-
-/* ───────── page ───────── */
-export function Landing() {
-  const a = useApp()
-  if (a.isMobile) return <LandingMobile />
-  return <LandingDesktop />
-}
-
-function LandingDesktop() {
+/* ───────── page (desktop / tablet) — loaded on demand; phones use LandingMobile ───────── */
+export default function LandingDesktop() {
   const a = useApp()
   const root = useRef<HTMLDivElement>(null)
   useReveal(root)
@@ -389,7 +275,7 @@ function LandingDesktop() {
             <div className="lp-prev">
               <div className="mini-field">
                 <div className="mf-top"><span>You send</span><span className="mf-chips"><b>25%</b><b>50%</b><b>75%</b><b>Max</b></span></div>
-                <div className="mf-mid"><span className="mf-amt">0.5</span><span className="mf-tok"><img src="img/f-bnb.png" alt="" />BNB<Icon n="chevron" size={12} /></span></div>
+                <div className="mf-mid"><span className="mf-amt">0.5</span><span className="mf-tok"><img src="img/f-bnb.webp" alt="" />BNB<Icon n="chevron" size={12} /></span></div>
                 <div className="mf-bot"><span>≈ $300.00</span><span>Balance: 3.0000 BNB</span></div>
               </div>
             </div>
@@ -421,7 +307,7 @@ function LandingDesktop() {
       <section className="lp-feature lp-wrap">
         <div className="lp-panel">
           <span className="lp-glow" style={{ width: 400, height: 300, opacity: 1, filter: 'blur(55px)' }} />
-          <img src="img/multi-chain.png" alt="Tokens orbiting in a ring" style={{ width: 510 }} />
+          <img loading="lazy" decoding="async" src="img/multi-chain.webp" alt="Tokens orbiting in a ring" style={{ width: 510 }} />
         </div>
         <div className="lp-feature-txt">
           <Eyebrow>Multi-chain</Eyebrow>
@@ -451,7 +337,7 @@ function LandingDesktop() {
         </div>
         <div className="lp-panel">
           <span className="lp-glow" style={{ width: 400, height: 300, opacity: 1, filter: 'blur(55px)' }} />
-          <img src="img/cross-chain.png" alt="Arrow looping between coins" style={{ width: 408 }} />
+          <img loading="lazy" decoding="async" src="img/cross-chain.webp" alt="Arrow looping between coins" style={{ width: 408 }} />
         </div>
       </section>
 
@@ -463,14 +349,14 @@ function LandingDesktop() {
         </div>
         <div className="lp-bento-row">
           <TiltCard className="lp-panel card wide" max={4}>
-            <div className="img"><img src="img/limit-orders.png" alt="" style={{ width: 274 }} /></div>
+            <div className="img"><img loading="lazy" decoding="async" src="img/limit-orders.webp" alt="" style={{ width: 274 }} /></div>
             <span className="lp-glow" style={{ width: 384, height: 200, filter: 'blur(50px)' }} />
             <Eyebrow>Limit orders</Eyebrow>
             <h3>Set your price. Walk away.</h3>
             <p>Place an order at the price you want and it fills when the market gets there — still non-custodial.</p>
           </TiltCard>
           <TiltCard className="lp-panel card" max={4}>
-            <div className="img"><img src="img/dynamic-fee.png" alt="" style={{ width: 227 }} /></div>
+            <div className="img"><img loading="lazy" decoding="async" src="img/dynamic-fee.webp" alt="" style={{ width: 227 }} /></div>
             <span className="lp-glow" style={{ width: 322, height: 200, filter: 'blur(50px)' }} />
             <Eyebrow>Dynamic fees</Eyebrow>
             <h3>Fees tuned to the network.</h3>
@@ -495,7 +381,7 @@ function LandingDesktop() {
           ].map(([n, x, y, s, px]) => {
             const full = (px as number) / 4
             const off = (full - (s as number)) / 2
-            return <img key={n as string} className="b-coin" src={`img/c-${n}.png`} alt="" style={{ left: `calc(50% - 600px + ${(x as number) - off}px)`, top: (y as number) - off, width: full, height: full }} />
+            return <img key={n as string} loading="lazy" decoding="async" className="b-coin" src={`img/c-${n}.webp`} alt="" style={{ left: `calc(50% - 600px + ${(x as number) - off}px)`, top: (y as number) - off, width: full, height: full }} />
           })}
           <h2>Ready for your first swap?</h2>
           <p>Connect your wallet and see every cost before you sign.</p>

@@ -120,7 +120,7 @@ export function WalletMenuBody() {
         {onKotai ? (
           <div className="wm-kotai on">
             <span className="kw-logo">
-              <img src="img/wallet/kotai.png" alt="" />
+              <img src="img/wallet/kotai.webp" alt="" />
             </span>
             <span className="grow">
               <b>Kotai Wallet</b>
@@ -132,7 +132,7 @@ export function WalletMenuBody() {
           /* runs the real Kotai Wallet connection (QR → approve); Back returns to this menu */
           <button className="wm-kotai" onClick={() => a.push('kotaiWallet')}>
             <span className="kw-logo">
-              <img src="img/wallet/kotai.png" alt="" />
+              <img src="img/wallet/kotai.webp" alt="" />
             </span>
             <span className="grow">
               <b>Switch to Kotai Wallet</b>

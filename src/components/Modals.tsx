@@ -55,7 +55,7 @@ const KotaiDownload = () => {
   return (
     <div className="kw-dl">
       <div className="kw-dl-txt">
-        <img src="img/wallet/kotai.png" alt="" width={36} height={36} />
+        <img src="img/wallet/kotai.webp" alt="" width={36} height={36} />
         <span>
           <b>Don’t have Kotai Wallet yet?</b>
           <small>Free on iOS and Android · set up in 2 minutes</small>
@@ -164,7 +164,7 @@ function KotaiWalletModal() {
       ) : (
         <div className="qr-box">
           <span className="rec-pill">Recommended</span>
-          <QR logo={<img src="img/wallet/kotai.png" alt="" width={28} height={28} />} onScan={go} />
+          <QR logo={<img src="img/wallet/kotai.webp" alt="" width={28} height={28} />} onScan={go} />
           <b>{busy ? 'Connecting…' : 'Scan with Kotai Wallet'}</b>
         </div>
       )}
@@ -210,7 +210,7 @@ function OtherWalletsModal() {
     >
       {showQr ? (
         <div className="qr-box">
-          <QR logo={<img src={`img/wallet/${id}.png`} alt="" width={28} height={28} />} onScan={go} />
+          <QR logo={<img src={`img/wallet/${id}.webp`} alt="" width={28} height={28} />} onScan={go} />
           <b>{busy ? 'Connecting…' : generic ? 'Scan with your wallet' : `Scan with ${name}`}</b>
         </div>
       ) : (

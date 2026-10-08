@@ -97,7 +97,7 @@ export function Icon({
 export type CoinId = TokenId | 'BNB' | 'SOL' | 'XRP'
 const COIN_SRC: Record<CoinId, string> = {
   ETH: 'img/coin/eth.svg',
-  KTI: 'img/coin/kti.png',
+  KTI: 'img/coin/kti.webp',
   USDT: 'img/coin/usdt.svg',
   USDC: 'img/coin/usdc.svg',
   BTC: 'img/coin/btc.svg',
@@ -132,7 +132,7 @@ export function WalletLogo({ id, size = 40, radius }: { id: string; size?: numbe
   if (id === 'kotai')
     return (
       <span className="wlogo kotai" style={{ width: size, height: size, borderRadius: radius ?? size * 0.28 }}>
-        <img src="img/wallet/kotai.png" alt="" width={size * 0.72} height={size * 0.72} draggable={false} />
+        <img src="img/wallet/kotai.webp" alt="" width={size * 0.72} height={size * 0.72} draggable={false} />
       </span>
     )
   if (id === 'more')
@@ -141,7 +141,7 @@ export function WalletLogo({ id, size = 40, radius }: { id: string; size?: numbe
         <Icon n="dots" size={size * 0.5} sw={2.4} />
       </span>
     )
-  return <img className="wlogo" src={`img/wallet/${id}.png`} width={size} height={size} alt="" draggable={false} style={{ borderRadius: radius ?? '50%' }} />
+  return <img className="wlogo" decoding="async" src={`img/wallet/${id}.webp`} width={size} height={size} alt="" draggable={false} style={{ borderRadius: radius ?? '50%' }} />
 }
 
 /* ───────── Logo (official KOTAI DEX SVG from /public/logo.svg) ───────── */
