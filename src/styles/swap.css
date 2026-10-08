@@ -249,8 +249,8 @@
 }
 .chip {
   height: 34px;
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
   background: #050c1a;
   border: 1px solid #3c68c8;
   font-size: 14px;
