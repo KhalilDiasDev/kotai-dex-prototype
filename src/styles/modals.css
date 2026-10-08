@@ -906,7 +906,7 @@
 
 /* confirm · "Modal · Confirmar" */
 .modal.confirm {
-  max-width: 400px;
+  max-width: 440px; /* same frame as the dialog it replaces */
   gap: 16px;
 }
 .alert-ico {

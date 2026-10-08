@@ -1172,10 +1172,12 @@ function FailedModal() {
 }
 
 /* ───────────── Confirm dialogs (stacked over the dialog they belong to) ───────────── */
-function Confirm({ title, body, keep, cancel, onCancel, under }: { title: string; body: string; keep: string; cancel: string; onCancel: () => void; under: ReactNode }) {
+/* Cancel confirmations replace the content of the dialog that asked for them (same frame, same place) —
+   never a second dialog stacked on top. "Keep…" goes back to exactly where the user was. */
+function Confirm({ title, body, keep, cancel, onCancel, pinned }: { title: string; body: string; keep: string; cancel: string; onCancel: () => void; pinned?: boolean }) {
   const a = useApp()
   return (
-    <Modal onScrim={a.back} className="confirm" under={under}>
+    <Modal onScrim={a.back} className={'confirm' + (pinned ? ' flow-modal' : '')}>
       <span className="alert-ico">
         <Icon n="warn" size={24} />
       </span>
@@ -1232,25 +1234,6 @@ function SheetNav() {
   )
 }
 
-function underFor(k: ModalKind): ReactNode {
-  switch (k) {
-    case 'connect':
-      return <ConnectModal />
-    case 'kotaiWallet':
-      return <KotaiWalletModal />
-    case 'otherWallets':
-      return <OtherWalletsModal />
-    case 'review':
-      return <ReviewModal />
-    case 'signing':
-      return <SwapFlowModal kind="signing" />
-    case 'processing':
-      return <SwapFlowModal kind="processing" />
-    default:
-      return null
-  }
-}
-
 /* Closing plays an exit (scrim fades, dialog/sheet eases out) — the last dialog stays mounted for that moment. */
 export function Modals() {
   const a = useApp()
@@ -1267,7 +1250,6 @@ export function Modals() {
 
 function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
   const a = useApp()
-  const prev = a.modalStack[a.modalStack.length - 1] ?? null
   const m = a.isMobile
   switch (k) {
     case 'connect':
@@ -1336,7 +1318,6 @@ function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
     case 'cancelConnect':
       return (
         <Confirm
-          under={underFor(prev)}
           title="Cancel connection?"
           body="No wallet is connected yet. You can come back and connect anytime — nothing leaves your wallet."
           keep="Keep connecting"
@@ -1347,7 +1328,7 @@ function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
     case 'cancelReview':
       return (
         <Confirm
-          under={underFor(prev)}
+          pinned
           title="Cancel this swap?"
           body="Nothing was sent yet. Your amounts stay on the swap screen if you want to try again."
           keep="Keep reviewing"
@@ -1358,7 +1339,7 @@ function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
     case 'cancelSign':
       return (
         <Confirm
-          under={underFor(prev)}
+          pinned
           title="Cancel the signature request?"
           body="The request in your wallet will be dismissed. Nothing was sent and no fee is charged."
           keep="Keep waiting"
@@ -1369,7 +1350,7 @@ function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
     case 'closeProcessing':
       return (
         <Confirm
-          under={underFor(prev)}
+          pinned
           title="Close this window?"
           body="Your swap was already sent to the network and can't be cancelled. It will finish in the background and appear in History."
           keep="Keep watching"
