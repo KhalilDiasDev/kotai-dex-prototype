@@ -61,6 +61,15 @@ export interface Quote {
   impact: number
   impactLevel: 'Low' | 'High'
   usdDelta: string
+  /** max slippage in % (Auto = 0.5) and the least the user can end up with */
+  slippage: number
+  minOut: number
+  /** pool fee (0.3%, 0.05% between stables/majors) and network fee, in USD */
+  poolFeePct: number
+  poolFeeUsd: number
+  gasUsd: number
+  gasBnb: number
+  feesUsd: number
 }
 
 interface AppState {
@@ -251,6 +260,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const inUsd = amountNum * f.price
     const outUsd = inUsd * (high ? USD_HIGH : USD_NORMAL) * (s.scenario === 'priceUpdated' ? 0.99 : 1)
     const impact = high ? 12.4 : 0.08
+    const slippage = s.slippage === 'Auto' ? 0.5 : parseFloat(s.slippage) || 0.5
+    const poolFeePct = s.from === 'KTI' || s.to === 'KTI' ? 0.3 : 0.05
+    const poolFeeUsd = (inUsd * poolFeePct) / 100
+    const gasBnb = 0.0003
+    const gasUsd = gasBnb * TOKENS[GAS_TOKEN].price
     return {
       rate,
       out,
@@ -259,8 +273,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
       impact,
       impactLevel: impact >= 5 ? 'High' : 'Low',
       usdDelta: high ? '−12.40%' : '−0.24%',
+      slippage,
+      minOut: out * (1 - slippage / 100),
+      poolFeePct,
+      poolFeeUsd,
+      gasUsd,
+      gasBnb,
+      feesUsd: poolFeeUsd + gasUsd,
     }
-  }, [s.from, s.to, s.scenario, amountNum])
+  }, [s.from, s.to, s.scenario, s.slippage, amountNum])
 
   const finish = (o: AppState): AppState => {
     const amt = parseFloat(o.amount) || 0

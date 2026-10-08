@@ -787,3 +787,15 @@
     background: var(--surface-overlay);
   }
 }
+
+@media (max-width: 720px) {
+  /* quote header: rate and refresh timer may wrap instead of squeezing */
+  .details .d-head {
+    height: auto;
+    flex-wrap: wrap;
+    gap: 2px 12px;
+  }
+  .details .meta {
+    white-space: nowrap;
+  }
+}

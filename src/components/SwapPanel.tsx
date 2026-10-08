@@ -18,21 +18,22 @@ function TokenSelect({ id, onClick }: { id: TokenId; onClick: () => void }) {
   )
 }
 
-/** "Refreshes in 12s" countdown — re-quotes when it hits zero. */
+/** "Refreshes in 30s" countdown — re-quotes when it hits zero. */
+const REFRESH_SECS = 30
 function useCountdown(active: boolean, onZero: () => void) {
-  const [n, setN] = useState(12)
+  const [n, setN] = useState(REFRESH_SECS)
   const cb = useRef(onZero)
   cb.current = onZero
   useEffect(() => {
     if (!active) {
-      setN(12)
+      setN(REFRESH_SECS)
       return
     }
     const t = window.setInterval(() => {
       setN((v) => {
         if (v <= 1) {
           cb.current()
-          return 12
+          return REFRESH_SECS
         }
         return v - 1
       })
@@ -118,6 +119,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
   const a = useApp()
   const [focus, setFocus] = useState(false)
   const [tip, setTip] = useState(false)
+  const [more, setMore] = useState(false)
   // card swap: the two fields trade places (FLIP — content swaps, then each card slides in from the other's slot)
   const sendRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -150,7 +152,17 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
     const sEl = sendRef.current
     const rEl = recvRef.current
     const d = sEl && rEl ? rEl.getBoundingClientRect().top - sEl.getBoundingClientRect().top : 0
+    // the selection follows the value: typing in the top card and flipping selects the bottom card
+    // (where that value now is), and the other way round. The button itself never takes focus (see onMouseDown).
+    const side = document.activeElement === inputRef.current ? 'send' : document.activeElement === recvInputRef.current ? 'recv' : null
+    const prevSend = a.amount
     flushSync(() => a.flip())
+    if (side === 'send') {
+      recvInputRef.current?.focus({ preventScroll: true })
+      setRecvText(prevSend)
+    } else if (side === 'recv') {
+      inputRef.current?.focus({ preventScroll: true })
+    }
     if (!sEl || !rEl || !d || matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const opt = { duration: 460, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }
     sEl.animate([{ transform: `translateY(${d}px) scale(0.97)`, opacity: 0.6 }, { transform: 'none', opacity: 1 }], opt)
@@ -230,7 +242,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
         <div ref={sendRef} onClick={focusAmount} className={'field gb' + (focus ? ' focus' : '') + (a.fieldError ? ' error' : '')}>
           <div className="field-top">
             <span className="f-label">
-              {a.isMobile && <Icon n="upload" size={16} />}You send
+              <Icon n="upload" size={16} />You send
             </span>
             {showChips ? (
               <div className="shortcuts">
@@ -280,7 +292,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
         </div>
 
         <div className="flip-slot">
-          <button className="flip" onClick={flipCards} aria-label="Flip tokens">
+          <button className="flip" onMouseDown={(e) => e.preventDefault()} onClick={flipCards} aria-label="Flip tokens">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M7 21V3M17 3v18" />
               {/* on hover each arrowhead turns around and travels to the other end of its line */}
@@ -294,7 +306,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
         <div ref={recvRef} onClick={focusReceive} className={'field gb' + (recvText !== null ? ' focus' : '')}>
           <div className={'field-top' + (hasAmt ? ' tall' : '')}>
             <span className="f-label">
-              {a.isMobile && <Icon n="download" size={16} />}You receive (estimated)
+              <Icon n="download" size={16} />You receive (estimated)
             </span>
             {!hasAmt && !a.isMobile && (
               <div className="quick" aria-label="Quick token picks">
@@ -370,13 +382,9 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                 <Icon n="clock" size={14} /> {a.quoting ? 'Finding the best price…' : `Refreshes in ${secs}s`}
               </span>
             </div>
+            {/* always visible: the three numbers that decide a swap */}
             <div className="d-row">
-              <span className="k">
-                Price impact
-                <button onMouseEnter={() => setTip(true)} onFocus={() => setTip(true)} onBlur={() => setTip(false)} onClick={() => (a.isMobile ? a.open('help') : setTip((v) => !v))} aria-label="What is price impact?">
-                  <Icon n="info" size={14} />
-                </button>
-              </span>
+              <span className="k">Price impact</span>
               {a.quoting || noRoute ? (
                 <span className="v">—</span>
               ) : (
@@ -386,6 +394,59 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                 </span>
               )}
             </div>
+            <div className="d-row">
+              <span className="k">
+                Minimum received
+                <button onMouseEnter={() => setTip(true)} onFocus={() => setTip(true)} onBlur={() => setTip(false)} onClick={() => (a.isMobile ? a.open('help') : setTip((v) => !v))} aria-label="What is minimum received?">
+                  <Icon n="info" size={14} />
+                </button>
+              </span>
+              <span className="v">{a.quoting || noRoute ? '—' : <b>{fmt(q.minOut, q.minOut < 1 ? 6 : 0)} {a.to}</b>}</span>
+            </div>
+            <button className={'d-row d-more' + (more ? ' on' : '')} onClick={() => setMore((v) => !v)} aria-expanded={more}>
+              <span className="k">Fees</span>
+              <span className="v">
+                {a.quoting || noRoute ? '—' : <b>≈ {usd(q.feesUsd)}</b>}
+                <Icon n="chevron" size={16} className="chev" />
+              </span>
+            </button>
+            {/* on demand: where the fees go and how the swap is routed */}
+            {more && !noRoute && (
+              <div className="d-extra">
+                <div className="d-row sm">
+                  <span className="k">
+                    <Icon n="fuel" size={14} /> Network fee
+                  </span>
+                  <span className="v">
+                    ≈ {usd(q.gasUsd)} <small>{q.gasBnb} BNB</small>
+                  </span>
+                </div>
+                <div className="d-row sm">
+                  <span className="k">
+                    <Icon n="coins" size={14} /> KOTAI pool fee
+                  </span>
+                  <span className="v">
+                    ≈ {usd(q.poolFeeUsd)} <small>{q.poolFeePct}%</small>
+                  </span>
+                </div>
+                <div className="d-row sm">
+                  <span className="k">
+                    <Icon n="sliders" size={14} /> Max slippage
+                  </span>
+                  <span className="v">
+                    {q.slippage}% <small>{a.slippage === 'Auto' ? 'Auto' : 'Custom'}</small>
+                  </span>
+                </div>
+                <div className="d-row sm">
+                  <span className="k">
+                    <Icon n="link" size={14} /> Route
+                  </span>
+                  <span className="v route">
+                    <Coin id={a.from} size={16} /> {a.from} <Icon n="arrowRight" size={12} /> <Coin id={a.to} size={16} /> {a.to} <small>BNB Chain</small>
+                  </span>
+                </div>
+              </div>
+            )}
             {tip && !a.isMobile && <HelpTip onClose={() => setTip(false)} />}
           </div>
         )}

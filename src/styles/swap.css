@@ -894,3 +894,48 @@
 .swap-card .field::before {
   inset: -1px;
 }
+
+/* ───────── Quote details · three key rows + fees breakdown on demand ───────── */
+.details .d-more {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+.details .d-more .chev {
+  color: var(--text-secondary);
+  transition: transform 0.2s;
+}
+.details .d-more.on .chev {
+  transform: rotate(180deg);
+}
+.details .d-more:hover .k {
+  color: #fff;
+}
+.d-extra {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(46, 69, 115, 0.5);
+  animation: rise 0.22s ease-out;
+}
+.details .d-row.sm {
+  height: 30px;
+  margin-top: 0;
+  font-size: 13px;
+}
+.details .d-row.sm .v {
+  font-weight: 500;
+  gap: 6px;
+}
+.details .v small {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+.details .v.route {
+  gap: 5px;
+}

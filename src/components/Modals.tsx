@@ -798,6 +798,16 @@ function ReviewModal() {
           <b>{unitPrice(TOKENS[a.to].price)}</b>
         </div>
         <div className="kv">
+          <span>Minimum received</span>
+          <b>
+            {fmt(q.minOut, q.minOut < 1 ? 6 : 0)} {a.to}
+          </b>
+        </div>
+        <div className="kv">
+          <span>Fees (network + pool)</span>
+          <b>≈ {usd(q.feesUsd)}</b>
+        </div>
+        <div className="kv">
           <span>Price impact</span>
           <b className={q.impactLevel === 'High' ? 'red' : ''}>{q.impact.toFixed(2)}%</b>
         </div>
