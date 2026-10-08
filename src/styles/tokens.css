@@ -1,0 +1,182 @@
+/* ─────────────────────────────────────────────────────────────
+   KOTAI DEX · design tokens — mirror of the Figma variable collections
+   "KOTAI · Primitivas", "KOTAI · Tokens" (Escuro), "KOTAI · Tokens Claro",
+   "KOTAI · Raio e espaço" and the local text styles (Instrument Sans / Geist Mono).
+   ───────────────────────────────────────────────────────────── */
+:root {
+  /* Primitives */
+  --ink-950: #00030a;
+  --ink-900: #020612;
+  --ink-850: #0b1428;
+  --ink-800: #112042;
+  --ink-700: #27458a;
+  --ink-600: #3c68c8;
+  --ink-500: #8aa3dc;
+  --ink-400: #b9caf5;
+  --ink-300: #e6edff;
+  --ink-100: #fbfdff;
+  --blue-300: #9ccbff;
+  --blue-400: #3d8bff;
+  --blue-600: #1a63e8;
+  --blue-700: #1450c8;
+  --blue-800: #0f3aa0;
+  --cyan-300: #6ec6ff;
+  --cyan-400: #1ab0ff;
+  --cyan-500: #0a7cff;
+  --pink-400: #f37bf3;
+  --green-400: #2bf5a0;
+  --green-600: #1e9e68;
+  --amber-400: #ffd04d;
+  --amber-600: #c98a1e;
+  --red-400: #ff6685;
+  --red-600: #c92a4a;
+  --red-700: #a8213d;
+  --white: #ffffff;
+  --brand-violet: #2b7fff;
+
+  /* Semantic tokens · Escuro */
+  --bg-page: #00030a;
+  --bg-surface: #020612;
+  --bg-raised: #0b1428;
+  --bg-hover: #112042;
+  --bg-selected: rgba(10, 20, 36, 0.749);
+  --bg-pill: rgba(10, 20, 36, 0.749);
+  --bg-control: #050c1a;
+  --bg-field: #0f1d3d;
+  --bg-field-selected: #081329;
+  --bg-sheet: #0a1424;
+  --overlay-scrim: rgba(3, 5, 16, 0.62);
+
+  --border-subtle: #27458a;
+  --border-default: #3c68c8;
+  --border-focus: #3d8bff;
+  --border-control: #263e63;
+  --border-field: rgba(82, 130, 224, 0.9);
+  --border-cutout: #010308;
+
+  --text-primary: #fbfdff;
+  --text-secondary: #e6edff;
+  --text-tertiary: #b9caf5;
+  --text-disabled: #8aa3dc;
+  --text-on-action: #fbfdff;
+  --text-link: #9ccbff;
+
+  --action-primary: #020612;
+  --action-primary-hover: #0b1428;
+  --action-primary-pressed: #00030a;
+  --action-secondary: #112042;
+  --action-secondary-hover: #27458a;
+  --action-disabled: #112042;
+  --action-danger: #c92a4a;
+  --action-danger-hover: #a8213d;
+  --focus-ring: #1ab0ff;
+
+  --accent-brand: #f37bf3;
+  --accent-info: #1ab0ff;
+  --accent-violet: #5aa0ff;
+
+  --success: #2bf5a0;
+  --warning: #ffd04d;
+  --danger: #ff6685;
+  --info: #1ab0ff;
+  --success-solid: #29c785;
+  --danger-solid: #eb4d66;
+
+  /* Tints used for status surfaces (token colour at the opacities used in Figma) */
+  --success-bg: rgba(43, 245, 160, 0.15);
+  --danger-bg: rgba(255, 102, 133, 0.14);
+  --warning-bg: rgba(255, 208, 77, 0.12);
+  --info-bg: rgba(61, 139, 255, 0.14);
+
+  /* Paint style · Contorno/Padrão (stroke 1.25, used by CTAs, tabs and the active nav pill) */
+  --outline-gradient: linear-gradient(104deg, rgba(255, 255, 255, 0.72) 0%, #7fb6ff 35%, #7f8fef 68%, #4d9bff 100%);
+  --outline-nav: linear-gradient(104deg, rgba(255, 255, 255, 0.72) 0%, #7fb6ff 35%, #9a7bff 68%, #4d9bff 100%);
+
+  /* Landing (B3) surface colours — as used on the Figma landing frame */
+  --lp-title: #f2f5fa;
+  --lp-body: #d8e5f8;
+  --lp-eyebrow: #94befc;
+  --lp-glass: rgba(10, 20, 36, 0.72);
+  --lp-glass-border: rgba(46, 69, 115, 0.8);
+  --lp-glow: #1a63e8;
+
+  /* Radius & spacing · "KOTAI · Raio e espaço" */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* Typography · KOTAI/* text styles */
+  --font: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  color-scheme: dark;
+}
+
+/* Semantic tokens · Claro */
+:root[data-theme='light'] {
+  --bg-page: #f5f7fa;
+  --bg-surface: #ffffff;
+  --bg-raised: #edf0f5;
+  --bg-hover: #e3e8ef;
+  --bg-selected: rgba(227, 232, 239, 0.749);
+  --bg-pill: rgba(227, 232, 239, 0.749);
+  --bg-control: #e6ecf6;
+  --bg-field: #f3f6fb;
+  --bg-field-selected: #e6ecf6;
+  --bg-sheet: #f5f7fa;
+  --overlay-scrim: rgba(26, 38, 77, 0.35);
+
+  --border-subtle: #e3e8ef;
+  --border-default: #cbd3df;
+  --border-focus: #1a63e8;
+  --border-control: #ccd4de;
+  --border-field: #9db3e6;
+  --border-cutout: #f5f8ff;
+
+  --text-primary: #00030a;
+  --text-secondary: #45556e;
+  --text-tertiary: #5e6e85;
+  --text-disabled: #8a98ad;
+  --text-on-action: #00030a;
+  --text-link: #1450c8;
+
+  --action-primary: #ffffff;
+  --action-primary-hover: #edf0f5;
+  --action-primary-pressed: #e3e8ef;
+  --action-secondary: #edf0f5;
+  --action-secondary-hover: #e3e8ef;
+  --action-disabled: #edf0f5;
+  --focus-ring: #0444a4;
+
+  --accent-brand: #2b7fff;
+  --accent-info: #0444a4;
+  --accent-violet: #3f8afa;
+
+  --success: #127a50;
+  --warning: #935400;
+  --danger: #c42344;
+  --info: #0444a4;
+  --success-solid: #1e9e68;
+  --danger-solid: #c92a4a;
+
+  --success-bg: rgba(18, 122, 80, 0.12);
+  --danger-bg: rgba(196, 35, 68, 0.1);
+  --warning-bg: rgba(147, 84, 0, 0.1);
+  --info-bg: rgba(4, 68, 164, 0.1);
+
+  --lp-title: #00030a;
+  --lp-body: #45556e;
+  --lp-eyebrow: #1450c8;
+  --lp-glass: rgba(255, 255, 255, 0.72);
+  --lp-glass-border: #cbd3df;
+  color-scheme: light;
+}

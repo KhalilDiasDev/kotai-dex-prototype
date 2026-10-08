@@ -1,0 +1,637 @@
+/* ─────────────────────────────────────────────────────────────
+   KOTAI DEX · base — page, background ("Fundo · Tela"), header
+   ("Cabeçalho" Topo/Rolando), buttons ("Botão") and shared atoms.
+   Values come from the Figma screens (1440 × 1034 frames).
+   ───────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+body {
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+input {
+  font: inherit;
+  color: inherit;
+}
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+.mono {
+  font-family: var(--mono);
+}
+img.coin {
+  display: block;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Gradient outline · paint style "Contorno/Padrão" (works over translucent fills) */
+.gb {
+  position: relative;
+  isolation: isolate;
+}
+.gb::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: var(--bw, 1.25px);
+  background: var(--gb, var(--outline-gradient));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+  z-index: -1;
+}
+
+/* ───────── Background · "Fundo · Tela" + "Brilho da marca" ───────── */
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #01050c;
+  pointer-events: none;
+}
+.bg-in {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1440px;
+  transform: translateX(-50%);
+}
+.bg .blob {
+  position: absolute;
+  border-radius: 50%;
+}
+.bg .blob.violet {
+  left: -300px;
+  bottom: -226px;
+  width: 1500px;
+  height: 360px;
+  background: radial-gradient(closest-side, rgba(43, 107, 232, 0.55), rgba(43, 107, 232, 0));
+  filter: blur(85px);
+  opacity: 0.5;
+}
+.bg .blob.blue {
+  left: 500px;
+  bottom: -236px;
+  width: 1500px;
+  height: 320px;
+  background: radial-gradient(closest-side, rgba(104, 61, 204, 0.42), rgba(104, 61, 204, 0));
+  filter: blur(85px);
+  opacity: 0.5;
+}
+.bg .blob.top {
+  left: 700px;
+  top: -160px;
+  width: 900px;
+  height: 260px;
+  background: radial-gradient(closest-side, rgba(43, 107, 232, 0.22), rgba(43, 107, 232, 0));
+  filter: blur(60px);
+  opacity: 0.3;
+}
+.bg .brand {
+  position: absolute;
+  left: 270px;
+  top: -160px;
+  width: 900px;
+  height: 420px;
+  border-radius: 50%;
+  background: #1a63e8;
+  filter: blur(110px);
+  opacity: 0.22;
+}
+.bg .arc {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: linear-gradient(90deg, rgba(106, 164, 251, 0), rgba(118, 172, 251, 0.55) 50%, rgba(106, 164, 251, 0)) border-box;
+  -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.6;
+}
+.bg .arc.l {
+  left: -300px;
+  bottom: -606px;
+  width: 1100px;
+  height: 1000px;
+}
+.bg .arc.r {
+  left: 900px;
+  top: -420px;
+  width: 1100px;
+  height: 700px;
+}
+.bg .spark {
+  position: absolute;
+  left: 251px;
+  bottom: 389px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #9cc2fc;
+  box-shadow: 0 0 6px rgba(118, 172, 251, 0.6);
+  opacity: 0.55;
+  animation: twinkle 4s ease-in-out infinite;
+}
+.bg.plain .blob,
+.bg.plain .arc,
+.bg.plain .spark,
+.bg.plain .brand {
+  display: none;
+}
+@keyframes twinkle {
+  50% {
+    opacity: 0.15;
+  }
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ───────── Header · "Cabeçalho" ───────── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: 88px;
+  flex: none;
+  /* at the top of the page: no background, no outline */
+  background: transparent;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, backdrop-filter 0.25s ease;
+}
+/* after scrolling: dark-blue glass */
+.header.scrolled {
+  background: rgba(3, 9, 24, 0.82);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+.header-in {
+  height: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header .brand-btn {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.header .brand-btn:hover {
+  opacity: 0.88;
+}
+.header .left,
+.header .right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.nav-item {
+  position: relative;
+  height: 36px;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  transition: color 0.2s, background-color 0.2s;
+}
+.nav-item.gb::before {
+  opacity: 0;
+  background: var(--outline-nav);
+}
+.nav-item:hover {
+  color: var(--text-primary);
+  background: rgba(2, 6, 16, 0.28);
+}
+.nav-item.active {
+  height: 39px;
+  color: var(--text-primary);
+  background: rgba(10, 20, 36, 0.75);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+.nav-item.active::before {
+  opacity: 1;
+}
+.nav-item.coin {
+  height: 39px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px 8px 10px;
+  color: #c7fff2;
+  background: rgba(26, 227, 191, 0.12);
+  box-shadow: inset 0 0 10px rgba(26, 227, 191, 0.3);
+  --gb: linear-gradient(104deg, rgba(26, 227, 191, 0.95), rgba(28, 115, 245, 0.95));
+}
+.nav-item.coin::before {
+  opacity: 1;
+}
+.nav-item.coin:hover {
+  background: rgba(26, 227, 191, 0.2);
+  box-shadow: inset 0 0 14px rgba(26, 227, 191, 0.45), 0 0 18px rgba(26, 227, 191, 0.18);
+}
+.nav-item.coin .kti-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0a1424;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 1px solid #263e63;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+  flex: none;
+}
+.icon-btn .ic-gear {
+  color: #d8e5f8;
+  transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+.icon-btn:hover {
+  background: var(--bg-hover);
+  border-color: #3c68c8;
+}
+.icon-btn:hover .ic-gear {
+  transform: rotate(60deg);
+}
+.icon-btn.on {
+  background: var(--bg-hover);
+  border-color: #3c68c8;
+}
+.pill-btn {
+  height: 40px;
+  padding: 0 14px 0 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid #3b424c;
+  background: #050c1a;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: nowrap;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.pill-btn .mono {
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 18px;
+}
+.pill-btn .chev {
+  transition: transform 0.25s ease;
+}
+.pill-btn:hover {
+  background: var(--bg-hover);
+  border-color: #4a5a73;
+}
+.pill-btn.on {
+  background: #1d3a7a;
+  border-color: #3c68c8;
+}
+.pill-btn.on .chev {
+  transform: rotate(180deg);
+}
+
+/* ───────── Buttons · "Botão" ───────── */
+/* the outline gradient slowly turns around the pill (same stops as --outline-gradient) */
+@property --ga {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 104deg;
+}
+@keyframes gbTurn {
+  to {
+    --ga: 464deg;
+  }
+}
+.btn {
+  position: relative;
+  isolation: isolate;
+  height: 48px;
+  padding: 0 24px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.25s ease, transform 0.12s ease, opacity 0.2s;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.25px;
+  background: var(--gb, linear-gradient(var(--ga), rgba(255, 255, 255, 0.72) 0%, #7fb6ff 35%, #7f8fef 68%, #4d9bff 100%));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+  animation: gbTurn 7s linear infinite;
+  z-index: -1;
+}
+.btn:disabled::before {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn::before {
+    animation: none;
+  }
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.985);
+}
+.btn.block {
+  width: 100%;
+}
+.btn.sm {
+  height: 40px;
+  padding: 0 24px;
+}
+.btn.lg {
+  height: 56px;
+}
+/* Destaque — dark pill with the gradient outline (primary CTA in every screen) */
+.btn.accent {
+  color: var(--text-primary);
+  background: rgba(10, 20, 36, 0.75);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.btn.accent:hover:not(:disabled) {
+  background: rgba(17, 32, 66, 0.85);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 18px rgba(127, 182, 255, 0.16), 0 0 22px rgba(127, 182, 255, 0.28),
+    0 0 44px rgba(127, 143, 239, 0.18);
+}
+/* hover: the gradient ring lights up so its blues/violets read clearly */
+.btn:hover:not(:disabled)::before,
+button.gb:hover:not(:disabled):is(.on, .active, .coin, :not(.tab, .nav-item))::before {
+  filter: brightness(1.45) saturate(1.5) drop-shadow(0 0 3px rgba(127, 182, 255, 0.9)) drop-shadow(0 0 8px rgba(127, 143, 239, 0.55));
+}
+.btn.accent:active:not(:disabled) {
+  background: rgba(5, 12, 26, 0.9);
+}
+.btn.accent:disabled {
+  color: var(--text-disabled);
+  box-shadow: none;
+}
+.btn.accent.dim:disabled {
+  color: var(--text-primary);
+  opacity: 0.5;
+}
+.btn.accent.loading:disabled {
+  color: var(--text-primary);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  cursor: progress;
+}
+/* Secundário — filled navy with the same outline (Cancel / Close / Adjust slippage) */
+.btn.secondary {
+  color: var(--text-primary);
+  background: #112042;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+.btn.secondary:hover:not(:disabled) {
+  background: #1a2f5e;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 22px rgba(77, 155, 255, 0.16);
+}
+.btn.secondary:active:not(:disabled) {
+  background: #0b1428;
+}
+/* White — header "Connect wallet" and "Finish" */
+.btn.white {
+  color: #050d18;
+  background: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.btn.white:hover:not(:disabled) {
+  background: #e9f1ff;
+  box-shadow: 0 0 22px rgba(127, 182, 255, 0.35);
+}
+.btn.white:active:not(:disabled) {
+  background: #dce6f7;
+}
+.btn.ghost {
+  color: var(--text-link);
+}
+.btn.ghost::before {
+  display: none;
+}
+.btn.ghost:hover {
+  background: var(--bg-hover);
+}
+
+/* ───────── Shared atoms ───────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  background: rgba(43, 245, 160, 0.16);
+  color: var(--success);
+  white-space: nowrap;
+}
+.badge.high {
+  background: rgba(255, 102, 133, 0.16);
+  color: var(--danger);
+}
+.badge.blue {
+  background: rgba(61, 139, 255, 0.16);
+  color: var(--blue-300);
+}
+.ring-spin {
+  display: inline-block;
+  flex: none;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(255, 255, 255, 0) 0%, rgba(148, 190, 252, 0) 40%, rgba(121, 173, 252, 0.3) 62%, rgba(255, 255, 255, 0.9) 85%, #fff 100%);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--rw)), #000 calc(100% - var(--rw) + 0.6px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - var(--rw)), #000 calc(100% - var(--rw) + 0.6px));
+  animation: spin 0.9s linear infinite;
+  filter: drop-shadow(0 0 2px rgba(148, 190, 252, 0.45));
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.fade-in {
+  animation: fade 0.2s ease-out;
+}
+.show-m {
+  display: none;
+}
+
+/* header selects blink green right after a wallet connects — points at where to configure */
+.pill-btn.flash {
+  animation: selFlash 0.9s ease-in-out 3;
+}
+.pill-btn.flash.d2 {
+  animation-delay: 0.15s;
+}
+@keyframes selFlash {
+  0%,
+  100% {
+    border-color: #3b424c;
+    box-shadow: none;
+  }
+  50% {
+    border-color: rgba(43, 245, 160, 0.85);
+    box-shadow: 0 0 0 3px rgba(43, 245, 160, 0.12), 0 0 16px rgba(43, 245, 160, 0.3);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pill-btn.flash {
+    animation: none;
+    border-color: rgba(43, 245, 160, 0.85);
+  }
+}
+
+/* ───────── screen transition (Home ↔ Swap) · View Transitions API ───────── */
+/* names exist only while a transition runs (html[data-vt]), so they never affect normal rendering */
+html[data-vt] .header {
+  view-transition-name: site-header;
+}
+html[data-vt='view']::view-transition-old(root) {
+  animation: vtOut 0.22s cubic-bezier(0.4, 0, 1, 1) both;
+}
+html[data-vt='view']::view-transition-new(root) {
+  animation: vtIn 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.06s both;
+}
+::view-transition-group(site-header) {
+  animation-duration: 0.3s;
+}
+@keyframes vtOut {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+@keyframes vtIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* price chart: swap card glides between centred / beside the chart; the chart fades + slides in and out */
+html[data-vt] .swap-col {
+  view-transition-name: swap-card;
+}
+html[data-vt] .chart-panel {
+  view-transition-name: chart-panel;
+}
+html[data-vt='chart']::view-transition-group(*) {
+  animation-duration: 0.48s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+html[data-vt='chart']::view-transition-old(root),
+html[data-vt='chart']::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
+html[data-vt='chart']::view-transition-new(chart-panel):only-child {
+  animation: chartIn 0.48s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+}
+html[data-vt='chart']::view-transition-old(chart-panel):only-child {
+  animation: chartOut 0.26s cubic-bezier(0.4, 0, 1, 1) both;
+}
+html[data-vt='chart']::view-transition-old(chart-panel),
+html[data-vt='chart']::view-transition-new(chart-panel) {
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+}
+html[data-vt='chart']::view-transition-old(swap-card):only-child {
+  animation: chartOut 0.22s cubic-bezier(0.4, 0, 1, 1) both;
+}
+html[data-vt='chart']::view-transition-new(swap-card):only-child {
+  animation: vtIn 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+}
+@keyframes chartIn {
+  from {
+    opacity: 0;
+    transform: translateX(-24px) scale(0.98);
+  }
+}
+@keyframes chartOut {
+  to {
+    opacity: 0;
+    transform: translateX(-16px) scale(0.98);
+  }
+}

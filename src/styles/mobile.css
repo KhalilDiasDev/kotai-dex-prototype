@@ -1,0 +1,391 @@
+/* ─────────────────────────────────────────────────────────────
+   Mobile · "Proposta de Telas - Swap - Mobile" (390 × 844 frames)
+   Compact header, 16px gutters, bottom sheets with grabber.
+   ───────────────────────────────────────────────────────────── */
+.f-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .show-m {
+    display: inline-flex !important;
+  }
+  .hide-m,
+  .nav {
+    display: none !important;
+  }
+
+  /* background · "Brilho inferior" + brand glow */
+  .bg-in {
+    width: 390px;
+  }
+  .bg .blob.violet {
+    left: -185px;
+    bottom: -196px;
+    width: 760px;
+    height: 380px;
+    filter: none;
+    opacity: 0.7;
+  }
+  .bg .blob.blue,
+  .bg .blob.top,
+  .bg .arc,
+  .bg .spark {
+    display: none;
+  }
+  .bg .brand {
+    left: -255px;
+  }
+
+  /* header */
+  .lp {
+    --header-h: 56px;
+  }
+  .header {
+    height: 56px;
+  }
+  .header-in {
+    padding: 0 16px;
+  }
+  .header .left {
+    gap: 12px;
+  }
+  .header .right {
+    gap: 8px;
+  }
+  .header .btn.white.sm {
+    width: 124px;
+    padding: 0 24px;
+  }
+  .header .pill-btn {
+    background: #070f24;
+  }
+
+  /* swap */
+  .main {
+    padding: 4px 16px 40px;
+  }
+  .swap-col {
+    max-width: none;
+  }
+  .swap-card {
+    gap: 16px;
+  }
+  .flip-slot {
+    margin: -8px 0;
+  }
+  .tabs {
+    width: 206px;
+  }
+  .tab {
+    flex: 0 0 64px;
+  }
+  .token-sel {
+    background: #070f24;
+  }
+  .chip {
+    height: 30px;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    background: #070f24;
+    border-color: #263e63;
+    font-weight: 400;
+  }
+  .field-top.tall {
+    min-height: 20px;
+  }
+  .details .meta {
+    letter-spacing: 0;
+  }
+  .help-tip {
+    position: static;
+    width: auto;
+    box-shadow: none;
+    background: transparent;
+    border: 0;
+    padding: 0;
+  }
+
+  /* bottom sheets */
+  .scrim {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal,
+  .modal.coin-modal,
+  .modal.confirm,
+  .modal.warn-modal {
+    max-width: 100%;
+    max-height: calc(100vh - 40px);
+    border-radius: 28px 28px 0 0;
+    border-bottom: 0;
+    background: #0a1424;
+    padding: 24px 24px calc(24px + env(safe-area-inset-bottom));
+    animation: sheetUp 0.32s cubic-bezier(0.2, 0.85, 0.25, 1);
+  }
+  @keyframes sheetUp {
+    from {
+      transform: translateY(100%);
+    }
+  }
+  .modal .handle {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 8px;
+    width: 40px;
+    height: 4px;
+    margin-left: -20px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.35);
+  }
+  .wallet-grid .w-tile {
+    height: 122px;
+  }
+  .m-row2 .btn {
+    padding: 0 8px;
+  }
+
+  /* stacked confirm → own sheet over the page */
+  .scrim.stacked .under {
+    display: none;
+  }
+
+
+  /* coin sheet (I11 mobile) */
+  .modal.coin-modal {
+    padding: 24px 16px calc(20px + env(safe-area-inset-bottom));
+    gap: 16px;
+  }
+  .cm-price b {
+    font-size: 36px;
+    line-height: 44px;
+  }
+  .cm-stats {
+    gap: 8px;
+  }
+  .cm-stats div {
+    padding: 8px 10px;
+  }
+  .cp-range button {
+    padding: 6px 12px;
+  }
+
+  /* search (I6 mobile) → full-height sheet */
+  .search-scrim {
+    padding: 0;
+    align-items: stretch;
+  }
+  .search-wrap {
+    width: 100%;
+    min-height: 100%;
+    padding: 16px;
+    background: #0a1424;
+    gap: 12px;
+    animation: sheetUp 0.32s cubic-bezier(0.2, 0.85, 0.25, 1);
+  }
+  .s-bar {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .s-input {
+    order: 2;
+    flex: 1 0 100%;
+    height: 48px;
+  }
+  .s-input kbd {
+    display: none;
+  }
+  .s-nets {
+    order: 1;
+    width: auto;
+    height: 40px;
+    box-shadow: none;
+  }
+  .search-wrap .s-close {
+    position: static;
+    order: 1;
+    width: 40px;
+    height: 40px;
+    margin-left: auto;
+  }
+  .s-results {
+    padding: 8px;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+  .s-row .fee {
+    display: none;
+  }
+  .net-filter {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    width: auto;
+    border-radius: 28px 28px 0 0;
+    background: #0a1424;
+    animation: sheetUp 0.3s cubic-bezier(0.2, 0.85, 0.25, 1);
+  }
+
+  /* history (I9 mobile) → sheet */
+  .hist-scrim {
+    padding: 0;
+    align-items: flex-end;
+  }
+  .hist-wrap {
+    width: 100%;
+    animation: sheetUp 0.32s cubic-bezier(0.2, 0.85, 0.25, 1);
+  }
+  .hist {
+    border-radius: 28px 28px 0 0;
+    padding: 24px 16px 32px;
+  }
+  .hist-title span {
+    display: none;
+  }
+  .hist-wrap .s-close {
+    right: 16px;
+    top: 16px;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+  .hist-row {
+    height: auto;
+    padding: 10px 8px;
+    gap: 10px;
+  }
+  .hist-row .pair img {
+    width: 24px;
+    height: 24px;
+  }
+  .hist-row b {
+    font-size: 14px;
+    line-height: 18px;
+  }
+  .hist-row small {
+    font-size: 12px;
+  }
+  .hist-row .st {
+    font-size: 12px;
+  }
+
+  /* dropdown bodies inside sheets */
+  .sheet-pop .wm-head,
+  .sheet-pop .wm-bal,
+  .sheet-pop .wm-list {
+    margin: 0;
+  }
+  .sys-sheet .dd-title {
+    padding-left: 0;
+  }
+
+  /* toasts */
+  .toasts.top {
+    top: 64px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+  }
+  .toasts.bottom {
+    bottom: 24px;
+    width: calc(100% - 32px);
+  }
+
+  /* chart panel is replaced by the coin sheet on mobile */
+  .chart-panel {
+    display: none;
+  }
+
+  .proto {
+    right: 12px;
+    bottom: 12px;
+  }
+  .proto.under-modal {
+    display: none;
+  }
+}
+
+/* Landing mobile · "Landing mobile · Home" */
+.lpm {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px 16px 40px;
+}
+.lpm-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.lpm-hero h1 {
+  margin: 0;
+  font-size: 34px;
+  line-height: 41px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+.lpm-hero p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 20px;
+  color: #a3b5d6;
+}
+.lpm .swap-col {
+  max-width: none;
+}
+.lpm-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 4px;
+}
+.lpm-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--bg-raised);
+  border: 1px solid rgba(46, 69, 115, 0.8);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.lpm-card:active {
+  transform: scale(0.99);
+  border-color: var(--ink-600);
+}
+.lpm-card b {
+  font-size: 18px;
+  line-height: 22px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+.lpm-card span {
+  font-size: 14px;
+  line-height: 17px;
+  color: #a3b5d6;
+}
+.lpm-eyebrow {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #4d9bff;
+}
+.lpm-cards h2 {
+  margin: 0;
+  font-size: 26px;
+  line-height: 32px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
