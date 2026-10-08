@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { ADDRESS, CURRENCIES, LANGUAGES, NETWORKS, TOKENS, TOKEN_LIST, fmt, usd } from '../data'
+import { ADDRESS, CURRENCIES, LANGUAGES, NETWORKS, TOKENS, TOKEN_LIST, WALLETS, fmt, usd } from '../data'
 import { useApp, type ModalKind } from '../store'
-import { Coin, Icon, Logo, Net, usePresence } from './ui'
+import { QR } from './Modals'
+import { Coin, Icon, Logo, Net, Spinner, WalletLogo, usePresence } from './ui'
 
 /** Closes the open dropdown on outside click / Escape. */
 function useDismiss(ref: React.RefObject<HTMLElement>, open: boolean, onClose: () => void) {
@@ -64,28 +65,144 @@ function NetworkDropdown() {
 }
 
 /* ───────── Dropdown · Carteira ───────── */
+/* The wallet menu is a small app of its own: network, history, switching wallets and the new wallet's connection
+   all open INSIDE the menu, each with a back row to the wallet — nothing closes the menu to open a separate dialog. */
+type WalletPage = 'main' | 'net' | 'history' | 'wallets' | 'connect'
+
+function WmBack({ to, onBack, children }: { to?: string; onBack: () => void; children: ReactNode }) {
+  return (
+    <button className="dd-title back" onClick={onBack} aria-label={`Back to ${to ?? 'wallet'}`}>
+      <Icon n="back" size={14} sw={2} /> {children}
+    </button>
+  )
+}
+
 export function WalletMenuBody() {
   const a = useApp()
+  const [page, setPage] = useState<WalletPage>(a.modal === 'walletNet' ? 'net' : 'main')
+  const [target, setTarget] = useState('kotai')
+  const [busy, setBusy] = useState(false)
+  const [qr, setQr] = useState(false)
   const copy = () => {
     navigator.clipboard?.writeText('0x7a25f3b9c8d1e6a2b4c5d7e8f9a0b1c2d3e4c3e1').catch(() => {})
     a.toast({ tone: 'success', title: 'Address copied', body: `${ADDRESS} · copied to clipboard` })
   }
-  // network picker opens inside this same menu, with a back row (like Language / Currency)
-  if (a.modal === 'walletNet') {
+  const home = () => setPage('main')
+  const startConnect = (id: string) => {
+    setTarget(id)
+    setBusy(false)
+    setQr(false)
+    setPage('connect')
+  }
+  // approving in the wallet connects it and lands back on the wallet's main page (menu stays open)
+  const approve = () => {
+    if (busy) return
+    setBusy(true)
+    window.setTimeout(() => {
+      a.connectWallet(target)
+      a.set({ modal: 'walletMenu' })
+      setBusy(false)
+      setPage('main')
+    }, 1100)
+  }
+
+  if (page === 'net') {
     return (
       <div className="wm-sub">
-        <button className="dd-title back" onClick={() => a.set({ modal: 'walletMenu' })}>
-          <Icon n="back" size={14} sw={2} /> Select network
-        </button>
+        <WmBack onBack={home}>Select network</WmBack>
         <NetworkList
           onPick={(id) => {
             a.setNetwork(id)
             a.set({ modal: 'walletMenu' })
+            home()
           }}
         />
       </div>
     )
   }
+
+  if (page === 'history') {
+    return (
+      <div className="wm-sub">
+        <WmBack onBack={home}>Swap history</WmBack>
+        <div className="wm-scroll">
+          {a.history.map((h, i) => (
+            <div key={i} className="wm-hist">
+              <span className="pair">
+                <Coin id={h.from} size={24} />
+                <Coin id={h.to} size={24} />
+              </span>
+              <span className="grow">
+                <b>{h.label}</b>
+                <small>{h.when}</small>
+              </span>
+              <span className={'st' + (h.status === 'Failed' ? ' bad' : '')}>
+                <i /> {h.status}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (page === 'wallets') {
+    return (
+      <div className="wm-sub">
+        <WmBack onBack={home}>Switch wallet</WmBack>
+        <div className="wm-scroll">
+          {WALLETS.map((w) => {
+            const cur = w.id === a.walletId
+            return (
+              <button key={w.id} className={'dd-item wm-wallet' + (cur ? ' sel' : '')} onClick={() => (cur ? home() : startConnect(w.id))}>
+                <WalletLogo id={w.id} size={28} radius={w.id === 'kotai' || w.id === 'ledger' ? 8 : undefined} />
+                <span className="grow">{w.name}</span>
+                {cur ? <span className="cap12 ok">Connected</span> : w.recommended ? <span className="cap12 rec">Recommended</span> : null}
+                {cur ? <Icon n="checkCircle" size={16} className="ok" /> : <Icon n="chevronR" size={16} sw={2} />}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+
+  if (page === 'connect') {
+    const w = WALLETS.find((x) => x.id === target)
+    const name = w?.name ?? 'your wallet'
+    const app = target === 'ledger' ? 'Ledger Live' : name
+    const showQr = !a.isMobile || qr
+    return (
+      <div className="wm-sub wm-connect">
+        <WmBack to="wallets" onBack={() => setPage('wallets')}>
+          <WalletLogo id={target} size={22} radius={target === 'kotai' || target === 'ledger' ? 6 : undefined} /> {name}
+        </WmBack>
+        {showQr ? (
+          <div className="qr-box sm">
+            <QR logo={<img src={`img/wallet/${target}.webp`} alt="" width={28} height={28} />} onScan={approve} />
+            <b>{busy ? 'Connecting…' : `Scan with ${name}`}</b>
+          </div>
+        ) : (
+          <button className="btn accent block" onClick={approve} disabled={busy}>
+            {busy ? (
+              <>
+                <Spinner size={18} /> Waiting for approval…
+              </>
+            ) : (
+              `Open ${app}`
+            )}
+          </button>
+        )}
+        <p className="wm-note">Connecting doesn’t give access to your funds: every transaction needs your approval.</p>
+        {a.isMobile && (
+          <button className="btn secondary block" onClick={() => setQr((v) => !v)}>
+            {qr ? 'Open the app instead' : 'Show QR code'}
+          </button>
+        )}
+      </div>
+    )
+  }
+
   const onKotai = a.walletId === 'kotai'
   return (
     <>
@@ -94,7 +211,7 @@ export function WalletMenuBody() {
           <img src="img/avatar.svg" width={40} height={40} alt="" />
           <span className="mono">{ADDRESS}</span>
         </span>
-        <button className="wm-net" onClick={() => a.set({ modal: 'walletNet' })} aria-label="Change network">
+        <button className="wm-net" onClick={() => setPage('net')} aria-label="Change network">
           <Net id={a.networkId} size={20} />
           <Icon n="chevron" size={12} sw={2} />
         </button>
@@ -113,8 +230,9 @@ export function WalletMenuBody() {
         <button className="dd-item" onClick={() => a.toast({ tone: 'info', title: 'View on explorer', body: 'Opens bscscan.com in the real product' })}>
           <Icon n="ext" size={18} /> View on explorer
         </button>
-        <button className="dd-item" onClick={() => a.open('history')}>
-          <Icon n="clock" size={18} /> Swap history
+        <button className="dd-item" onClick={() => setPage('history')}>
+          <Icon n="clock" size={18} /> <span className="grow">Swap history</span>
+          <Icon n="chevronR" size={16} sw={2} className="go" />
         </button>
         <span className="dd-sep" />
         {onKotai ? (
@@ -129,8 +247,8 @@ export function WalletMenuBody() {
             <Icon n="checkCircle" size={18} className="ok" />
           </div>
         ) : (
-          /* runs the real Kotai Wallet connection (QR → approve); Back returns to this menu */
-          <button className="wm-kotai" onClick={() => a.push('kotaiWallet')}>
+          /* runs the Kotai Wallet connection (QR → approve) right here in the menu */
+          <button className="wm-kotai" onClick={() => startConnect('kotai')}>
             <span className="kw-logo">
               <img src="img/wallet/kotai.webp" alt="" />
             </span>
@@ -141,11 +259,13 @@ export function WalletMenuBody() {
             <Icon n="chevronR" size={18} sw={2} />
           </button>
         )}
-        <button className="dd-item" onClick={() => a.open('connect')}>
-          <Icon n="flip" size={18} /> Switch wallet
+        <button className="dd-item" onClick={() => setPage('wallets')}>
+          <Icon n="flip" size={18} /> <span className="grow">Switch wallet</span>
+          <Icon n="chevronR" size={16} sw={2} className="go" />
         </button>
-        <button className="dd-item" onClick={() => a.open('connect')}>
-          <Icon n="plus" size={18} sw={2} /> Connect another wallet
+        <button className="dd-item" onClick={() => setPage('wallets')}>
+          <Icon n="plus" size={18} sw={2} /> <span className="grow">Connect another wallet</span>
+          <Icon n="chevronR" size={16} sw={2} className="go" />
         </button>
         <span className="dd-sep" />
         <button className="dd-item danger" onClick={a.disconnect}>

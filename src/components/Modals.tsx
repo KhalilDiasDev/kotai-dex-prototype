@@ -13,7 +13,7 @@ const QR_ROWS = [
   '1001010010000000000011001', '0011011000000100000101100', '0000000000110100001101101', '0000000001101011001000111', '0000000010010100100001100',
   '0000000000110000001101000', '0000000000100110001000011', '0000000001110101101011101', '0000000001100010001111110', '0000000000101010000110011',
 ]
-function QR({ logo, onScan }: { logo: ReactNode; onScan?: () => void }) {
+export function QR({ logo, onScan }: { logo: ReactNode; onScan?: () => void }) {
   const mods = useMemo(() => {
     const out: [number, number][] = []
     QR_ROWS.forEach((r, y) => [...r].forEach((b, x) => b === '1' && out.push([x, y])))

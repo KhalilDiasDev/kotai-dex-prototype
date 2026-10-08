@@ -735,3 +735,105 @@
     transform: translateY(-6px) scale(0.97);
   }
 }
+
+/* ───────── Wallet menu · pages that open inside the menu ───────── */
+.wm-sub .dd-title.back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 36px;
+  margin-bottom: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: left;
+}
+.wm-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: min(52vh, 380px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #263e63 transparent;
+}
+.dd-item .go {
+  color: var(--text-tertiary);
+}
+.wm-wallet .cap12.ok,
+.wm-wallet .ok {
+  color: var(--success-solid, #29c785);
+}
+.wm-wallet .cap12.rec {
+  color: #2bf5a0;
+}
+.wm-hist {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 6px;
+  border-radius: 10px;
+}
+.wm-hist + .wm-hist {
+  border-top: 1px solid rgba(46, 69, 115, 0.4);
+  border-radius: 0;
+}
+.wm-hist .pair {
+  display: inline-flex;
+  flex: none;
+}
+.wm-hist .pair img + img {
+  margin-left: -8px;
+}
+.wm-hist .grow {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.wm-hist b {
+  font-size: 13px;
+  line-height: 17px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wm-hist small {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+.wm-hist .st {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #2bf5a0;
+  white-space: nowrap;
+}
+.wm-hist .st i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.wm-hist .st.bad {
+  color: #ff6685;
+}
+.wm-connect {
+  gap: 12px;
+}
+.wm-connect .qr-box.sm {
+  padding: 14px;
+  gap: 10px;
+}
+.wm-note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--text-tertiary);
+}
