@@ -189,6 +189,53 @@ export function useScrollLock() {
   }, [])
 }
 
+/** Mobile bottom sheets can be grabbed by their top (grabber / title row) and dragged down to dismiss.
+    A short drag springs back; past ~110px or a quick flick, the sheet slides away and `onDismiss` runs. */
+function useSheetDrag(onDismiss: () => void) {
+  const ref = useRef<HTMLDivElement>(null)
+  const st = useRef<{ y: number; t: number; dy: number; id: number } | null>(null)
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = ref.current
+    if (!el || !window.matchMedia('(max-width: 720px)').matches) return
+    if ((e.target as HTMLElement).closest('button, a, input, textarea, select, [role="button"]')) return
+    // only the top strip of the sheet (grabber + title row) starts a drag
+    if (e.clientY - el.getBoundingClientRect().top > 72) return
+    st.current = { y: e.clientY, t: performance.now(), dy: 0, id: e.pointerId }
+    try {
+      el.setPointerCapture(e.pointerId)
+    } catch {
+      /* synthetic pointers can't be captured */
+    }
+    el.style.transition = 'none'
+    el.style.animation = 'none'
+  }
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = st.current
+    const el = ref.current
+    if (!d || !el || e.pointerId !== d.id) return
+    d.dy = Math.max(0, e.clientY - d.y)
+    el.style.transform = `translateY(${d.dy}px)`
+  }
+  const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = st.current
+    const el = ref.current
+    if (!d || !el || e.pointerId !== d.id) return
+    st.current = null
+    const v = d.dy / Math.max(1, performance.now() - d.t) // px per ms
+    el.style.transition = 'transform 0.22s cubic-bezier(0.3, 0, 0.2, 1)'
+    if (d.dy > 110 || (d.dy > 40 && v > 0.6)) {
+      el.style.transform = 'translateY(100%)'
+      window.setTimeout(onDismiss, 190)
+    } else {
+      el.style.transform = ''
+      window.setTimeout(() => {
+        if (ref.current) ref.current.style.transition = ''
+      }, 240)
+    }
+  }
+  return { ref, onPointerDown, onPointerMove, onPointerUp }
+}
+
 /* ───────── Modal / bottom sheet ───────── */
 /* When one dialog replaces another in the same commit (review → signing → processing → done…),
    the new one skips the scrim fade and pop-in so it reads as the same modal updating in place. */
@@ -235,8 +282,19 @@ export function Modal({
     window.addEventListener('keydown', h)
     return () => window.removeEventListener('keydown', h)
   }, [])
+  const drag = useSheetDrag(() => handleRef.current?.())
   const sheet = (
-    <div className={'modal' + (className ? ' ' + className : '') + (inPlace ? ' in-place' : '')} role="dialog" aria-modal="true" style={width ? { maxWidth: width } : undefined}>
+    <div
+      ref={drag.ref}
+      className={'modal' + (className ? ' ' + className : '') + (inPlace ? ' in-place' : '')}
+      role="dialog"
+      aria-modal="true"
+      style={width ? { maxWidth: width } : undefined}
+      onPointerDown={drag.onPointerDown}
+      onPointerMove={drag.onPointerMove}
+      onPointerUp={drag.onPointerUp}
+      onPointerCancel={drag.onPointerUp}
+    >
       <span className="handle" />
       {(title || onClose) && (
         <div className="modal-head">
