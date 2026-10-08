@@ -1,0 +1,7 @@
+# Netlify (if the site is linked to the Git repo): build with pnpm, publish the Vite output
+[build]
+  command = "pnpm build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
