@@ -377,8 +377,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // flipping keeps the pair the user built: what they were receiving becomes what they send
   const flip = useCallback(() => {
-    setS((o) => ({ ...o, from: o.to, to: o.from, amount: '' }))
+    setS((o) => {
+      const amt = parseFloat(o.amount)
+      if (!(amt > 0)) return { ...o, from: o.to, to: o.from }
+      const out = amt * (TOKENS[o.from].price / TOKENS[o.to].price)
+      return { ...o, from: o.to, to: o.from, amount: String(+out.toFixed(out < 1 ? 8 : 6)), quoting: o.connected }
+    })
+    requote()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const applyToken = (o: AppState, id: TokenId): AppState => {
@@ -400,8 +408,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  // once the KTI notice is accepted it isn't shown again this session
   const confirmWarning = useCallback(() => {
-    setS((o) => (o.pendingToken ? applyToken(o, o.pendingToken) : { ...o, modal: null }))
+    setS((o) => (o.pendingToken ? { ...applyToken(o, o.pendingToken), skipWarning: true } : { ...o, modal: null }))
   }, [])
 
   const connectWallet = useCallback(
