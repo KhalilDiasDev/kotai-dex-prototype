@@ -800,7 +800,7 @@ function ReviewModal() {
         <div className="kv">
           <span>Minimum received</span>
           <b>
-            {fmt(q.minOut, q.minOut < 1 ? 6 : 0)} {a.to}
+            {fmt(q.minOut, q.minOut < 1 ? 6 : q.minOut < 10000 ? 2 : 0)} {a.to}
           </b>
         </div>
         <div className="kv">

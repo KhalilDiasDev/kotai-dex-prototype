@@ -340,11 +340,12 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
 
         {/* You receive */}
         <div ref={recvRef} onClick={focusReceive} className={'field gb' + (recvText !== null ? ' focus' : '')}>
-          <div className={'field-top' + (hasAmt ? ' tall' : '')}>
+          <div className="field-top">
             <span className="f-label">
               <Icon n="download" size={16} />You receive (estimated)
             </span>
-            {!hasAmt && !a.isMobile && (
+            {/* quick token picks stay available after choosing a token or typing an amount */}
+            {!a.isMobile && (
               <div className="quick" aria-label="Quick token picks">
                 {QUICK.map((id) => (
                   <button key={id} className={a.to === id ? 'on' : ''} onClick={() => quick(id)} aria-label={`Receive ${id}`} title={TOKENS[id].name}>
@@ -440,7 +441,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                   The least you'll get if the price moves before your swap confirms. If it would be lower, the swap is cancelled and your {a.from} stays in your wallet.
                 </InfoTip>
               </span>
-              <span className="v">{a.quoting || noRoute ? '—' : <b>{fmt(q.minOut, q.minOut < 1 ? 6 : 0)} {a.to}</b>}</span>
+              <span className="v">{a.quoting || noRoute ? '—' : <b>{fmt(q.minOut, q.minOut < 1 ? 6 : q.minOut < 10000 ? 2 : 0)} {a.to}</b>}</span>
             </div>
             <div
               className={'d-row d-more' + (more ? ' on' : '')}

@@ -799,3 +799,29 @@
     white-space: nowrap;
   }
 }
+
+/* ───────── Pointer cursor on everything clickable ───────── */
+button:not(:disabled),
+a[href],
+[role='button'],
+[role='tab'],
+[role='option'],
+[role='menuitem'],
+label:has(input[type='checkbox']),
+label:has(input[type='radio']),
+input[type='checkbox'],
+input[type='radio'],
+summary,
+select {
+  cursor: pointer;
+}
+/* the swap cards are click targets too; only the number itself shows the text caret */
+.swap-card .field {
+  cursor: pointer;
+}
+.swap-card .field .amount {
+  cursor: text;
+}
+.btn.accent.loading:disabled {
+  cursor: progress;
+}
