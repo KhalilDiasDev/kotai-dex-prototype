@@ -939,3 +939,57 @@
 .details .v.route {
   gap: 5px;
 }
+
+/* ───────── "?" help next to a label ───────── */
+.info-tip {
+  position: relative;
+  display: inline-flex;
+}
+.info-tip > button {
+  display: inline-flex;
+  color: var(--text-tertiary);
+  border-radius: 50%;
+  transition: color 0.2s;
+}
+.info-tip > button:hover,
+.info-tip > button[aria-expanded='true'] {
+  color: #fff;
+}
+.it-pop {
+  position: absolute;
+  left: -14px;
+  bottom: calc(100% + 8px);
+  z-index: 30;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--bg-hover);
+  border: 1px solid var(--ink-600);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 40px rgba(0, 0, 0, 0.55);
+  text-align: left;
+  white-space: normal;
+  cursor: default;
+  pointer-events: none; /* never keeps itself open: leaving the icon closes it */
+  animation: rise 0.16s ease-out;
+}
+.it-pop b {
+  font-size: 13px;
+  line-height: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.it-pop span {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text-secondary);
+}
+@media (max-width: 720px) {
+  .it-pop {
+    width: min(260px, calc(100vw - 72px));
+  }
+}

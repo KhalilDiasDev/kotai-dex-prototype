@@ -53,6 +53,43 @@ export function HelpTip({ onClose }: { onClose: () => void }) {
   )
 }
 
+/* "?" next to a label: the description shows while the pointer (or keyboard focus) is on the icon and
+   disappears the moment it leaves; on touch a tap toggles it and tapping elsewhere closes it */
+function InfoTip({ title, children }: { title: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLSpanElement>(null)
+  useEffect(() => {
+    if (!open) return
+    const h = (e: PointerEvent) => ref.current && !ref.current.contains(e.target as Node) && setOpen(false)
+    document.addEventListener('pointerdown', h)
+    return () => document.removeEventListener('pointerdown', h)
+  }, [open])
+  return (
+    <span className="info-tip" ref={ref} onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+      <button
+        type="button"
+        data-notip
+        aria-label={`What is ${title.toLowerCase()}?`}
+        aria-expanded={open}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        onClick={(e) => {
+          e.stopPropagation()
+          setOpen(true)
+        }}
+      >
+        <Icon n="info" size={14} />
+      </button>
+      {open && (
+        <span className="it-pop" role="tooltip">
+          <b>{title}</b>
+          <span>{children}</span>
+        </span>
+      )}
+    </span>
+  )
+}
+
 /* "adjustments" icon whose knobs slide along their tracks on hover (lines are cut around each knob by a mask that moves with it) */
 const KNOBS: [number, number][] = [
   [14, 6],
@@ -118,7 +155,6 @@ function TabSelect() {
 export function SwapPanel({ compact }: { compact?: boolean }) {
   const a = useApp()
   const [focus, setFocus] = useState(false)
-  const [tip, setTip] = useState(false)
   const [more, setMore] = useState(false)
   // card swap: the two fields trade places (FLIP — content swaps, then each card slides in from the other's slot)
   const sendRef = useRef<HTMLDivElement>(null)
@@ -384,7 +420,10 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
             </div>
             {/* always visible: the three numbers that decide a swap */}
             <div className="d-row">
-              <span className="k">Price impact</span>
+              <span className="k">
+                Price impact
+                <InfoTip title="Price impact">How much your own swap moves the pool price. Low is normal; a high value means you receive noticeably less.</InfoTip>
+              </span>
               {a.quoting || noRoute ? (
                 <span className="v">—</span>
               ) : (
@@ -397,25 +436,36 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
             <div className="d-row">
               <span className="k">
                 Minimum received
-                <button onMouseEnter={() => setTip(true)} onFocus={() => setTip(true)} onBlur={() => setTip(false)} onClick={() => (a.isMobile ? a.open('help') : setTip((v) => !v))} aria-label="What is minimum received?">
-                  <Icon n="info" size={14} />
-                </button>
+<InfoTip title="Minimum received">
+                  The least you'll get if the price moves before your swap confirms. If it would be lower, the swap is cancelled and your {a.from} stays in your wallet.
+                </InfoTip>
               </span>
               <span className="v">{a.quoting || noRoute ? '—' : <b>{fmt(q.minOut, q.minOut < 1 ? 6 : 0)} {a.to}</b>}</span>
             </div>
-            <button className={'d-row d-more' + (more ? ' on' : '')} onClick={() => setMore((v) => !v)} aria-expanded={more}>
-              <span className="k">Fees</span>
+            <div
+              className={'d-row d-more' + (more ? ' on' : '')}
+              role="button"
+              tabIndex={0}
+              aria-expanded={more}
+              onClick={() => setMore((v) => !v)}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setMore((v) => !v))}
+            >
+              <span className="k">
+                Fees
+                <InfoTip title="Fees">Everything this swap costs: the network fee plus the KOTAI pool fee. It is already included in the amounts above.</InfoTip>
+              </span>
               <span className="v">
                 {a.quoting || noRoute ? '—' : <b>≈ {usd(q.feesUsd)}</b>}
                 <Icon n="chevron" size={16} className="chev" />
               </span>
-            </button>
+            </div>
             {/* on demand: where the fees go and how the swap is routed */}
             {more && !noRoute && (
               <div className="d-extra">
                 <div className="d-row sm">
                   <span className="k">
                     <Icon n="fuel" size={14} /> Network fee
+                    <InfoTip title="Network fee">Paid in BNB to the BNB Chain validators that process the transaction. It doesn't go to KOTAI.</InfoTip>
                   </span>
                   <span className="v">
                     ≈ {usd(q.gasUsd)} <small>{q.gasBnb} BNB</small>
@@ -424,6 +474,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                 <div className="d-row sm">
                   <span className="k">
                     <Icon n="coins" size={14} /> KOTAI pool fee
+                    <InfoTip title="KOTAI pool fee">A share of the amount paid to the liquidity providers of this pool.</InfoTip>
                   </span>
                   <span className="v">
                     ≈ {usd(q.poolFeeUsd)} <small>{q.poolFeePct}%</small>
@@ -432,6 +483,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                 <div className="d-row sm">
                   <span className="k">
                     <Icon n="sliders" size={14} /> Max slippage
+                    <InfoTip title="Max slippage">The most the price may move against you before the swap is cancelled. You can change it in Swap settings.</InfoTip>
                   </span>
                   <span className="v">
                     {q.slippage}% <small>{a.slippage === 'Auto' ? 'Auto' : 'Custom'}</small>
@@ -440,6 +492,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                 <div className="d-row sm">
                   <span className="k">
                     <Icon n="link" size={14} /> Route
+                    <InfoTip title="Route">The path your tokens take. This pair swaps directly in one KOTAI pool on BNB Chain.</InfoTip>
                   </span>
                   <span className="v route">
                     <Coin id={a.from} size={16} /> {a.from} <Icon n="arrowRight" size={12} /> <Coin id={a.to} size={16} /> {a.to} <small>BNB Chain</small>
@@ -447,7 +500,6 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                 </div>
               </div>
             )}
-            {tip && !a.isMobile && <HelpTip onClose={() => setTip(false)} />}
           </div>
         )}
 
