@@ -12,6 +12,7 @@ const REVEAL = [
   '.lp-bento .lp-head',
   '.lp-bento-row > *',
   '.lp-banner',
+  '.lpm-grid > *',
   '.lpm-cards > *',
 ].join(',')
 

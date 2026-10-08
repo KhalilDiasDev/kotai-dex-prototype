@@ -861,3 +861,104 @@ select {
 .lpm-fl {
   overflow: visible;
 }
+
+/* ───────── Home (mobile) · lower sections: icon cards + illustrated features ───────── */
+.lpm-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.lpm-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  border-radius: 18px;
+  background: var(--bg-raised);
+  border: 1px solid rgba(46, 69, 115, 0.8);
+}
+.lpm-ic {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 6px;
+  border-radius: 11px;
+  background: rgba(77, 155, 255, 0.14);
+  color: #7fb6ff;
+}
+.lpm-mini b {
+  font-size: 15px;
+  line-height: 19px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+.lpm-mini span:last-child {
+  font-size: 13px;
+  line-height: 17px;
+  color: #a3b5d6;
+}
+.lpm-feature {
+  overflow: hidden;
+  border-radius: 22px;
+  background: var(--bg-raised);
+  border: 1px solid rgba(46, 69, 115, 0.8);
+}
+.lpm-art {
+  display: grid;
+  place-items: center;
+  height: 172px;
+  padding: 14px;
+  background: radial-gradient(60% 70% at 50% 55%, rgba(48, 115, 214, 0.32), rgba(48, 115, 214, 0) 70%), #050c1c;
+  border-bottom: 1px solid rgba(46, 69, 115, 0.5);
+}
+.lpm-art img {
+  width: auto;
+  height: auto;
+  max-width: 82%;
+  max-height: 144px;
+}
+.lpm-feature-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px 18px;
+}
+.lpm-tag {
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(148, 190, 252, 0.35);
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9cc2fc;
+}
+.lpm-feature-txt b {
+  font-size: 19px;
+  line-height: 24px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+.lpm-feature-txt > span:last-child {
+  font-size: 14px;
+  line-height: 20px;
+  color: #a3b5d6;
+}
+/* phone reveal: quick, short travel, almost no stagger — smooth instead of slow */
+.lpm .reveal {
+  transform: translateY(14px);
+  transition: opacity 0.38s ease-out var(--rdm, 0ms), transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) var(--rdm, 0ms);
+  will-change: opacity, transform;
+}
+.lpm .reveal.in {
+  transform: none;
+  will-change: auto;
+}
+.lpm-grid > .reveal:nth-child(even),
+.lpm-cards > .reveal:nth-child(even) {
+  --rdm: 50ms;
+}
