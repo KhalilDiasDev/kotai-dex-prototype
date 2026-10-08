@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { BottomNav } from './components/BottomNav'
 import { ChartPanel } from './components/ChartPanel'
 import { Header } from './components/Header'
 import { IconTips } from './components/IconTips'
@@ -72,6 +73,7 @@ function Shell() {
           <Landing />
         )}
       </div>
+      {a.isMobile && <BottomNav />}
       <Modals />
       {/* every notification lands top-right, under the header */}
       <Toasts list={a.toasts} />

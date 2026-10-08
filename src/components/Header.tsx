@@ -243,9 +243,6 @@ export function Header() {
     <header className={'header' + (scrolled ? ' scrolled' : '')}>
       <div className="header-in">
         <div className="left">
-          <button className="icon-btn show-m" onClick={() => a.open('navMenu')} aria-label="Open menu">
-            <Icon n="menu" size={20} />
-          </button>
           <button className="brand-btn" onClick={() => a.set({ view: 'home', modal: null, chart: 'off' })} aria-label="KOTAI DEX home">
             <Logo height={a.isMobile ? 22 : 37} />
           </button>

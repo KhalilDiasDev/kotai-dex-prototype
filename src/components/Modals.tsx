@@ -1074,29 +1074,39 @@ function Confirm({ title, body, keep, cancel, onCancel, under }: { title: string
 }
 
 /* ───────────── Mobile sheets for the desktop dropdowns ───────────── */
+/* Mobile · "Menu" from the bottom bar: a list that pops up above the bar (not a full sheet) */
 function SheetNav() {
   const a = useApp()
-  const go = (v: 'home' | 'swap') => a.set({ view: v, modal: null, chart: 'off' })
-  const soon = (t: string) => a.toast({ tone: 'info', title: t, body: 'Not part of this prototype' })
-  const items: [string, () => void, boolean?][] = [
-    ['Home', () => go('home'), a.view === 'home'],
-    ['Swap', () => go('swap'), a.view === 'swap'],
-    ['Market', () => soon('Market')],
-    ['Invest', () => soon('Invest')],
-    ['KTI Coin', () => a.openCoin('KTI')],
-    ['Search', () => a.open('search')],
-    ['Settings', () => a.open('system')],
+  useScrollLock()
+  const soon = (t: string) => {
+    a.close()
+    a.toast({ tone: 'info', title: t, body: 'Not part of this prototype' })
+  }
+  const items: { label: string; sub: string; icon: ReactNode; act: () => void; hide?: boolean }[] = [
+    { label: 'Market', sub: 'Prices and top movers', icon: <Icon n="trend" size={20} />, act: () => soon('Market') },
+    { label: 'Invest', sub: 'Earn with KTI pools', icon: <Icon n="coins" size={20} />, act: () => soon('Invest') },
+    { label: 'Search', sub: 'Tokens, pools or address', icon: <Icon n="search" size={20} />, act: () => a.open('search') },
+    { label: 'Swap history', sub: 'Your recent swaps', icon: <Icon n="history" size={20} />, act: () => a.open('history'), hide: !a.connected },
+    { label: 'Settings', sub: 'Language and currency', icon: <Icon n="gear" size={20} />, act: () => a.open('system') },
+    { label: 'Connect wallet', sub: 'Kotai Wallet and others', icon: <Icon n="wallet" size={20} />, act: () => a.open('connect'), hide: a.connected },
   ]
   return (
-    <Modal title="Menu" onClose={a.close} className="sheet-menu">
-      <div className="menu-list">
-        {items.map(([l, f, on]) => (
-          <button key={l} className={on ? 'on' : ''} onClick={f}>
-            {l}
-          </button>
-        ))}
+    <div className="scrim nav-scrim" onMouseDown={(e) => e.target === e.currentTarget && a.close()}>
+      <div className="nav-pop" role="menu" aria-label="More options">
+        {items
+          .filter((i) => !i.hide)
+          .map((i) => (
+            <button key={i.label} className="np-item" role="menuitem" onClick={i.act}>
+              <span className="np-ic">{i.icon}</span>
+              <span className="grow">
+                <b>{i.label}</b>
+                <small>{i.sub}</small>
+              </span>
+              <Icon n="chevronR" size={16} sw={2} className="np-go" />
+            </button>
+          ))}
       </div>
-    </Modal>
+    </div>
   )
 }
 

@@ -4,6 +4,9 @@ import type { TokenId } from '../data'
 /* ───────── Icons · "Ícone/*" components from the Figma file (24px grid, 1.75 stroke) ───────── */
 const P: Record<string, ReactNode> = {
   menu: <path d="M4 6h16M4 12h16M4 18h16" />,
+  home: <path d="M5 12H3l9-9 9 9h-2M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6" />,
+  grid: <path d="M4 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5ZM14 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5ZM4 15a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-4ZM14 15a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-4Z" />,
+  trend: <path d="M3 17l6-6 4 4 8-8M14 7h7v7" />,
   x: <path d="M18 6L6 18M6 6l12 12" />,
   search: <path d="M3.53 12.68A7 7 0 1 1 16.47 7.32 7 7 0 0 1 3.53 12.68ZM21 21l-6-6" />,
   chevron: <path d="M6 9l6 6 6-6" />,
