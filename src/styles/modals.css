@@ -1958,3 +1958,156 @@
     padding-top: 20px;
   }
 }
+
+/* token list · unit price next to the network */
+.tok-price {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+.s-row .r small.down {
+  color: #ff6685;
+}
+
+/* coin modal · the title is a coin select with its own search */
+.cm-pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px 4px 4px;
+  margin: -4px 0 -4px -4px;
+  border-radius: var(--radius-full);
+  font: inherit;
+  color: inherit;
+  transition: background-color 0.2s;
+}
+.cm-pick:hover,
+.cm-pick.on {
+  background: rgba(255, 255, 255, 0.06);
+}
+.cm-pick .chev {
+  color: var(--text-secondary);
+  transition: transform 0.2s;
+}
+.cm-pick.on .chev {
+  transform: rotate(180deg);
+}
+.cm-picker {
+  position: sticky;
+  top: 52px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: -8px 0 0;
+  padding: 10px;
+  border-radius: 16px;
+  background: #0e1b33;
+  border: 1px solid rgba(46, 69, 115, 0.8);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55);
+  animation: dropIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cm-pick-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 264px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.cm-opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  text-align: left;
+  transition: background-color 0.15s;
+}
+.cm-opt:hover,
+.cm-opt.on {
+  background: rgba(77, 155, 255, 0.12);
+}
+.cm-opt .grow,
+.cm-opt .r {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.cm-opt .grow {
+  flex: 1;
+}
+.cm-opt .r {
+  align-items: flex-end;
+}
+.cm-opt b {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.cm-opt small {
+  font-size: 12px;
+  line-height: 15px;
+  color: var(--text-tertiary);
+}
+.cm-opt small.up {
+  color: #2bf5a0;
+}
+.cm-opt small.down {
+  color: #ff6685;
+}
+
+/* ───────── Scrollable areas keep their navigation in place ─────────
+   the list scrolls on its own; title rows, search fields and tab rows never leave the screen */
+.tok-list {
+  max-height: min(44vh, 372px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #263e63 transparent;
+}
+.s-results {
+  max-height: calc(100vh - 96px - 56px - 10px - 24px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #263e63 transparent;
+}
+.s-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  flex: none;
+}
+.s-tabs::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: -14px;
+  bottom: -8px;
+  width: 760px;
+  background: var(--surface-overlay);
+  z-index: -1;
+}
+.hist {
+  max-height: calc(100vh - 96px - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #263e63 transparent;
+}
+.hist-title {
+  position: sticky;
+  top: -20px;
+  z-index: 3;
+  margin-top: -20px;
+  padding-top: 20px;
+  background: var(--surface-overlay);
+}
+.wm-sub .dd-title.back,
+.dd-sys .dd-title.back {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface-overlay);
+}

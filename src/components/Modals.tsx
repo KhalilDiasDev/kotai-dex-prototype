@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { ADDRESS, NETWORKS, TOKENS, TOKEN_LIST, WALLETS, fmt, usd, type TokenId } from '../data'
+import { ADDRESS, NETWORKS, TOKENS, TOKEN_LIST, WALLETS, fmt, unitPrice, usd, type TokenId } from '../data'
 import { useApp, type ModalKind } from '../store'
 import { NetworkList, SystemBody, WalletMenuBody } from './Header'
 import { HelpTip } from './SwapPanel'
@@ -252,10 +252,12 @@ function TokenSelectModal() {
               <b>
                 {t.id === 'USDT' ? 'Tether' : t.name} {t.native && <span className="badge blue">Native</span>}
               </b>
-              <small>{t.networkLabel}</small>
+              <small>
+                {t.networkLabel} · <span className="tok-price">{unitPrice(t.price)}</span>
+              </small>
             </span>
             <span className="r">
-              <b>{t.id === 'ETH' ? '1.0000' : t.id === 'KTI' ? '0' : '0.00'}</b>
+              <b>{t.balance > 0 ? fmt(t.balance, 4) : '0'}</b>
               <small>{usd(t.balance * t.price)}</small>
             </span>
           </button>
@@ -366,9 +368,9 @@ const parse = (s: string) => s.split(',').map(Number)
 export const COIN_INFO: Record<string, CoinInfo> = {
   ETH: { id: 'ETH', name: 'Ethereum', price: '$3500', up: true, chg: '+37.40 (1.08%)', cap: '$412.6B', vol: '$18.2B', net: 'Ethereum', h: 115, swap: 'ETH', ys: parse('0.991,1,0.936,0.881,0.893,0.866,0.919,0.92,0.922,0.94,0.954,0.928,0.935,0.953,0.883,0.886,0.866,0.808,0.822,0.79,0.759,0.783,0.811,0.817,0.867,0.863,0.9,0.832,0.797,0.721,0.671,0.625,0.58,0.633,0.655,0.654,0.666,0.604,0.639,0.603,0.655,0.666,0.651,0.58,0.505,0.489,0.498,0.515,0.5,0.521,0.488,0.486,0.513,0.503,0.449,0.416,0.438,0.492,0.438,0.389,0.322,0.255,0.221,0.195,0.217,0.261,0.227,0.261,0.315,0.302,0.224,0.24,0.237,0.196,0.199,0.161,0.196,0.116,0.069,0.046,0.045,0.036,0.001,0.029,0,0.003,0.024,0.017,0.075,0.103,0.11') },
   BTC: { id: 'BTC', name: 'Bitcoin', price: '$67420', up: true, chg: '+1,408 (2.14%)', cap: '$1.33T', vol: '$31.4B', net: 'Bitcoin', h: 118, swap: 'BTC', ys: parse('0.981,0.951,1,0.942,0.943,0.897,0.894,0.872,0.851,0.889,0.901,0.842,0.823,0.764,0.791,0.779,0.722,0.679,0.691,0.642,0.669,0.682,0.664,0.683,0.731,0.707,0.634,0.636,0.658,0.599,0.527,0.471,0.483,0.483,0.446,0.481,0.523,0.576,0.594,0.525,0.469,0.449,0.486,0.526,0.517,0.494,0.531,0.481,0.539,0.516,0.479,0.506,0.543,0.476,0.515,0.505,0.436,0.442,0.366,0.425,0.463,0.474,0.402,0.397,0.395,0.358,0.388,0.446,0.406,0.387,0.381,0.396,0.338,0.282,0.27,0.238,0.168,0.179,0.119,0.099,0.065,0.007,0,0.02,0.032,0.06,0.023,0.073,0.129,0.096,0.113') },
-  KTI: { id: 'KTI', name: 'Kotai Coin', price: '$0.0042', up: true, chg: '+0.00019 (4.80%)', cap: '$84.0M', vol: '$2.1M', net: 'Kotai', h: 133, swap: 'KTI', ys: parse('1,0.938,0.96,0.904,0.896,0.837,0.788,0.746,0.708,0.759,0.768,0.807,0.766,0.768,0.755,0.731,0.767,0.742,0.75,0.691,0.646,0.649,0.592,0.62,0.663,0.623,0.582,0.523,0.471,0.433,0.47,0.409,0.349,0.303,0.338,0.281,0.225,0.253,0.255,0.283,0.259,0.214,0.175,0.185,0.233,0.206,0.144,0.16,0.157,0.097,0.06,0.109,0.153,0.163,0.157,0.169,0.146,0.112,0.143,0.169,0.175,0.131,0.153,0.166,0.144,0.163,0.123,0.075,0.079,0.058,0,0.012,0.034,0,0,0,0,0,0,0,0,0.024,0.043,0.056,0.1,0.147,0.183,0.159,0.208,0.245,0.241') },
+  KTI: { id: 'KTI', name: 'Kotai Coin', price: '$0.000025', up: true, chg: '+0.0000011 (4.80%)', cap: '$84.0M', vol: '$2.1M', net: 'BNB Chain', h: 133, swap: 'KTI', ys: parse('1,0.938,0.96,0.904,0.896,0.837,0.788,0.746,0.708,0.759,0.768,0.807,0.766,0.768,0.755,0.731,0.767,0.742,0.75,0.691,0.646,0.649,0.592,0.62,0.663,0.623,0.582,0.523,0.471,0.433,0.47,0.409,0.349,0.303,0.338,0.281,0.225,0.253,0.255,0.283,0.259,0.214,0.175,0.185,0.233,0.206,0.144,0.16,0.157,0.097,0.06,0.109,0.153,0.163,0.157,0.169,0.146,0.112,0.143,0.169,0.175,0.131,0.153,0.166,0.144,0.163,0.123,0.075,0.079,0.058,0,0.012,0.034,0,0,0,0,0,0,0,0,0.024,0.043,0.056,0.1,0.147,0.183,0.159,0.208,0.245,0.241') },
   SOL: { id: 'SOL', name: 'Solana', price: '$148.20', up: false, chg: '-5.01 (3.27%)', cap: '$68.4B', vol: '$3.9B', net: 'Solana', h: 138, ys: parse('0.106,0.145,0.162,0.119,0.119,0.176,0.216,0.172,0.131,0.097,0.121,0.145,0.098,0.053,0.02,0,0.019,0.022,0.044,0.103,0.127,0.137,0.174,0.228,0.286,0.246,0.245,0.263,0.276,0.268,0.301,0.364,0.369,0.412,0.412,0.405,0.393,0.415,0.42,0.434,0.451,0.514,0.538,0.54,0.541,0.524,0.505,0.478,0.438,0.475,0.451,0.423,0.375,0.351,0.324,0.369,0.401,0.463,0.487,0.504,0.497,0.537,0.54,0.585,0.56,0.527,0.558,0.549,0.606,0.596,0.609,0.636,0.627,0.683,0.663,0.659,0.669,0.73,0.788,0.789,0.837,0.833,0.892,0.913,0.889,0.856,0.857,0.9,0.962,0.961,1') },
-  BNB: { id: 'BNB', name: 'BNB', price: '$592.40', up: false, chg: '-2.51 (0.42%)', cap: '$86.3B', vol: '$1.8B', net: 'BNB Chain', h: 128, ys: parse('0.059,0.063,0.06,0.009,0,0.042,0.036,0.092,0.152,0.135,0.158,0.154,0.203,0.211,0.263,0.227,0.213,0.228,0.25,0.298,0.252,0.253,0.25,0.32,0.382,0.445,0.469,0.425,0.491,0.497,0.511,0.567,0.625,0.623,0.695,0.72,0.734,0.738,0.729,0.712,0.757,0.796,0.746,0.723,0.782,0.758,0.763,0.797,0.823,0.821,0.791,0.787,0.748,0.793,0.847,0.917,0.866,0.891,0.895,0.887,0.85,0.837,0.804,0.872,0.823,0.839,0.805,0.819,0.795,0.779,0.732,0.76,0.825,0.87,0.834,0.835,0.875,0.897,0.947,0.95,0.971,0.92,0.884,0.902,0.912,0.899,0.846,0.821,0.887,0.955,1') },
+  BNB: { id: 'BNB', name: 'BNB', price: '$600.00', up: false, chg: '-2.53 (0.42%)', cap: '$86.3B', vol: '$1.8B', net: 'BNB Chain', h: 128, swap: 'BNB', ys: parse('0.059,0.063,0.06,0.009,0,0.042,0.036,0.092,0.152,0.135,0.158,0.154,0.203,0.211,0.263,0.227,0.213,0.228,0.25,0.298,0.252,0.253,0.25,0.32,0.382,0.445,0.469,0.425,0.491,0.497,0.511,0.567,0.625,0.623,0.695,0.72,0.734,0.738,0.729,0.712,0.757,0.796,0.746,0.723,0.782,0.758,0.763,0.797,0.823,0.821,0.791,0.787,0.748,0.793,0.847,0.917,0.866,0.891,0.895,0.887,0.85,0.837,0.804,0.872,0.823,0.839,0.805,0.819,0.795,0.779,0.732,0.76,0.825,0.87,0.834,0.835,0.875,0.897,0.947,0.95,0.971,0.92,0.884,0.902,0.912,0.899,0.846,0.821,0.887,0.955,1') },
   USDT: { id: 'USDT', name: 'Tether', price: '$1.00', up: true, chg: '+0.00 (0.00%)', cap: '$118.2B', vol: '$46.9B', net: 'Multi-chain', h: 119, swap: 'USDT', ys: parse('0.976,0.924,0.878,0.934,0.896,0.901,0.959,0.977,1,0.984,0.988,0.932,0.941,0.99,0.987,0.914,0.844,0.855,0.858,0.874,0.863,0.837,0.769,0.704,0.752,0.781,0.815,0.817,0.788,0.793,0.767,0.796,0.761,0.69,0.69,0.735,0.761,0.725,0.681,0.611,0.669,0.662,0.643,0.572,0.546,0.494,0.51,0.461,0.409,0.345,0.289,0.294,0.246,0.219,0.215,0.159,0.131,0.095,0.056,0,0.044,0.086,0.128,0.068,0.108,0.164,0.171,0.19,0.189,0.149,0.147,0.159,0.157,0.171,0.099,0.086,0.142,0.101,0.121,0.108,0.08,0.092,0.063,0.056,0.087,0.08,0.081,0.093,0.145,0.139,0.131') },
   USDC: { id: 'USDC', name: 'USD Coin', price: '$1.00', up: true, chg: '+0.00 (0.00%)', cap: '$34.1B', vol: '$7.2B', net: 'Multi-chain', h: 109, swap: 'USDC', ys: parse('0.924,0.972,0.896,0.951,0.898,0.882,0.888,0.882,0.883,0.887,0.889,0.939,0.918,0.892,0.844,0.894,0.924,0.951,0.951,0.95,1,0.961,0.984,0.927,0.979,0.989,0.908,0.836,0.865,0.887,0.835,0.853,0.875,0.887,0.824,0.766,0.829,0.764,0.699,0.733,0.68,0.639,0.677,0.714,0.755,0.69,0.739,0.758,0.781,0.81,0.745,0.78,0.742,0.796,0.744,0.706,0.723,0.781,0.713,0.766,0.779,0.761,0.766,0.721,0.739,0.715,0.644,0.691,0.737,0.687,0.614,0.625,0.564,0.562,0.613,0.605,0.554,0.603,0.612,0.599,0.534,0.493,0.491,0.476,0.406,0.424,0.363,0.293,0.348,0.277,0') },
   XRP: { id: 'XRP', name: 'XRP', price: '$0.5200', up: true, chg: '+0.0045 (0.86%)', cap: '$29.4B', vol: '$1.1B', net: 'XRP Ledger', h: 142, ys: parse('0.936,0.939,0.974,1,0.951,0.922,0.882,0.858,0.839,0.86,0.86,0.87,0.832,0.863,0.904,0.93,0.922,0.954,0.953,0.936,0.91,0.873,0.851,0.818,0.858,0.849,0.808,0.81,0.766,0.796,0.737,0.741,0.692,0.658,0.673,0.658,0.619,0.663,0.599,0.598,0.581,0.524,0.485,0.49,0.462,0.406,0.354,0.313,0.28,0.265,0.21,0.149,0.13,0.123,0.158,0.149,0.085,0.093,0.132,0.15,0.133,0.069,0.039,0.022,0.016,0.046,0.043,0,0,0,0.001,0.009,0.03,0.015,0.042,0.039,0.026,0.025,0.02,0.012,0.048,0.087,0.108,0.092,0.07,0.105,0.122,0.117,0.158,0.165,0.201') },
@@ -377,8 +379,10 @@ const RANGE_SEEDS = ['1H', '1D', '1W', '1M', '1Y', 'All']
 
 function CoinModal() {
   const a = useApp()
-  const c = COIN_INFO[a.coinToken] ?? COIN_INFO.ETH
+  const c = COIN_INFO[a.coinToken] ?? COIN_INFO.KTI
   const [range, setRange] = useState('1D')
+  const [pick, setPick] = useState(false)
+  const [pq, setPq] = useState('')
   const ys = useMemo(() => {
     if (range === '1D') return c.ys
     let s = RANGE_SEEDS.indexOf(range) * 7919 + c.name.length * 97
@@ -399,7 +403,57 @@ function CoinModal() {
   const col = c.up ? '#3ddc97' : '#ff6685'
   const last = pts[90]
   return (
-    <Modal onClose={a.close} className="coin-modal" title={<><Coin id={c.id} size={36} /> {c.name} <span className="sym">{c.id}</span></>}>
+    <Modal
+      onClose={a.close}
+      className="coin-modal"
+      title={
+        /* the coin name is a select: pick another coin and its chart loads in this same dialog */
+        <button className={'cm-pick' + (pick ? ' on' : '')} onClick={() => setPick((v) => !v)} aria-haspopup="listbox" aria-expanded={pick}>
+          <Coin id={c.id} size={36} /> {c.name} <span className="sym">{c.id}</span>
+          <Icon n="chevron" size={18} className="chev" />
+        </button>
+      }
+    >
+      {pick && (
+        <div className="cm-picker" role="listbox">
+          <label className="m-search">
+            <Icon n="search" size={18} />
+            <input autoFocus placeholder="Search coin" value={pq} onChange={(e) => setPq(e.target.value)} />
+          </label>
+          <div className="cm-pick-list">
+            {Object.values(COIN_INFO)
+              .filter((x) => (x.name + x.id).toLowerCase().includes(pq.trim().toLowerCase()))
+              .sort((x, y) => (x.id === 'KTI' ? -1 : y.id === 'KTI' ? 1 : 0))
+              .map((x) => (
+                <button
+                  key={x.id}
+                  role="option"
+                  aria-selected={x.id === c.id}
+                  className={'cm-opt' + (x.id === c.id ? ' on' : '')}
+                  onClick={() => {
+                    a.openCoin(x.id as never)
+                    setPick(false)
+                    setPq('')
+                  }}
+                >
+                  <Coin id={x.id} size={28} />
+                  <span className="grow">
+                    <b>{x.name}</b>
+                    <small>
+                      {x.id} · {x.net}
+                    </small>
+                  </span>
+                  <span className="r">
+                    <b>{x.price}</b>
+                    <small className={x.up ? 'up' : 'down'}>
+                      {x.up ? '▲' : '▼'} {x.chg.match(/\(([^)]+)\)/)?.[1]}
+                    </small>
+                  </span>
+                </button>
+              ))}
+          </div>
+        </div>
+      )}
       <div className="cm-price">
         <b>{c.price}</b>
         <span className={'cm-delta' + (c.up ? '' : ' down')}>
@@ -431,7 +485,7 @@ function CoinModal() {
           <b>{c.vol}</b>
         </div>
         <div>
-          <small>Rede</small>
+          <small>Network</small>
           <b>{c.net}</b>
         </div>
       </div>
@@ -441,7 +495,7 @@ function CoinModal() {
           className="btn white block cm-swap"
           onClick={() => {
             const t = c.swap
-            if (t) a.set({ view: 'swap', modal: null, to: t === a.from ? a.to : t === 'ETH' ? 'KTI' : t, from: t === 'ETH' ? 'ETH' : a.from === t ? 'ETH' : a.from })
+            if (t) a.set({ view: 'swap', modal: null, to: t === a.from ? a.to : t === 'BNB' ? 'KTI' : t, from: t === 'BNB' ? 'BNB' : a.from === t ? 'BNB' : a.from })
             else a.toast({ tone: 'info', title: `${c.name} isn't available yet`, body: 'This token is not part of the prototype list' })
             window.scrollTo({ top: 0, behavior: 'smooth' })
           }}
@@ -456,16 +510,19 @@ function CoinModal() {
 }
 
 /* ───────────── Search (I6) + network filter (I6b) ───────────── */
-const SEARCH_TOKENS: { id: TokenId; name: string; sub: string; price: string; chg: string; up?: boolean; native?: boolean }[] = [
-  { id: 'KTI', name: 'KTI Coin', sub: 'KTI · 1 network', price: '$0.000025', chg: '▲ 4.80%', up: true, native: true },
+const SEARCH_TOKENS: { id: TokenId; name: string; sub: string; price: string; chg: string; up?: boolean; down?: boolean; native?: boolean }[] = [
+  { id: 'KTI', name: 'KTI Coin', sub: 'KTI · BNB Chain only', price: '$0.000025', chg: '▲ 4.80%', up: true, native: true },
+  { id: 'BNB', name: 'BNB', sub: 'BNB · $86.3B FDV', price: '$600.00', chg: '▼ 0.42%', down: true },
   { id: 'USDT', name: 'Tether USD', sub: 'USDT · $118.2B FDV', price: '$1.00', chg: '0.00%' },
-  { id: 'ETH', name: 'Ethereum', sub: 'ETH · $421.6B FDV', price: '$3,500.00', chg: '▲ 1.08%', up: true },
   { id: 'USDC', name: 'USD Coin', sub: 'USDC · $61.3B FDV', price: '$1.00', chg: '0.00%' },
+  { id: 'ETH', name: 'Ethereum', sub: 'ETH · $421.6B FDV', price: '$3,500.00', chg: '▲ 1.08%', up: true },
 ]
+/* every KTI pair lives on BNB Chain */
 const POOLS: [TokenId, TokenId, string][] = [
-  ['ETH', 'KTI', 'KOTAI pool · 0.3%'],
+  ['BNB', 'KTI', 'KOTAI pool · 0.3%'],
   ['KTI', 'USDT', 'KOTAI pool · 0.3%'],
-  ['ETH', 'USDT', 'KOTAI pool · 0.05%'],
+  ['KTI', 'USDC', 'KOTAI pool · 0.3%'],
+  ['BNB', 'USDT', 'KOTAI pool · 0.05%'],
 ]
 
 function NetFilter({ sel, setSel, onClose }: { sel: Set<string>; setSel: (s: Set<string>) => void; onClose: () => void }) {
@@ -576,7 +633,7 @@ function SearchOverlay() {
                   <span className="coin-badge s40">
                     <Coin id={t.id} size={40} />
                     <span className="nb">
-                      <Coin id="ETH" size={12} />
+                      <Coin id="BNB" size={12} />
                     </span>
                   </span>
                   <span className="grow">
@@ -587,7 +644,7 @@ function SearchOverlay() {
                   </span>
                   <span className="r">
                     <b>{t.price}</b>
-                    <small className={t.up ? 'up' : ''}>{t.chg}</small>
+                    <small className={t.up ? 'up' : t.down ? 'down' : ''}>{t.chg}</small>
                   </span>
                 </button>
               ))}
@@ -614,7 +671,7 @@ function SearchOverlay() {
                     <b>
                       {x} / {y}
                     </b>
-                    <small>Ethereum</small>
+                    <small>BNB Chain</small>
                   </span>
                   <span className="fee">{fee}</span>
                   <Icon n="chevronR" size={16} className="go" />
@@ -733,8 +790,12 @@ function ReviewModal() {
         <div className="kv">
           <span>Exchange rate</span>
           <b>
-            1 {a.from} = {fmt(q.rate, 0)} {a.to}
+            1 {a.from} = {fmt(q.rate, q.rate < 1 ? 8 : 0)} {a.to}
           </b>
+        </div>
+        <div className="kv">
+          <span>{a.to} price</span>
+          <b>{unitPrice(TOKENS[a.to].price)}</b>
         </div>
         <div className="kv">
           <span>Price impact</span>
@@ -827,7 +888,7 @@ function SwapFlowModal({ kind }: { kind: 'signing' | 'processing' }) {
         : 'Continue in your wallet · 1 of 3 completed'
   const title = rejected ? 'Signature rejected' : processing ? 'Swap in progress' : 'You’re swapping'
   const sub = processing
-    ? 'Sent to the Ethereum network and being confirmed.'
+    ? 'Sent to BNB Chain and being confirmed.'
     : rejected
       ? 'Nothing was sent. You can try again.'
       : 'Follow the steps below. Nothing moves until you sign.'
@@ -997,7 +1058,7 @@ function DoneModal() {
             <Icon n={copied ? 'check' : 'copy'} size={16} />
           </button>
         </div>
-        <button className="m-link" onClick={() => a.toast({ tone: 'info', title: 'View on explorer', body: 'Opens etherscan.io in the real product' })}>
+        <button className="m-link" onClick={() => a.toast({ tone: 'info', title: 'View on explorer', body: 'Opens bscscan.com in the real product' })}>
           View on explorer <Icon n="ext" size={14} />
         </button>
       </div>

@@ -783,3 +783,114 @@
 .cp-dock .btn {
   width: 220px;
 }
+
+/* ───────── Swap card · moving gradient border on the fields (same turn as the buttons) ───────── */
+.field::before {
+  background: var(--gb, linear-gradient(var(--ga), rgba(255, 255, 255, 0.72) 0%, #7fb6ff 35%, #7f8fef 68%, #4d9bff 100%));
+  animation: gbTurn 7s linear infinite;
+}
+/* a faint moving ring is always on; it brightens on hover and is full on focus */
+.swap-card .field.gb::before,
+.swap-card .field::before {
+  opacity: 0.35;
+}
+.swap-card .field:hover::before {
+  opacity: 0.7;
+}
+.swap-card .field.focus::before {
+  opacity: 1;
+}
+.swap-card .field.error::before {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .field::before {
+    animation: none;
+  }
+}
+
+/* ───────── Swap card · a little more depth on cards, tabs and buttons ───────── */
+.swap-card .field {
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.swap-card .field.focus {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 38px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(28, 104, 217, 0.12);
+}
+.swap-card .tabs,
+.swap-card .tool,
+.swap-card .ts-btn,
+.swap-card .token-sel,
+.swap-card .flip {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.swap-card .flip {
+  box-shadow: 0 0 0 4px #010308, 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+.swap-card .tab.on {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+}
+.swap-card .details {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 16px 38px rgba(0, 0, 0, 0.42);
+}
+.swap-card .cta .btn {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+/* ───────── Market price bar (both tokens, under the fields) ───────── */
+.price-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pb-item {
+  flex: 1 1 0;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 12px;
+  background: rgba(10, 20, 36, 0.75);
+  border: 1px solid #263e63;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  font-size: 13px;
+  line-height: 16px;
+  white-space: nowrap;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.pb-item:hover {
+  background: var(--bg-hover);
+  border-color: #3c68c8;
+}
+.pb-sym {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+.pb-item b {
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pb-chg {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+.pb-chg.up {
+  color: #2bf5a0;
+}
+.pb-chg.down {
+  color: #ff6685;
+}
+.details .rate small {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+/* the moving ring sits exactly on the field's own 1px border (no double line) */
+.swap-card .field::before {
+  inset: -1px;
+}

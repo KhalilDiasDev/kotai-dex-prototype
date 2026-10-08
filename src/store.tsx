@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { flushSync } from 'react-dom'
-import { ADDRESS, HISTORY, NETWORKS, TOKENS, WALLETS, type HistoryItem, type TokenId } from './data'
+import { ADDRESS, GAS_TOKEN, HISTORY, KTI_NETWORK, NETWORKS, TOKENS, WALLETS, type HistoryItem, type TokenId } from './data'
 
 export type View = 'home' | 'swap'
 export type Tab = 'swap' | 'limit' | 'buy'
@@ -154,8 +154,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     connected: false,
     wasConnected: false,
     walletId: 'kotai',
-    networkId: 'eth',
-    from: 'ETH',
+    networkId: KTI_NETWORK,
+    from: 'BNB',
     to: 'KTI',
     amount: '',
     slippage: 'Auto',
@@ -164,7 +164,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     modalStack: [],
     tokenSide: 'from',
     pendingToken: null,
-    coinToken: 'ETH',
+    coinToken: 'KTI',
     scenario: 'none',
     step: 1,
     toasts: [],
@@ -316,14 +316,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
     if (amountNum <= 0 || s.quoting) return null
     if (s.scenario === 'offline') return { tone: 'offline', text: 'No network connection. Your funds are safe and nothing was sent. We keep trying to reconnect.' }
-    if (s.scenario === 'wrongNetwork') return { tone: 'info', text: 'Your wallet is connected to BNB Chain. Switch to Ethereum to swap these tokens.' }
+    // KTI only exists on BNB Chain: any other network in the wallet blocks the swap until it's switched
+    if (s.scenario === 'wrongNetwork' || s.networkId !== KTI_NETWORK)
+      return {
+        tone: 'info',
+        text: `Your wallet is connected to ${NETWORKS.find((n) => n.id === s.networkId)?.name ?? 'another network'}. KTI only exists on BNB Chain — switch to continue.`,
+      }
     if (s.scenario === 'noRoute') return { tone: 'error', text: 'No route found for this amount. Try a smaller amount or another token.' }
     if (s.scenario === 'highImpact') return { tone: 'warn', text: 'High price impact detected. You may receive fewer tokens than expected.' }
     const bal = TOKENS[s.from].balance
-    if (amountNum === bal && s.from === 'ETH')
-      return { tone: 'warn', text: 'Not enough ETH for network fees. Leave about $2.33 (0.00067 ETH) to swap your full balance.' }
+    if (amountNum === bal && s.from === GAS_TOKEN)
+      return { tone: 'warn', text: 'Not enough BNB for network fees. Leave about $0.18 (0.0003 BNB) to swap your full balance.' }
     return null
-  }, [s.connected, s.wasConnected, s.scenario, s.from, s.quoting, amountNum])
+  }, [s.connected, s.wasConnected, s.scenario, s.from, s.networkId, s.quoting, amountNum])
 
   const fieldError = useMemo(() => {
     if (!s.connected || amountNum <= 0) return null
@@ -338,18 +343,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (amountNum <= 0) return { label: 'Enter an amount', disabled: true, kind: 'primary', action: none }
     if (fieldError) return { label: 'Insufficient balance', disabled: true, kind: 'disabled', action: none }
     if (s.quoting) return { label: 'Please wait…', disabled: true, kind: 'loading', action: none }
-    if (s.scenario === 'wrongNetwork')
+    if (s.scenario === 'wrongNetwork' || s.networkId !== KTI_NETWORK)
       return {
-        label: 'Switch to Ethereum',
+        label: 'Switch to BNB Chain',
         disabled: false,
         kind: 'primary',
         action: () => {
-          setS((o) => ({ ...o, scenario: 'none', networkId: 'eth' }))
+          setS((o) => ({ ...o, scenario: o.scenario === 'wrongNetwork' ? 'none' : o.scenario, networkId: KTI_NETWORK }))
         },
       }
     if (s.scenario === 'offline') return { label: 'Waiting for network', disabled: true, kind: 'disabled', action: none }
     if (s.scenario === 'noRoute') return { label: 'No route available', disabled: true, kind: 'dim', action: none }
-    if (banner && banner.text.startsWith('Not enough ETH')) return { label: 'Not enough ETH for fees', disabled: true, kind: 'disabled', action: none }
+    if (banner && banner.text.startsWith('Not enough BNB')) return { label: 'Not enough BNB for fees', disabled: true, kind: 'disabled', action: none }
     return {
       label: 'Review swap',
       disabled: false,
@@ -362,7 +367,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         } else open('review')
       },
     }
-  }, [s.connected, s.scenario, s.quoting, amountNum, fieldError, banner, open, set])
+  }, [s.connected, s.scenario, s.networkId, s.quoting, amountNum, fieldError, banner, open, set])
 
   const requote = () => {
     window.clearTimeout(quoteTimer.current)
@@ -434,8 +439,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     clearTimers()
     setS((o) => {
       const next: AppState = { ...o, scenario: sc, modal: null, modalStack: [], view: 'swap', quoting: false, connected: true, wasConnected: true }
-      if (!(parseFloat(o.amount) > 0) || parseFloat(o.amount) > 1 || (sc !== 'none' && parseFloat(o.amount) === 1)) next.amount = '0.5'
-      next.networkId = sc === 'wrongNetwork' ? 'bnb' : 'eth'
+      // scenarios run on a pair the wallet can actually afford (BNB → …), below the balance
+      if (TOKENS[o.from].balance < 0.5) {
+        next.from = 'BNB'
+        if (o.to === 'BNB') next.to = 'KTI'
+      }
+      const amt = parseFloat(o.amount)
+      if (!(amt > 0) || amt >= TOKENS[next.from].balance) next.amount = '0.5'
+      next.networkId = sc === 'wrongNetwork' ? 'eth' : KTI_NETWORK
       if (sc === 'highImpact' || sc === 'priceUpdated' || sc === 'accountChanged') next.modal = 'review'
       return next
     })
@@ -443,7 +454,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const setNetwork = useCallback(
     (id: string) => {
-      setS((o) => ({ ...o, networkId: id, modal: null, modalStack: [], scenario: o.scenario === 'wrongNetwork' && id === 'eth' ? 'none' : o.scenario }))
+      setS((o) => ({ ...o, networkId: id, modal: null, modalStack: [], scenario: o.scenario === 'wrongNetwork' && id === KTI_NETWORK ? 'none' : o.scenario }))
       toast({ tone: 'info', title: 'Network changed', body: NETWORKS.find((n) => n.id === id)?.name })
     },
     [toast],

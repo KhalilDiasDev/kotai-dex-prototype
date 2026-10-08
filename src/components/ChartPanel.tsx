@@ -31,6 +31,7 @@ export function seriesFor(range: Range, seed = 0): number[] {
 }
 
 const CHANGE: Record<TokenId, [number, number]> = {
+  BNB: [-2.53, 0.42],
   ETH: [37.4, 1.08],
   KTI: [0.0000011, 4.8],
   USDT: [0, 0],
@@ -50,7 +51,12 @@ export function ChartPanel() {
   const [hover, setHover] = useState<number | null>(null)
   const area = useRef<HTMLDivElement>(null)
   const t = TOKENS[token]
-  const ys = useMemo(() => seriesFor(range, token === 'ETH' ? 0 : token.length), [range, token])
+  const [chg, pct] = CHANGE[token]
+  // a token that is down on the day draws the same curve mirrored in time, so the line really ends lower
+  const ys = useMemo(() => {
+    const base = seriesFor(range, token === 'BNB' ? 0 : token.charCodeAt(0) + token.length)
+    return chg < 0 ? [...base].reverse() : base
+  }, [range, token, chg])
   const W = full ? 1144 : 664
   const H = full ? 520 : 300
   const top = H * 0.4533
@@ -58,7 +64,6 @@ export function ChartPanel() {
   const pts = ys.map((y, i) => [(i / 90) * W, top + y * amp] as const)
   const line = pts.map(([x, y], i) => (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1)).join(' ')
   const areaPath = line + ` L${W} ${H} L0 ${H} Z`
-  const [chg, pct] = CHANGE[token]
   const open = t.price - chg
   const k = (ys[0] - ys[90]) !== 0 ? chg / (ys[0] - ys[90]) : 0
   const priceAt = (i: number) => open + (ys[0] - ys[i]) * k
@@ -88,7 +93,7 @@ export function ChartPanel() {
           <span className="coin-badge">
             <Coin id={token} size={36} />
             <span className="nb">
-              <Coin id="ETH" size={12} />
+              <Coin id="BNB" size={12} />
             </span>
           </span>
           <b>{t.name === 'KTI Coin' ? 'Kotai Coin' : t.name}</b>
@@ -130,7 +135,7 @@ export function ChartPanel() {
           <span className="tri">{up ? '▲' : '▼'}</span>
           <span className="chg">
             {hover === null
-              ? `${chg < 1 && chg > 0 ? '$' + chg.toFixed(7) : '$' + chg.toFixed(2)} (${pct.toFixed(2)}%)`
+              ? `${Math.abs(chg) < 1 && chg !== 0 ? '$' + Math.abs(chg).toFixed(7) : '$' + Math.abs(chg).toFixed(2)} (${pct.toFixed(2)}%)`
               : `$${Math.abs(hd) < 1 ? Math.abs(hd).toFixed(6) : Math.abs(hd).toFixed(2)} (${((Math.abs(hd) / open) * 100).toFixed(2)}%)`}
           </span>
           <span className="when">· {hover === null ? 'Past 24 hours' : when(hover)}</span>
@@ -147,8 +152,8 @@ export function ChartPanel() {
           </defs>
           {hover === null ? (
             <g className="cp-anim" key={range + token + full}>
-              <path d={areaPath} fill="#2bf5a0" />
-              <path d={line} fill="none" stroke="#2bf5a0" strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+              <path d={areaPath} fill={up ? '#2bf5a0' : '#ff6685'} />
+              <path d={line} fill="none" stroke={up ? '#2bf5a0' : '#ff6685'} strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
             </g>
           ) : (
             <>
@@ -164,7 +169,7 @@ export function ChartPanel() {
           )}
         </svg>
         {hover === null ? (
-          <span className="cp-dot" style={{ left: `${(pts[90][0] / W) * 100}%`, top: pts[90][1] }} />
+          <span className={'cp-dot' + (up ? '' : ' red')} style={{ left: `${(pts[90][0] / W) * 100}%`, top: pts[90][1] }} />
         ) : (
           <>
             <span className={'cp-dot' + (up ? '' : ' red')} style={{ left: `${(hx / W) * 100}%`, top: pts[hover][1] }} />

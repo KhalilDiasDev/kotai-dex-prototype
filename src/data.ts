@@ -1,4 +1,4 @@
-export type TokenId = 'ETH' | 'KTI' | 'USDT' | 'BTC' | 'USDC'
+export type TokenId = 'BNB' | 'ETH' | 'KTI' | 'USDT' | 'BTC' | 'USDC'
 
 export interface Token {
   id: TokenId
@@ -11,15 +11,21 @@ export interface Token {
   native?: boolean
 }
 
+/* KTI exists only on BNB Chain (BSC), so every pair in the app is a BEP-20 pair on that network:
+   BNB is the gas token and the default "from", USDT/USDC are the stable pairs, ETH/BTC are the pegged versions. */
+export const KTI_NETWORK = 'bnb'
+export const GAS_TOKEN: TokenId = 'BNB'
+
 export const TOKENS: Record<TokenId, Token> = {
-  ETH: { id: 'ETH', name: 'Ethereum', symbol: 'ETH', price: 3500, balance: 1, networkLabel: 'ETH · Ethereum', change24h: 1.08 },
-  KTI: { id: 'KTI', name: 'KTI Coin', symbol: 'KTI', price: 0.000025, balance: 0, networkLabel: 'KTI · Ethereum', change24h: 4.8, native: true },
-  USDT: { id: 'USDT', name: 'Tether USD', symbol: 'USDT', price: 1, balance: 0, networkLabel: 'USDT · Ethereum', change24h: 0 },
-  BTC: { id: 'BTC', name: 'Bitcoin', symbol: 'BTC', price: 67000, balance: 0, networkLabel: 'BTC · Ethereum', change24h: 0.6 },
-  USDC: { id: 'USDC', name: 'USD Coin', symbol: 'USDC', price: 1, balance: 0, networkLabel: 'USDC · Ethereum', change24h: 0 },
+  BNB: { id: 'BNB', name: 'BNB', symbol: 'BNB', price: 600, balance: 3, networkLabel: 'BNB · BNB Chain', change24h: -0.42 },
+  KTI: { id: 'KTI', name: 'KTI Coin', symbol: 'KTI', price: 0.000025, balance: 0, networkLabel: 'KTI · BNB Chain', change24h: 4.8, native: true },
+  USDT: { id: 'USDT', name: 'Tether USD', symbol: 'USDT', price: 1, balance: 250, networkLabel: 'USDT · BNB Chain', change24h: 0 },
+  USDC: { id: 'USDC', name: 'USD Coin', symbol: 'USDC', price: 1, balance: 0, networkLabel: 'USDC · BNB Chain', change24h: 0 },
+  ETH: { id: 'ETH', name: 'Ethereum', symbol: 'ETH', price: 3500, balance: 0, networkLabel: 'ETH · BNB Chain', change24h: 1.08 },
+  BTC: { id: 'BTC', name: 'Bitcoin', symbol: 'BTC', price: 67000, balance: 0, networkLabel: 'BTCB · BNB Chain', change24h: 0.6 },
 }
 
-export const TOKEN_LIST: Token[] = [TOKENS.KTI, TOKENS.ETH, TOKENS.USDT, TOKENS.BTC, TOKENS.USDC]
+export const TOKEN_LIST: Token[] = [TOKENS.KTI, TOKENS.BNB, TOKENS.USDT, TOKENS.USDC, TOKENS.ETH, TOKENS.BTC]
 
 export interface Network {
   id: string
@@ -28,12 +34,12 @@ export interface Network {
 }
 
 export const NETWORKS: Network[] = [
-  { id: 'eth', name: 'Ethereum', hasKtiPool: true },
   { id: 'bnb', name: 'BNB Chain', hasKtiPool: true },
-  { id: 'poly', name: 'Polygon', hasKtiPool: true },
-  { id: 'arb', name: 'Arbitrum', hasKtiPool: true },
-  { id: 'base', name: 'Base', hasKtiPool: true },
-  { id: 'op', name: 'Optimism', hasKtiPool: true },
+  { id: 'eth', name: 'Ethereum', hasKtiPool: false },
+  { id: 'poly', name: 'Polygon', hasKtiPool: false },
+  { id: 'arb', name: 'Arbitrum', hasKtiPool: false },
+  { id: 'base', name: 'Base', hasKtiPool: false },
+  { id: 'op', name: 'Optimism', hasKtiPool: false },
   { id: 'avax', name: 'Avalanche', hasKtiPool: false },
 ]
 
@@ -65,11 +71,11 @@ export interface HistoryItem {
 }
 
 export const HISTORY: HistoryItem[] = [
-  { from: 'ETH', to: 'USDT', label: '0.5 ETH for 1,280.81 USDT', when: 'Today · 14:32', status: 'Completed' },
-  { from: 'USDT', to: 'KTI', label: '250 USDT for 9,820,000 KTI', when: 'Yesterday · 09:12', status: 'Completed' },
-  { from: 'ETH', to: 'USDC', label: '1.2 ETH for 3,071.4 USDC', when: 'Oct 3 · 18:47', status: 'Completed' },
-  { from: 'USDC', to: 'ETH', label: '100 USDC for 0.028 ETH', when: 'Oct 1 · 11:05', status: 'Failed' },
-  { from: 'ETH', to: 'USDT', label: '0.2 ETH for 512.3 USDT', when: 'Sep 28 · 20:31', status: 'Completed' },
+  { from: 'BNB', to: 'KTI', label: '0.5 BNB for 11,940,000 KTI', when: 'Today · 14:32', status: 'Completed' },
+  { from: 'USDT', to: 'KTI', label: '250 USDT for 9,950,000 KTI', when: 'Yesterday · 09:12', status: 'Completed' },
+  { from: 'BNB', to: 'USDT', label: '1.2 BNB for 718.2 USDT', when: 'Oct 3 · 18:47', status: 'Completed' },
+  { from: 'KTI', to: 'BNB', label: '4,000,000 KTI for 0.166 BNB', when: 'Oct 1 · 11:05', status: 'Failed' },
+  { from: 'USDT', to: 'BNB', label: '120 USDT for 0.199 BNB', when: 'Sep 28 · 20:31', status: 'Completed' },
 ]
 
 export const LANGUAGES = [
@@ -97,5 +103,8 @@ export const fmt = (n: number, max = 4): string => {
   if (!isFinite(n)) return '0'
   return n.toLocaleString('en-US', { maximumFractionDigits: max })
 }
+/** Unit price of a token: cents-level tokens keep their significant digits ($0.000025), the rest read as money ($600.00). */
+export const unitPrice = (n: number): string => (n > 0 && n < 0.01 ? '$' + Number(n.toPrecision(3)).toFixed(Math.min(10, Math.ceil(-Math.log10(n)) + 2)).replace(/0+$/, '') : usd(n))
+export const pctText = (p: number): string => (p === 0 ? '0.00%' : `${p > 0 ? '▲' : '▼'} ${Math.abs(p).toFixed(2)}%`)
 export const usd = (n: number): string =>
   '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })

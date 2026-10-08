@@ -78,7 +78,7 @@ const NAMES: Record<string, [string, string]> = {
 }
 /* price · 24h change (%) — sign matches the trend badge drawn in the Figma hero */
 const MARKET: Record<string, [string, number]> = {
-  xrp: ['$0.5821', 3.12], bnb: ['$584.30', -1.84], usdt: ['$1.0002', 0.02], sol: ['$142.67', -2.37],
+  xrp: ['$0.5821', 3.12], bnb: ['$600.00', -0.42], usdt: ['$1.0002', 0.02], sol: ['$142.67', -2.37],
   usdc: ['$0.9999', 0.01], btc: ['$67,000.00', 0.6], eth: ['$3,500.00', 1.08], kti: ['$0.000025', 4.8],
 }
 
@@ -388,8 +388,8 @@ function LandingDesktop() {
             <div className="lp-prev">
               <div className="mini-field">
                 <div className="mf-top"><span>You send</span><span className="mf-chips"><b>25%</b><b>50%</b><b>75%</b><b>Max</b></span></div>
-                <div className="mf-mid"><span className="mf-amt">0.5</span><span className="mf-tok"><img src="img/f-eth.png" alt="" />ETH<Icon n="chevron" size={12} /></span></div>
-                <div className="mf-bot"><span>≈ $1,750.00</span><span>Balance: 1.0000 ETH</span></div>
+                <div className="mf-mid"><span className="mf-amt">0.5</span><span className="mf-tok"><img src="img/f-bnb.png" alt="" />BNB<Icon n="chevron" size={12} /></span></div>
+                <div className="mf-bot"><span>≈ $300.00</span><span>Balance: 3.0000 BNB</span></div>
               </div>
             </div>
             <div className="lp-step-txt">
@@ -400,7 +400,7 @@ function LandingDesktop() {
           </TiltCard>
           <TiltCard className="lp-step">
             <div className="lp-prev col">
-              <div className="mini-ok"><span>Minimum received</span><b>69,650,000 KTI</b></div>
+              <div className="mini-ok"><span>Minimum received</span><b>11,940,000 KTI</b></div>
               <button className="btn accent block" tabIndex={-1}>Confirm swap</button>
             </div>
             <div className="lp-step-txt">

@@ -1,12 +1,12 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { TOKENS, fmt, usd, type TokenId } from '../data'
+import { TOKENS, fmt, pctText, unitPrice, usd, type TokenId } from '../data'
 import { useApp, type Tab } from '../store'
 import { Anchor } from './Header'
 import { SettingsBody } from './Modals'
 import { Banner, Coin, Icon, Spinner } from './ui'
 
-const QUICK: TokenId[] = ['KTI', 'USDT', 'ETH', 'BTC', 'USDC']
+const QUICK: TokenId[] = ['KTI', 'USDT', 'BNB', 'USDC', 'ETH']
 
 function TokenSelect({ id, onClick }: { id: TokenId; onClick: () => void }) {
   return (
@@ -43,10 +43,11 @@ function useCountdown(active: boolean, onZero: () => void) {
 }
 
 export function HelpTip({ onClose }: { onClose: () => void }) {
+  const a = useApp()
   return (
     <div className="help-tip" role="tooltip" onMouseLeave={onClose}>
       <b>Minimum received</b>
-      <p>The least you'll get if the price moves before your swap confirms. If it would be lower, the swap is cancelled and your ETH stays in your wallet.</p>
+      <p>The least you'll get if the price moves before your swap confirms. If it would be lower, the swap is cancelled and your {a.from} stays in your wallet.</p>
     </div>
   )
 }
@@ -208,7 +209,12 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
             <button
               className={'tool' + (a.chart !== 'off' ? ' on' : '')}
               aria-label="Price chart"
-              onClick={() => (a.isMobile ? a.openCoin(a.from) : a.set({ chart: a.chart === 'off' ? 'side' : 'off' }))}
+              onClick={() => {
+                if (a.isMobile) a.openCoin(a.to === 'KTI' || a.from !== 'KTI' ? a.to : a.from)
+                // from the Home card the chart opens on the Swap screen, next to the same pair
+                else if (a.view === 'home') a.set({ view: 'swap', chart: 'side' })
+                else a.set({ chart: a.chart === 'off' ? 'side' : 'off' })
+              }}
             >
               <Icon n="chart" size={20} />
             </button>
@@ -285,7 +291,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
         </div>
 
         {/* You receive */}
-        <div ref={recvRef} onClick={focusReceive} className={'field' + (recvText !== null ? ' gb focus' : '')}>
+        <div ref={recvRef} onClick={focusReceive} className={'field gb' + (recvText !== null ? ' focus' : '')}>
           <div className={'field-top' + (hasAmt ? ' tall' : '')}>
             <span className="f-label">
               {a.isMobile && <Icon n="download" size={16} />}You receive (estimated)
@@ -333,10 +339,33 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
           </div>
         </div>
 
+        {/* market price of both tokens, always in view where the amounts are decided; each one opens its chart */}
+        <div className="price-bar" aria-label="Market prices">
+          {[a.from, a.to].map((id) => {
+            const t = TOKENS[id]
+            return (
+              <button key={id} className="pb-item" onClick={() => a.openCoin(id)} aria-label={`${t.symbol} price and chart`}>
+                <Coin id={id} size={16} />
+                <span className="pb-sym">{t.symbol}</span>
+                <b>{unitPrice(t.price)}</b>
+                <span className={'pb-chg' + (t.change24h > 0 ? ' up' : t.change24h < 0 ? ' down' : '')}>{pctText(t.change24h)}</span>
+              </button>
+            )
+          })}
+        </div>
+
         {showDetails && (
           <div className="details">
             <div className="d-head">
-              <span className="rate">{noRoute ? 'No route available' : `1 ${a.from} = ${fmt(q.rate, q.rate < 1 ? 6 : 0)} ${a.to}`}</span>
+              <span className="rate">
+                {noRoute ? (
+                  'No route available'
+                ) : (
+                  <>
+                    1 {a.from} = {fmt(q.rate, q.rate < 1 ? 6 : 0)} {a.to} <small>({unitPrice(from.price)})</small>
+                  </>
+                )}
+              </span>
               <span className="meta">
                 <Icon n="clock" size={14} /> {a.quoting ? 'Finding the best price…' : `Refreshes in ${secs}s`}
               </span>

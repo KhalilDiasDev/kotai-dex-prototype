@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { ADDRESS, CURRENCIES, LANGUAGES, NETWORKS } from '../data'
+import { ADDRESS, CURRENCIES, LANGUAGES, NETWORKS, TOKENS, TOKEN_LIST, fmt, usd } from '../data'
 import { useApp, type ModalKind } from '../store'
 import { Coin, Icon, Logo, Net, usePresence } from './ui'
 
@@ -101,14 +101,16 @@ export function WalletMenuBody() {
       </div>
       <div className="wm-bal">
         <span className="cap12">Balance</span>
-        <b>$3,500.00</b>
-        <span className="cap12 hi">1.0000 ETH · 0 KTI</span>
+        <b>{usd(TOKEN_LIST.reduce((sum, t) => sum + t.balance * t.price, 0))}</b>
+        <span className="cap12 hi">
+          {TOKENS.BNB.balance.toFixed(4)} BNB · {fmt(TOKENS.USDT.balance, 2)} USDT · {fmt(TOKENS.KTI.balance, 0)} KTI
+        </span>
       </div>
       <div className="wm-list">
         <button className="dd-item" onClick={copy}>
           <Icon n="copy" size={18} /> Copy address
         </button>
-        <button className="dd-item" onClick={() => a.toast({ tone: 'info', title: 'View on explorer', body: 'Opens etherscan.io in the real product' })}>
+        <button className="dd-item" onClick={() => a.toast({ tone: 'info', title: 'View on explorer', body: 'Opens bscscan.com in the real product' })}>
           <Icon n="ext" size={18} /> View on explorer
         </button>
         <button className="dd-item" onClick={() => a.open('history')}>

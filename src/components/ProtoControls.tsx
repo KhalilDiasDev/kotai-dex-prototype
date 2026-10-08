@@ -27,11 +27,11 @@ export function ProtoControls() {
             </button>
           ))}
           <h4>Atalhos</h4>
-          <button className="opt" onClick={() => a.set({ view: 'swap', amount: '1.5', connected: true, wasConnected: true, scenario: 'none', modal: null })}>
-            Preparar · saldo insuficiente (1,5 ETH)
+          <button className="opt" onClick={() => a.set({ view: 'swap', from: 'BNB', to: 'KTI', networkId: 'bnb', amount: '4.5', connected: true, wasConnected: true, scenario: 'none', modal: null })}>
+            Preparar · saldo insuficiente (4,5 BNB)
           </button>
-          <button className="opt" onClick={() => a.set({ view: 'swap', amount: '1', connected: true, wasConnected: true, scenario: 'none', modal: null })}>
-            Preparar · ETH insuficiente para taxas (1 ETH)
+          <button className="opt" onClick={() => a.set({ view: 'swap', from: 'BNB', to: 'KTI', networkId: 'bnb', amount: '3', connected: true, wasConnected: true, scenario: 'none', modal: null })}>
+            Preparar · BNB insuficiente para taxas (3 BNB)
           </button>
           <button className="opt" onClick={() => a.set({ view: 'swap', connected: false, wasConnected: true, amount: '0.5', scenario: 'none', modal: null })}>
             Preparar · carteira desconectada (valores mantidos)
