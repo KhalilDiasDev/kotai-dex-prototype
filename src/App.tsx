@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BottomNav } from './components/BottomNav'
+import { BottomNav, ConnectFab } from './components/BottomNav'
 import { ChartPanel } from './components/ChartPanel'
 import { Header } from './components/Header'
 import { IconTips } from './components/IconTips'
@@ -89,6 +89,7 @@ function Shell() {
         )}
       </div>
       {compactNav && <BottomNav />}
+      {a.isMobile && <ConnectFab />}
       <Modals />
       {/* every notification lands top-right, under the header */}
       <Toasts list={a.toasts} />

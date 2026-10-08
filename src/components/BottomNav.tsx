@@ -28,3 +28,16 @@ export function BottomNav() {
     </nav>
   )
 }
+
+/* Mobile · while disconnected, "Connect wallet" floats in the bottom corner (under the prototype toggle);
+   once connected it disappears and the header shows the wallet select as usual */
+export function ConnectFab() {
+  const a = useApp()
+  if (a.connected || a.modal) return null
+  return (
+    <button className="connect-fab" onClick={() => a.open('connect')}>
+      <Icon n="wallet" size={18} />
+      Connect wallet
+    </button>
+  )
+}

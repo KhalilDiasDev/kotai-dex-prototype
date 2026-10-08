@@ -296,9 +296,12 @@ export function Header() {
               </button>
             </Anchor>
           ) : (
-            <button className="btn white sm" onClick={() => a.open('connect')}>
-              {a.isMobile ? 'Connect' : 'Connect wallet'}
-            </button>
+            // on phones the connect action lives in the floating corner button instead
+            !a.isMobile && (
+              <button className="btn white sm" onClick={() => a.open('connect')}>
+                Connect wallet
+              </button>
+            )
           )}
         </div>
       </div>

@@ -378,6 +378,10 @@
     right: 12px;
     bottom: calc(84px + env(safe-area-inset-bottom));
   }
+  /* with the floating Connect button in the corner, the prototype toggle sits above it */
+  body:has(.connect-fab) .proto {
+    bottom: calc(140px + env(safe-area-inset-bottom));
+  }
   /* room for the bottom bar */
   .app {
     padding-bottom: calc(72px + env(safe-area-inset-bottom));
@@ -703,4 +707,35 @@
 }
 .ts-opt.on svg {
   color: #7fb6ff;
+}
+
+/* Mobile · floating Connect wallet */
+.connect-fab {
+  position: fixed;
+  right: 12px;
+  bottom: calc(84px + env(safe-area-inset-bottom));
+  z-index: 46;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px 0 16px;
+  border-radius: var(--radius-full);
+  background: #fff;
+  color: #050d18;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), 0 0 0 4px rgba(127, 182, 255, 0.12);
+  animation: fabIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s;
+}
+.connect-fab:active {
+  transform: scale(0.96);
+}
+@keyframes fabIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.95);
+  }
 }
