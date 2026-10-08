@@ -213,6 +213,7 @@
     margin-left: auto;
   }
   .s-results {
+    position: static; /* lets the network dropdown anchor to the sheet, right under its button */
     padding: 8px;
     background: transparent;
     border: 0;
@@ -221,16 +222,17 @@
   .s-row .fee {
     display: none;
   }
+  /* network filter stays a dropdown under its button (not a second sheet over the search) */
   .net-filter {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: auto;
-    bottom: 0;
-    width: auto;
-    border-radius: 28px 28px 0 0;
-    background: #0a1424;
-    animation: sheetUp 0.3s cubic-bezier(0.2, 0.85, 0.25, 1);
+    position: absolute;
+    left: 16px;
+    right: auto;
+    top: 64px;
+    bottom: auto;
+    width: min(340px, calc(100% - 32px));
+    max-height: calc(100% - 80px);
+    overflow-y: auto;
+    border-radius: 16px;
   }
 
   /* history (I9 mobile) → sheet */
