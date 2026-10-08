@@ -739,3 +739,40 @@
     transform: translateY(12px) scale(0.95);
   }
 }
+
+/* ───────── Hover: clickable text turns pure white (with a faint glow) ───────── */
+@media (hover: hover) {
+  .nav-item:hover,
+  .tab:hover,
+  .tool:hover,
+  .icon-btn:hover,
+  .pill-btn:hover,
+  .chip:hover,
+  .dd-item:hover,
+  .dd-title.back:hover,
+  .ts-opt:hover,
+  .np-item:hover,
+  .bn-item:hover,
+  .cp-range button:hover,
+  .cp-switch button:hover,
+  .s-row:hover,
+  .hist-row:hover,
+  .wm-kotai:hover,
+  .kw-store:hover,
+  .w-tile:hover .nm,
+  .proto-panel .opt:hover,
+  .m-link:hover,
+  .lp-link:hover,
+  .lp-arrow:hover,
+  .btn.accent:hover:not(:disabled),
+  .btn.secondary:hover:not(:disabled) {
+    color: #fff;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.22);
+  }
+  .s-row:hover b,
+  .hist-row:hover b,
+  .np-item:hover b,
+  .dd-item:hover b {
+    color: #fff;
+  }
+}
