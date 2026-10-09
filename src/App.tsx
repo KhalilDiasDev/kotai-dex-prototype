@@ -65,11 +65,20 @@ function Background({ plain }: { plain: boolean }) {
 
 function Toasts({ list }: { list: Toast[] }) {
   const a = useApp()
+  // closing with the X plays the same "back to the right edge" exit before the toast is removed
+  const [leaving, setLeaving] = useState<number[]>([])
+  const dismiss = (id: number) => {
+    setLeaving((l) => [...l, id])
+    window.setTimeout(() => {
+      a.dismissToast(id)
+      setLeaving((l) => l.filter((x) => x !== id))
+    }, 300)
+  }
   if (!list.length) return null
   return (
     <div className="toasts top" aria-live="polite">
       {list.map((t) => (
-        <div key={t.id} className={'toast ' + t.tone}>
+        <div key={t.id} className={'toast ' + t.tone + (leaving.includes(t.id) ? ' out' : '')}>
           <span className="ti">
             <Icon n={t.tone === 'success' ? 'check' : t.tone === 'error' ? 'warn' : 'info'} size={15} sw={2.2} />
           </span>
@@ -79,7 +88,7 @@ function Toasts({ list }: { list: Toast[] }) {
             {/* only the "this isn't in the prototype" notices keep a second line, saying exactly that */}
             {t.body && /prototype|real product/i.test(t.body) && <div className="tb">Not available in this prototype</div>}
           </div>
-          <button className="x" onClick={() => a.dismissToast(t.id)} aria-label="Dismiss">
+          <button className="x" onClick={() => dismiss(t.id)} aria-label="Dismiss">
             <Icon n="x" size={14} sw={2} />
           </button>
           <span className="track" />
