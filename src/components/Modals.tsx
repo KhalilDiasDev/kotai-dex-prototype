@@ -313,6 +313,11 @@ function TokenSelectModal() {
       <span className="grow">
         <b>
           {t.id === 'USDT' ? 'Tether' : t.name}
+          {t.id === current && (
+            <span className="tok-sel">
+              <Icon n="check" size={11} sw={3} /> Selected
+            </span>
+          )}
         </b>
         <small>
           {t.networkLabel} · <span className="tok-price">{unitPrice(t.price)}</span>
@@ -698,6 +703,8 @@ function SearchOverlay() {
             <input autoFocus placeholder="Search tokens, pools or address" value={q} onChange={(e) => setQ(e.target.value)} />
             <kbd>Esc</kbd>
           </label>
+          {/* the network list is anchored to its own button */}
+          <span className="s-nets-wrap">
           <button className={'s-nets' + (filter ? ' on' : '')} onClick={() => setFilter((v) => !v)}>
             <span className="stack3">
               {icons.map((id) => (
@@ -709,6 +716,8 @@ function SearchOverlay() {
             {sel.size > 3 && <span className="plus">+{sel.size - 3}</span>}
             <Icon n="chevron" size={18} className="chev" />
           </button>
+          {filter && <NetFilter sel={sel} setSel={setSel} onClose={() => setFilter(false)} />}
+          </span>
           <button className="s-close" onClick={a.close} aria-label="Close search">
             <Icon n="x" size={18} />
           </button>
@@ -779,7 +788,6 @@ function SearchOverlay() {
           )}
           {tab === 'Wallets' && <p className="m-empty">Paste a wallet address to look it up.</p>}
           {toks.length === 0 && pools.length === 0 && tab !== 'Wallets' && <p className="m-empty">Nothing found for “{q}”.</p>}
-          {filter && <NetFilter sel={sel} setSel={setSel} onClose={() => setFilter(false)} />}
         </div>
       </div>
     </div>
