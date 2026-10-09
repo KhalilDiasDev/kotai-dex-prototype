@@ -1096,3 +1096,23 @@ select {
     opacity: 0.22;
   }
 }
+
+/* ───────── Swap toolbar shares the cards' surface: tabs, chart and settings read as part of the swap ───────── */
+.swap-card .tabs,
+.swap-card .tool,
+.swap-card .ts-btn {
+  background: var(--bg-field);
+}
+.swap-card .tool:hover,
+.swap-card .tool.on {
+  background: #14274d;
+}
+/* the price chart panel sits on the same surface as the swap cards */
+.chart-panel {
+  background: var(--bg-field);
+  border-color: rgba(46, 69, 115, 0.22);
+}
+.chart-panel .cp-switch,
+.chart-panel .cp-range {
+  background: rgba(5, 12, 26, 0.55);
+}
