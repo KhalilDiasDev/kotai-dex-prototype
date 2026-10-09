@@ -559,7 +559,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
           /* empty wallet: the ways to add funds are already here, no button in between */
           <div className="funds-inline">
             <span className="fi-title">Add funds to start trading</span>
-            <FundOptions compact />
+            <FundOptions cards />
           </div>
         ) : (
           <div className="cta">

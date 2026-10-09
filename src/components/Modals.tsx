@@ -772,10 +772,10 @@ export const FUND_OPTIONS: { icon: string; title: string; text: string; tone: st
   { icon: 'arrowDown', title: 'Transfer from wallet', text: 'Move funds from another wallet.', tone: 'wallet' },
   { icon: 'bank', title: 'Transfer from account', text: 'Move funds from a trading platform.', tone: 'account' },
 ]
-export function FundOptions({ compact }: { compact?: boolean }) {
+export function FundOptions({ compact, cards }: { compact?: boolean; cards?: boolean }) {
   const a = useApp()
   return (
-    <div className={'fund-list' + (compact ? ' sm' : '')}>
+    <div className={'fund-list' + (compact ? ' sm' : '') + (cards ? ' cards' : '')}>
       {FUND_OPTIONS.map((o) => (
         <button key={o.title} className="fund-opt" onClick={() => a.toast({ tone: 'info', title: o.title, body: 'Opens this flow in the real product' })}>
           <span className={'fund-ic ' + o.tone}>

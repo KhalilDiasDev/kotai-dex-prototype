@@ -2501,3 +2501,47 @@ body:has(.hist-scrim) .help-fab {
   font-size: 13px;
   line-height: 18px;
 }
+
+/* ───────── Add funds as three cards side by side (swap screen, empty wallet) ───────── */
+.fund-list.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.fund-list.cards .fund-opt {
+  height: 100%;
+  gap: 12px;
+  padding: 16px 14px;
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+}
+.fund-list.cards .fund-ic {
+  width: 36px;
+  height: 36px;
+}
+.fund-list.cards b {
+  font-size: 15px;
+  line-height: 19px;
+}
+.fund-list.cards small {
+  font-size: 12px;
+  line-height: 16px;
+}
+@media (max-width: 720px) {
+  /* phones: the same three cards, stacked and roomy */
+  .fund-list.cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .fund-list.cards .fund-opt {
+    padding: 16px 18px;
+  }
+  .fund-list.cards b {
+    font-size: 17px;
+    line-height: 22px;
+  }
+  .fund-list.cards small {
+    font-size: 14px;
+    line-height: 19px;
+  }
+}
