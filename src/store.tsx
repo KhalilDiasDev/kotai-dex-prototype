@@ -468,7 +468,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   )
 
   const disconnect = useCallback(() => {
-    setS((o) => ({ ...o, connected: false, modal: null, modalStack: [], scenario: 'none', quoting: false }))
+    // disconnecting on purpose starts clean: the typed amounts go away with the wallet
+    setS((o) => ({ ...o, connected: false, wasConnected: false, amount: '', modal: null, modalStack: [], scenario: 'none', quoting: false }))
   }, [])
 
   const setScenario = useCallback((sc: Scenario) => {
