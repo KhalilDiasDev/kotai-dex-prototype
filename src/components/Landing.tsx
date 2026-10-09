@@ -274,7 +274,7 @@ export default function LandingDesktop() {
           <TiltCard className="lp-step">
             <div className="lp-prev">
               <div className="mini-field">
-                <div className="mf-top"><span>You send</span><span className="mf-chips"><b>25%</b><b>50%</b><b>75%</b><b>Max</b></span></div>
+                <div className="mf-top"><span>Send</span><span className="mf-chips"><b>25%</b><b>50%</b><b>75%</b><b>Max</b></span></div>
                 <div className="mf-mid"><span className="mf-amt">0.5</span><span className="mf-tok"><img src="img/f-bnb.webp" alt="" />BNB<Icon n="chevron" size={12} /></span></div>
                 <div className="mf-bot"><span>$300.00</span><span>Balance: 3.0000 BNB</span></div>
               </div>

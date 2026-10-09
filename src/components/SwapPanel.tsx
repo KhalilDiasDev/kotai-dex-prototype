@@ -310,7 +310,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
         <div ref={sendRef} onClick={focusAmount} className={'field gb' + (focus ? ' focus' : '') + (a.fieldError ? ' error' : '')}>
           <div className="field-top">
             <span className="f-label">
-              <Icon n="upload" size={16} />You send
+              <Icon n="upload" size={16} />Send
             </span>
             {/* desktop: the % shortcuts replace the balance text only while the card is hovered or focused (cleaner at rest);
                 touch: they show while typing, as before */}
@@ -393,7 +393,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
         <div ref={recvRef} onClick={focusReceive} className={'field gb' + (recvText !== null ? ' focus' : '')}>
           <div className="field-top">
             <span className="f-label">
-              <Icon n="download" size={16} />You receive
+              <Icon n="download" size={16} />Receive
             </span>
             {/* quick token picks stay available after choosing a token or typing an amount */}
             {!a.isMobile && (

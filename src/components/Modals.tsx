@@ -910,7 +910,7 @@ function Summary() {
     <div className="sum">
       <div className="sum-row">
         <div>
-          <small>You send</small>
+          <small>Send</small>
           <b>
             {fmt(a.amountNum)} {a.from}
           </b>
@@ -923,7 +923,7 @@ function Summary() {
       </div>
       <div className="sum-row">
         <div>
-          <small>You receive</small>
+          <small>Receive</small>
           <b>
             {fmt(q.out, 0)} {a.to}
           </b>
@@ -1206,7 +1206,7 @@ function DoneModal() {
       </div>
       <div className="m-box g14">
         <div className="kv tall">
-          <span>You sent</span>
+          <span>Sent</span>
           <span className="amt">
             <span>
               <b className="red">
@@ -1218,7 +1218,7 @@ function DoneModal() {
           </span>
         </div>
         <div className="kv tall">
-          <span>You received</span>
+          <span>Received</span>
           <span className="amt">
             <span>
               <b className="green">
