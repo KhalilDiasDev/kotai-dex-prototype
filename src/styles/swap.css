@@ -347,16 +347,25 @@
   place-items: center;
   transition: background-color 0.2s, box-shadow 0.2s;
 }
+/* arrowheads: each one turns around and travels the whole line, end to end.
+   Origins and distances are written in the icon's own units (24-unit viewBox), without transform-box,
+   so every browser moves them the same full distance. */
 .flip .hd {
-  transform-box: fill-box;
-  transform-origin: center;
   transition: transform 0.5s cubic-bezier(0.65, 0, 0.25, 1);
 }
-.flip:hover .hd.l {
-  transform: translateY(-15px) scaleY(-1);
+.flip .hd.l {
+  transform-origin: 7px 19.5px; /* centre of the bottom-left head */
 }
-.flip:hover .hd.r {
-  transform: translateY(15px) scaleY(-1);
+.flip .hd.r {
+  transform-origin: 17px 4.5px; /* centre of the top-right head */
+}
+.flip:hover .hd.l,
+.flip:focus-visible .hd.l {
+  transform: translate(0, -15px) scale(1, -1);
+}
+.flip:hover .hd.r,
+.flip:focus-visible .hd.r {
+  transform: translate(0, 15px) scale(1, -1);
 }
 .flip:hover {
   background: var(--bg-hover);
