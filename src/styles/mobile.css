@@ -1054,3 +1054,28 @@ select {
 .token-sel::before {
   opacity: 0.55;
 }
+
+/* ───────── Close / back buttons: one outline everywhere ───────── */
+.sq-btn,
+.coin-modal .sq-btn,
+.pop-head button,
+.s-close,
+.cp-round,
+.help-head button,
+.toast .x {
+  border: 1px solid rgba(60, 104, 200, 0.3) !important;
+  background: rgba(17, 32, 66, 0.45) !important;
+  border-radius: 50% !important;
+  color: var(--text-primary);
+  transition: background-color 0.18s, border-color 0.18s;
+}
+.sq-btn:hover,
+.coin-modal .sq-btn:hover,
+.pop-head button:hover,
+.s-close:hover,
+.cp-round:hover,
+.help-head button:hover,
+.toast .x:hover {
+  border-color: rgba(60, 104, 200, 0.6) !important;
+  background: var(--bg-hover) !important;
+}
