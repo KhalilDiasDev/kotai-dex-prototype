@@ -375,11 +375,16 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
 
         <div className="flip-slot">
           <button className="flip" onMouseDown={(e) => e.preventDefault()} onClick={flipCards} aria-label="Flip tokens">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+{/* drawn 1:1 (24 units = 24px) and scaled as a whole, so "15px" means the same in every browser.
+                Each head sits in a group placed at its own centre: it flips around 0,0 and slides 15 down/up the line. */}
+            <svg className="flip-ic" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M7 21V3M17 3v18" />
-              {/* on hover each arrowhead turns around and travels to the other end of its line */}
-              <path className="hd l" d="M10 18l-3 3-3-3" />
-              <path className="hd r" d="M20 6l-3-3-3 3" />
+              <g transform="translate(7 19.5)">
+                <path className="hd l" d="M3 -1.5l-3 3-3-3" />
+              </g>
+              <g transform="translate(17 4.5)">
+                <path className="hd r" d="M3 1.5l-3-3-3 3" />
+              </g>
             </svg>
           </button>
         </div>
