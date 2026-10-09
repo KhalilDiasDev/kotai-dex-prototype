@@ -1404,9 +1404,16 @@ function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
       ) : null
     case 'network':
       return m || a.modalStack.length ? (
-        <Modal title="Select network" onClose={a.modalStack.length ? a.back : a.close} className="sheet-pop">
+        <Modal title="Select network" onBack={a.modalStack.length ? a.back : undefined} onClose={a.close} className="sheet-pop">
           <div className="dd-list">
-            <NetworkList onPick={a.setNetwork} />
+            <NetworkList
+              onPick={(id) => {
+                const from = a.modalStack[a.modalStack.length - 1]
+                a.setNetwork(id)
+                // opened from another dialog (Select a token): go back to it instead of closing everything
+                if (from) a.set({ modal: from, modalStack: [] })
+              }}
+            />
           </div>
         </Modal>
       ) : null

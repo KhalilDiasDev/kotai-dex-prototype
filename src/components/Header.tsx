@@ -25,7 +25,8 @@ function useDismiss(ref: React.RefObject<HTMLElement>, open: boolean, onClose: (
 export function Anchor({ kinds, children, pop }: { kinds: ModalKind[]; children: ReactNode; pop: ReactNode }) {
   const a = useApp()
   const ref = useRef<HTMLDivElement>(null)
-  const open = !a.isMobile && kinds.includes(a.modal)
+  // a picker pushed from inside a dialog (e.g. network from Select a token) belongs to that dialog, not to this anchor
+  const open = !a.isMobile && kinds.includes(a.modal) && a.modalStack.length === 0
   useDismiss(ref, open, a.close)
   // keep the popover for a beat after closing so it can ease out
   const p = usePresence(open, 160)
