@@ -1013,3 +1013,81 @@
   border: 1px solid rgba(46, 69, 115, 0.9);
   box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6);
 }
+
+/* ───────── Notifications · discreet: small, quiet, one line (a second only for "not in the prototype") ───────── */
+.toast {
+  min-height: 42px;
+  padding: 7px 8px 9px 10px;
+  gap: 9px;
+  border-radius: 14px;
+  background: rgba(10, 20, 36, 0.78);
+  border-color: rgba(46, 69, 115, 0.7);
+  box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.45);
+}
+.toast .ti {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+}
+.toast .tt {
+  font-size: 13.5px;
+  line-height: 18px;
+  font-weight: 500;
+  color: #dfe8f7;
+}
+.toast .tb {
+  font-size: 11.5px;
+  line-height: 14px;
+  color: var(--text-tertiary);
+}
+.toast .x {
+  width: 26px !important;
+  height: 26px !important;
+  background: transparent;
+  border-color: transparent;
+}
+.toasts.top {
+  min-width: 0;
+  max-width: 320px;
+}
+
+/* ───────── Casos de uso button · shows the running case ───────── */
+.pt-active {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 180px;
+  padding: 3px 10px 3px 8px;
+  border-radius: 999px;
+  background: rgba(43, 245, 160, 0.12);
+  border: 1px solid rgba(43, 245, 160, 0.4);
+  color: #2bf5a0;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pt-active i {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+@media (max-width: 720px) {
+  /* phones: with a case running, the chip replaces the label to save room */
+  .proto-toggle.has-case .pt-label {
+    display: none;
+  }
+  .pt-active {
+    max-width: 150px;
+  }
+}
+.toast .track,
+.toast .bar {
+  height: 2px;
+}
+.toast .bar {
+  opacity: 0.7;
+}

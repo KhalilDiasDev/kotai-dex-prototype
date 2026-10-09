@@ -52,6 +52,8 @@ export function ProtoControls() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
+  const active = a.scenario === 'none' ? null : GROUPS.flatMap((g) => g.items).find(([k]) => k === a.scenario)?.[1] ?? null
+
   const shortcut = (p: Parameters<typeof a.set>[0]) => {
     a.set({ ...p, showControls: false })
   }
@@ -97,8 +99,15 @@ export function ProtoControls() {
           </div>
         </div>
       )}
-      <button className={'proto-toggle' + (open ? ' on' : '')} onClick={() => a.set({ showControls: !open })} aria-expanded={open}>
-        <Icon n="sliders" size={16} /> Casos de uso
+      {/* the button remembers which use case is running and says so */}
+      <button className={'proto-toggle' + (open ? ' on' : '') + (active ? ' has-case' : '')} onClick={() => a.set({ showControls: !open })} aria-expanded={open}>
+        <Icon n="sliders" size={16} />
+        <span className="pt-label">Casos de uso</span>
+        {active && (
+          <span className="pt-active">
+            <i /> {active}
+          </span>
+        )}
       </button>
     </div>
   )

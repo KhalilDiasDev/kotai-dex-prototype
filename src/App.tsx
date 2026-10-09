@@ -71,14 +71,16 @@ function Toasts({ list }: { list: Toast[] }) {
       {list.map((t) => (
         <div key={t.id} className={'toast ' + t.tone}>
           <span className="ti">
-            <Icon n={t.tone === 'success' ? 'check' : t.tone === 'error' ? 'warn' : 'info'} size={20} sw={2} />
+            <Icon n={t.tone === 'success' ? 'check' : t.tone === 'error' ? 'warn' : 'info'} size={15} sw={2.2} />
           </span>
           {/* notifications are one short line: just the name of what happened */}
           <div className="tx">
             <div className="tt">{t.title}</div>
+            {/* only the "this isn't in the prototype" notices keep a second line, saying exactly that */}
+            {t.body && /prototype|real product/i.test(t.body) && <div className="tb">Not available in this prototype</div>}
           </div>
           <button className="x" onClick={() => a.dismissToast(t.id)} aria-label="Dismiss">
-            <Icon n="x" size={16} sw={2} />
+            <Icon n="x" size={14} sw={2} />
           </button>
           <span className="track" />
           <span className="bar" />

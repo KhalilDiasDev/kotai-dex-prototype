@@ -830,6 +830,7 @@ function HistoryPanel() {
             <h3>Swap history</h3>
             <span>Wallet {ADDRESS}</span>
           </div>
+          {a.history.length === 0 && <p className="m-empty">No swaps yet.</p>}
           {a.history.map((h, i) => (
             <HistRow key={i} h={h} />
           ))}
