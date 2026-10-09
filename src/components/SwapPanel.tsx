@@ -567,24 +567,18 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
 
         {a.banner && <Banner tone={a.banner.tone}>{a.banner.text}</Banner>}
 
-        {a.noFunds ? (
-          /* empty wallet: the ways to add funds are already here, no button in between */
-          <div className="funds-inline">
-            <span className="fi-title">Add funds to start trading</span>
-            <FundOptions cards />
-          </div>
-        ) : (
-          <div className="cta">
-            <button
-              className={'btn accent block lg' + (a.cta.kind === 'dim' ? ' dim' : '') + (a.cta.kind === 'loading' ? ' loading' : '')}
-              disabled={a.cta.disabled}
-              onClick={a.cta.action}
-            >
-              {a.cta.kind === 'loading' && <Spinner size={18} />}
-              {a.cta.label}
-            </button>
-          </div>
-        )}
+        <div className="cta">
+          <button
+            className={'btn accent block lg' + (a.cta.kind === 'dim' ? ' dim' : '') + (a.cta.kind === 'loading' ? ' loading' : '')}
+            disabled={a.cta.disabled}
+            onClick={a.cta.action}
+          >
+            {a.cta.kind === 'loading' && <Spinner size={18} />}
+            {a.cta.label}
+          </button>
+        </div>
+        {/* empty wallet: the button says what to do ("Add funds") and the ways to do it sit right below */}
+        {a.noFunds && <FundOptions cards />}
       </div>
 
     </div>

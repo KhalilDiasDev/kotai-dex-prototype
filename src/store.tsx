@@ -346,7 +346,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (s.wasConnected && amountNum > 0) return { tone: 'warn', text: 'Wallet disconnected. Your tokens and amounts were kept. Connect again to continue.' }
       return null
     }
-    if (noFunds) return { tone: 'info', text: 'Your wallet has no funds yet. Add funds to start trading — you can buy crypto or transfer it in.' }
     if (amountNum <= 0 || s.quoting) return null
     if (s.scenario === 'offline') return { tone: 'offline', text: 'No network connection. Your funds are safe and nothing was sent. We keep trying to reconnect.' }
     // KTI only exists on BNB Chain: any other network in the wallet blocks the swap until it's switched
