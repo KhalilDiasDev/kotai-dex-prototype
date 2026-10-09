@@ -237,6 +237,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [dismissToast],
   )
 
+  // every action that changes something tells the user in one short notification.
+  // Swap outcomes are announced here, when the flow reaches them (also if the dialog was closed meanwhile).
+  const seen = useRef({ history: s.history.length, modal: s.modal, step: s.step })
+  useEffect(() => {
+    const p = seen.current
+    if (s.history.length > p.history) toast({ tone: 'success', title: 'Swap completed' })
+    if (s.modal === 'failed' && p.modal !== 'failed') toast({ tone: 'error', title: 'Swap not completed' })
+    if (s.step === -2 && p.step !== -2) toast({ tone: 'error', title: 'Signature rejected' })
+    if (s.modal === 'processing' && p.modal !== 'processing' && p.modal !== 'closeProcessing') toast({ tone: 'info', title: 'Swap sent to the network' })
+    seen.current = { history: s.history.length, modal: s.modal, step: s.step }
+  }, [s.history.length, s.modal, s.step, toast])
+
   const open = useCallback((m: ModalKind) => setS((o) => ({ ...o, modal: m, modalStack: [] })), [])
   const push = useCallback((m: ModalKind) => setS((o) => ({ ...o, modal: m, modalStack: [...o.modalStack, o.modal] })), [])
   const back = useCallback(
@@ -386,6 +398,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         kind: 'primary',
         action: () => {
           setS((o) => ({ ...o, scenario: o.scenario === 'wrongNetwork' ? 'none' : o.scenario, networkId: KTI_NETWORK }))
+          toast({ tone: 'success', title: 'Switched to BNB Chain' })
         },
       }
     if (s.scenario === 'offline') return { label: 'Waiting for network', disabled: true, kind: 'disabled', action: none }
@@ -403,7 +416,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         } else open('review')
       },
     }
-  }, [s.connected, s.scenario, s.networkId, s.quoting, amountNum, fieldError, banner, open, set])
+  }, [s.connected, s.scenario, s.networkId, s.quoting, amountNum, fieldError, banner, open, set, toast])
 
   const requote = () => {
     window.clearTimeout(quoteTimer.current)
@@ -470,7 +483,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const disconnect = useCallback(() => {
     // disconnecting on purpose starts clean: the typed amounts go away with the wallet
     setS((o) => ({ ...o, connected: false, wasConnected: false, amount: '', modal: null, modalStack: [], scenario: 'none', quoting: false }))
-  }, [])
+    toast({ tone: 'info', title: 'Wallet disconnected' })
+  }, [toast])
 
   const setScenario = useCallback((sc: Scenario) => {
     clearTimers()

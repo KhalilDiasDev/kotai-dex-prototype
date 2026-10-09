@@ -403,6 +403,7 @@ export function SettingsBody({ onClose }: { onClose: () => void }) {
               onClick={() => {
                 a.set({ slippage: s })
                 setCustom('')
+                a.toast({ tone: 'success', title: `Max slippage: ${s === 'Auto' ? 'Auto (0.5%)' : s + '%'}` })
               }}
             >
               {s === 'Auto' ? 'Auto' : s + '%'}
@@ -949,6 +950,7 @@ function ReviewModal() {
         onClick={() => {
           if (sc === 'priceUpdated' || sc === 'accountChanged') {
             a.set({ scenario: 'none' })
+            a.toast({ tone: 'success', title: sc === 'priceUpdated' ? 'Quote updated to the new rate' : 'Quote reloaded' })
           } else a.startSwap()
         }}
       >

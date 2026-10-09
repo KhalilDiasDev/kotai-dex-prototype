@@ -279,7 +279,7 @@ export function SystemBody() {
         </button>
         {lang
           ? LANGUAGES.map((l) => (
-              <button key={l.name} className={'dd-item opt' + (a.language === l.name ? ' cur' : '')} onClick={() => a.set({ language: l.name })}>
+              <button key={l.name} className={'dd-item opt' + (a.language === l.name ? ' cur' : '')} onClick={() => (a.toast({ tone: 'success', title: `Language: ${l.name}` }), a.set({ language: l.name }))}>
                 <span className="grow">
                   <b>{l.name}</b> <small>{l.native}</small>
                 </span>
@@ -287,7 +287,7 @@ export function SystemBody() {
               </button>
             ))
           : CURRENCIES.map((c) => (
-              <button key={c.code} className={'dd-item opt' + (a.currency === c.code ? ' cur' : '')} onClick={() => a.set({ currency: c.code })}>
+              <button key={c.code} className={'dd-item opt' + (a.currency === c.code ? ' cur' : '')} onClick={() => (a.toast({ tone: 'success', title: `Currency: ${c.code}` }), a.set({ currency: c.code }))}>
                 <span className="grow">
                   <b>{c.code}</b> <small>{c.name}</small>
                 </span>
