@@ -1211,3 +1211,9 @@
   background: rgba(127, 182, 255, 0.26);
   color: #fff;
 }
+
+/* empty wallet: the same breathing room above and below the button, and the cards share the price bar's gap */
+.swap-card > .fund-list.cards {
+  margin-top: 12px;
+  gap: 8px;
+}
