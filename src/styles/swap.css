@@ -1166,3 +1166,25 @@
   background: rgba(127, 182, 255, 0.26);
   color: #fff;
 }
+/* the tooltip's action is a proper pill button (not the round help-icon style it sits next to) */
+.details .k .it-pop .it-link,
+.it-pop .it-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(127, 182, 255, 0.14);
+  border: 1px solid rgba(127, 182, 255, 0.4);
+  color: #cfe3ff;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.details .k .it-pop .it-link:hover,
+.it-pop .it-link:hover {
+  background: rgba(127, 182, 255, 0.26);
+  color: #fff;
+}
