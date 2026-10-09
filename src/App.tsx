@@ -73,12 +73,12 @@ function Toasts({ list }: { list: Toast[] }) {
           <span className="ti">
             <Icon n={t.tone === 'success' ? 'check' : t.tone === 'error' ? 'warn' : 'info'} size={20} sw={2} />
           </span>
+          {/* notifications are one short line: just the name of what happened */}
           <div className="tx">
             <div className="tt">{t.title}</div>
-            {t.body && <div className="tb">{t.body}</div>}
           </div>
           <button className="x" onClick={() => a.dismissToast(t.id)} aria-label="Dismiss">
-            <Icon n="x" size={14} sw={2} />
+            <Icon n="x" size={16} sw={2} />
           </button>
           <span className="track" />
           <span className="bar" />

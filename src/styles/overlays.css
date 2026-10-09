@@ -933,3 +933,83 @@
   flex-direction: column;
   gap: 8px;
 }
+
+/* ───────── Notifications: one compact line + a larger close button ───────── */
+.toast {
+  min-height: 56px;
+  padding: 10px 12px 12px 14px;
+  border-radius: 18px;
+  gap: 12px;
+}
+.toast .tt {
+  font-size: 15px;
+}
+.toast .x {
+  width: 34px !important;
+  height: 34px !important;
+}
+.toasts.top {
+  width: auto;
+  min-width: 260px;
+  max-width: 380px;
+}
+
+/* ───────── Corner buttons: Help (left) and Casos de uso (right) share one size ───────── */
+.help-btn {
+  width: 46px;
+  height: 46px;
+  font-size: 22px;
+}
+.proto-toggle {
+  height: 46px;
+  padding: 0 18px 0 16px;
+  gap: 10px;
+  font-size: 14px;
+  background: var(--surface-overlay);
+  border: 1px solid rgba(46, 69, 115, 0.9);
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.proto-toggle:hover,
+.proto-toggle.on {
+  background: #112042;
+  border-color: #3c68c8;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(127, 182, 255, 0.12);
+}
+.proto-panel {
+  bottom: 56px;
+}
+.help-pop {
+  bottom: calc(100% + 12px);
+}
+@media (max-width: 1100px) {
+  /* above the bottom bar, mirrored: help on the left, use cases on the right */
+  .proto {
+    right: 12px;
+    bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+  .help-fab {
+    left: 12px;
+    bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+  .help-btn {
+    width: 44px;
+    height: 44px;
+  }
+  .proto-toggle {
+    height: 44px;
+    padding: 0 16px 0 14px;
+  }
+  .proto-panel {
+    width: min(300px, calc(100vw - 24px));
+    max-height: min(64vh, 520px);
+  }
+  .help-pop {
+    width: min(240px, calc(100vw - 24px));
+  }
+}
+/* use-cases panel: solid surface so the page behind never shows through the list */
+.proto-panel {
+  background: var(--surface-overlay);
+  border: 1px solid rgba(46, 69, 115, 0.9);
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6);
+}

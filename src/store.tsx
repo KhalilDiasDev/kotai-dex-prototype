@@ -462,7 +462,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return { ...o, walletId: id, connected: true, wasConnected: true, modal: null, modalStack: [], view: 'swap' }
       })
       const name = WALLETS.find((w) => w.id === id)?.name ?? (id === 'other' ? 'WalletConnect' : id[0].toUpperCase() + id.slice(1))
-      toast({ tone: 'success', title: 'Wallet connected', body: `${name} · ${ADDRESS}` })
+      toast({ tone: 'success', title: `${name} connected`, body: `${name} · ${ADDRESS}` })
     },
     [toast],
   )
@@ -492,7 +492,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const setNetwork = useCallback(
     (id: string) => {
       setS((o) => ({ ...o, networkId: id, modal: null, modalStack: [], scenario: o.scenario === 'wrongNetwork' && id === KTI_NETWORK ? 'none' : o.scenario }))
-      toast({ tone: 'info', title: 'Network changed', body: NETWORKS.find((n) => n.id === id)?.name })
+      toast({ tone: 'info', title: `Switched to ${NETWORKS.find((n) => n.id === id)?.name ?? 'network'}`, body: NETWORKS.find((n) => n.id === id)?.name })
     },
     [toast],
   )
