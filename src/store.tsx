@@ -374,8 +374,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const cta = useMemo<AppApi['cta']>(() => {
     const none = () => {}
     if (!s.connected) return { label: 'Connect wallet', disabled: false, kind: 'primary', action: () => open('connect') }
-    // a wallet with nothing in it can't swap yet: the main action becomes adding funds
-    if (noFunds) return { label: 'Add funds', disabled: false, kind: 'primary', action: () => open('addFunds') }
+    // a wallet with nothing in it can't swap yet: the button only states it; the options below it are what the user taps
+    if (noFunds) return { label: 'Add funds', disabled: true, kind: 'disabled', action: none }
     if (amountNum <= 0) return { label: 'Enter an amount', disabled: true, kind: 'primary', action: none }
     if (fieldError) return { label: 'Insufficient balance', disabled: true, kind: 'disabled', action: none }
     if (s.quoting) return { label: 'Please wait…', disabled: true, kind: 'loading', action: none }
