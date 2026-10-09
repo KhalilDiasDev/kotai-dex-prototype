@@ -134,7 +134,7 @@
   padding: 20px;
   border-radius: 20px;
   background: var(--bg-field);
-  border: 1px solid rgba(46, 69, 115, 0.8);
+  border: 1px solid rgba(46, 69, 115, 0.42);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease;
 }
@@ -373,7 +373,7 @@
   gap: 2px;
   padding: 18px 20px;
   border-radius: 16px;
-  border: 1px solid rgba(46, 69, 115, 0.8);
+  border: 1px solid rgba(46, 69, 115, 0.42);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 12px 32px rgba(0, 0, 0, 0.28);
   animation: rise 0.25s ease-out;
 }
@@ -512,7 +512,7 @@
   padding: 28px;
   border-radius: 24px;
   background: var(--ink-900);
-  border: 1px solid rgba(46, 69, 115, 0.8);
+  border: 1px solid rgba(46, 69, 115, 0.42);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 16px 40px rgba(0, 0, 0, 0.35);
   animation: panelIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }

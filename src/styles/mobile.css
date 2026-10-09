@@ -467,7 +467,7 @@
   padding: 18px;
   border-radius: 20px;
   background: var(--bg-raised);
-  border: 1px solid rgba(46, 69, 115, 0.8);
+  border: 1px solid rgba(46, 69, 115, 0.42);
   transition: border-color 0.2s, transform 0.2s;
 }
 .lpm-card:active {
@@ -582,7 +582,7 @@
   padding: 8px;
   border-radius: 20px;
   background: #0a1424;
-  border: 1px solid rgba(46, 69, 115, 0.8);
+  border: 1px solid rgba(46, 69, 115, 0.42);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
   transform-origin: bottom right;
   animation: navPop 0.28s cubic-bezier(0.16, 1, 0.3, 1);
@@ -671,7 +671,7 @@
   gap: 2px;
   padding: 6px;
   border-radius: 16px;
-  border: 1px solid rgba(46, 69, 115, 0.8);
+  border: 1px solid rgba(46, 69, 115, 0.42);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
   transform-origin: top left;
   animation: dropIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
@@ -875,7 +875,7 @@ select {
   padding: 14px;
   border-radius: 18px;
   background: var(--bg-raised);
-  border: 1px solid rgba(46, 69, 115, 0.8);
+  border: 1px solid rgba(46, 69, 115, 0.42);
 }
 .lpm-ic {
   display: grid;
@@ -902,7 +902,7 @@ select {
   overflow: hidden;
   border-radius: 22px;
   background: var(--bg-raised);
-  border: 1px solid rgba(46, 69, 115, 0.8);
+  border: 1px solid rgba(46, 69, 115, 0.42);
 }
 .lpm-art {
   display: grid;
@@ -992,4 +992,54 @@ select {
     padding: 4px 12px;
     font-size: 13px;
   }
+}
+
+/* ───────── Softer outlines: swap cards, their controls and dialogs sit lighter on the page ───────── */
+.swap-card .field::before,
+.swap-card .field.gb::before {
+  opacity: 0.16; /* resting moving ring */
+}
+.swap-card .field:hover::before {
+  opacity: 0.38;
+}
+.swap-card .field.focus::before {
+  opacity: 0.72;
+}
+.swap-card .field:hover {
+  border-color: rgba(60, 104, 200, 0.4);
+}
+.tabs,
+.tool,
+.ts-btn,
+.pb-item {
+  border-color: rgba(38, 62, 99, 0.55);
+}
+.token-sel,
+.swap-card .field .chip {
+  border-color: rgba(60, 104, 200, 0.45);
+}
+.tool:hover,
+.tool.on,
+.pb-item:hover {
+  border-color: rgba(60, 104, 200, 0.6);
+}
+.m-box,
+.wm-bal,
+.fund-opt,
+.w-tile,
+.d-extra {
+  border-color: rgba(46, 69, 115, 0.4);
+}
+.sq-btn,
+.pop-head button,
+.s-close,
+.cp-round {
+  border-color: rgba(46, 69, 115, 0.55);
+}
+.sum {
+  border-color: rgba(60, 104, 200, 0.4);
+}
+.modal .btn.accent::before,
+.modal .btn.secondary::before {
+  opacity: 0.75;
 }
