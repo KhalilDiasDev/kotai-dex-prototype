@@ -737,40 +737,29 @@ function SearchOverlay() {
 }
 
 /* ───────────── History (I9) ───────────── */
-/* One swap in the history: what left and what arrived are separate blocks, each with its own amount and USD value */
+/* One swap in the history, kept to the essentials: coin + amount on each side, and the date (failed swaps are flagged) */
 const histAmt = (n: number) => fmt(n, n < 1 ? 6 : n < 10000 ? 4 : 0)
 export function HistRow({ h, compact }: { h: HistoryItem; compact?: boolean }) {
   const failed = h.status === 'Failed'
+  const size = compact ? 22 : 28
   return (
     <div className={'hrow' + (compact ? ' sm' : '') + (failed ? ' failed' : '')}>
       <div className="hr-side">
-        <Coin id={h.from} size={compact ? 24 : 32} />
-        <span className="hr-txt">
-          <small>Sent</small>
-          <b>
-            -{histAmt(h.amountFrom)} {h.from}
-          </b>
-          <small className="hr-usd">≈ {usd(h.amountFrom * TOKENS[h.from].price)}</small>
-        </span>
+        <Coin id={h.from} size={size} />
+        <b>
+          -{histAmt(h.amountFrom)} {h.from}
+        </b>
       </div>
-      <span className="hr-arr">
-        <Icon n="arrowRight" size={12} sw={2} />
-      </span>
+      <Icon n="arrowRight" size={14} sw={2} className="hr-arr" />
       <div className="hr-side">
-        <Coin id={h.to} size={compact ? 24 : 32} />
-        <span className="hr-txt">
-          <small>{failed ? 'Not received' : 'Received'}</small>
-          <b className="in">
-            {failed ? '' : '+'}
-            {histAmt(h.amountTo)} {h.to}
-          </b>
-          <small className="hr-usd">≈ {usd(h.amountTo * TOKENS[h.to].price)}</small>
-        </span>
+        <Coin id={h.to} size={size} />
+        <b className="in">
+          {failed ? '' : '+'}
+          {histAmt(h.amountTo)} {h.to}
+        </b>
       </div>
       <div className="hr-meta">
-        <span className={'st' + (failed ? ' bad' : '')}>
-          <i /> {h.status}
-        </span>
+        {failed && <span className="st bad">Failed</span>}
         <small>{h.when}</small>
       </div>
     </div>

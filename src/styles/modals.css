@@ -2426,3 +2426,78 @@ body:has(.hist-scrim) .help-fab {
     right: 480px;
   }
 }
+
+/* ───────── History row · essentials only: coin + amount → coin + amount, date ───────── */
+.hrow,
+.hist .hrow,
+.hrow.sm {
+  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-template-areas: 'from arr to' 'meta meta meta';
+  align-items: center;
+  gap: 4px 10px;
+  padding: 12px 4px;
+}
+.hrow .hr-side {
+  gap: 8px;
+}
+.hrow .hr-side:first-child {
+  grid-area: from;
+}
+.hrow .hr-side:nth-of-type(2) {
+  grid-area: to;
+}
+.hrow .hr-side b {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  color: #f2f5fa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hrow .hr-side b.in {
+  color: #2bf5a0;
+}
+.hrow.failed .hr-side b.in {
+  color: var(--text-tertiary);
+  text-decoration: line-through;
+}
+/* plain arrow, no circle */
+.hrow .hr-arr,
+.hrow.sm .hr-arr {
+  grid-area: arr;
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--text-tertiary);
+}
+.hrow .hr-meta,
+.hist .hrow .hr-meta,
+.hrow.sm .hr-meta {
+  grid-area: meta;
+  grid-column: auto;
+  grid-row: auto;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.hrow .hr-meta small {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+.hrow .hr-meta .st.bad {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(235, 77, 102, 0.14);
+  color: #ff6685;
+  font-size: 11px;
+  font-weight: 600;
+}
+.hrow.sm .hr-side b {
+  font-size: 13px;
+  line-height: 18px;
+}
