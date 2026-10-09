@@ -2787,3 +2787,18 @@ body:has(.hist-scrim) .help-fab {
   background: #101d36;
   border-color: rgba(46, 69, 115, 0.24);
 }
+
+/* network filter · a ticked box is clearly ticked: blue fill, like the selected controls in the swap card */
+.nf-box {
+  border-color: rgba(60, 104, 200, 0.55);
+  background: rgba(5, 12, 26, 0.5);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.nf-box.on {
+  background: #2b6be8;
+  border-color: #5a93ff;
+  box-shadow: 0 0 0 3px rgba(43, 107, 232, 0.18);
+}
+.nf-row.on {
+  background: rgba(43, 107, 232, 0.1);
+}
