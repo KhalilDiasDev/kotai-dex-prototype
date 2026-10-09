@@ -2781,3 +2781,9 @@ body:has(.hist-scrim) .help-fab {
   line-height: 15px;
   font-weight: 600;
 }
+
+/* transaction hash box: same raised surface as the other boxes in the dialog (was near-black) */
+.hash {
+  background: #101d36;
+  border-color: rgba(46, 69, 115, 0.24);
+}

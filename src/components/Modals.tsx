@@ -1237,10 +1237,10 @@ function DoneModal() {
         </button>
       </div>
       <div className="m-row2 g10">
-        <button className="btn secondary m52" onClick={() => a.open('history')}>
+        <button className="btn accent m52" onClick={() => a.open('history')}>
           View in History
         </button>
-        <button className="btn accent m52" onClick={() => a.set({ amount: '', modal: null, modalStack: [] })}>
+        <button className="btn secondary m52" onClick={() => a.set({ amount: '', modal: null, modalStack: [] })}>
           Finish
         </button>
       </div>
