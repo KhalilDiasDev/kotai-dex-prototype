@@ -1079,3 +1079,20 @@ select {
   border-color: rgba(60, 104, 200, 0.6) !important;
   background: var(--bg-hover) !important;
 }
+
+/* ───────── Background arc lines: barely there ───────── */
+.lp-bg .lp-arc {
+  background: linear-gradient(90deg, rgba(106, 164, 251, 0), rgba(130, 182, 255, 0.28) 50%, rgba(106, 164, 251, 0)) border-box;
+}
+.bg .arc {
+  opacity: 0.3;
+}
+.lp-bg .spark,
+.bg .spark {
+  opacity: 0.3;
+}
+@media (max-width: 720px) {
+  .bg .arc.l {
+    opacity: 0.22;
+  }
+}
