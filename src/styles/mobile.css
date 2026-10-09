@@ -1107,12 +1107,3 @@ select {
 .swap-card .tool.on {
   background: #14274d;
 }
-/* the price chart panel sits on the same surface as the swap cards */
-.chart-panel {
-  background: var(--bg-field);
-  border-color: rgba(46, 69, 115, 0.22);
-}
-.chart-panel .cp-switch,
-.chart-panel .cp-range {
-  background: rgba(5, 12, 26, 0.55);
-}
