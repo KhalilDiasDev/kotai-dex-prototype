@@ -15,6 +15,7 @@ export type Scenario =
   | 'rejected'
   | 'slow'
   | 'failed'
+  | 'noFunds'
 
 export type ModalKind =
   | null
@@ -22,6 +23,7 @@ export type ModalKind =
   | 'kotaiWallet'
   | 'otherWallets'
   | 'walletMenu'
+  | 'addFunds'
   | 'walletNet'
   | 'network'
   | 'networkFilter'
@@ -127,6 +129,9 @@ interface AppApi extends AppState {
   setNetwork: (id: string) => void
   completeSwap: () => void
   openCoin: (id: TokenId) => void
+  /** wallet balance of a token (zero for every token in the "wallet without funds" use case) */
+  balanceOf: (id: TokenId) => number
+  noFunds: boolean
 }
 
 const Ctx = createContext<AppApi | null>(null)
@@ -289,6 +294,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const item: HistoryItem = {
       from: o.from,
       to: o.to,
+      amountFrom: amt,
+      amountTo: out,
       label: `${amt} ${o.from} for ${Math.round(out).toLocaleString('en-US')} ${o.to}`,
       when: 'Just now',
       status: 'Completed',
@@ -330,11 +337,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [s.scenario])
 
+  const noFunds = s.connected && s.scenario === 'noFunds'
+  const balanceOf = (id: TokenId) => (s.scenario === 'noFunds' ? 0 : TOKENS[id].balance)
+
   const banner = useMemo<AppApi['banner']>(() => {
     if (!s.connected) {
       if (s.wasConnected && amountNum > 0) return { tone: 'warn', text: 'Wallet disconnected. Your tokens and amounts were kept. Connect again to continue.' }
       return null
     }
+    if (noFunds) return { tone: 'info', text: 'Your wallet has no funds yet. Add funds to start trading — you can buy crypto or transfer it in.' }
     if (amountNum <= 0 || s.quoting) return null
     if (s.scenario === 'offline') return { tone: 'offline', text: 'No network connection. Your funds are safe and nothing was sent. We keep trying to reconnect.' }
     // KTI only exists on BNB Chain: any other network in the wallet blocks the swap until it's switched
@@ -345,22 +356,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
     if (s.scenario === 'noRoute') return { tone: 'error', text: 'No route found for this amount. Try a smaller amount or another token.' }
     if (s.scenario === 'highImpact') return { tone: 'warn', text: 'High price impact detected. You may receive fewer tokens than expected.' }
-    const bal = TOKENS[s.from].balance
+    const bal = balanceOf(s.from)
     if (amountNum === bal && s.from === GAS_TOKEN)
       return { tone: 'warn', text: 'Not enough BNB for network fees. Leave about $0.18 (0.0003 BNB) to swap your full balance.' }
     return null
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [s.connected, s.wasConnected, s.scenario, s.from, s.networkId, s.quoting, amountNum])
 
   const fieldError = useMemo(() => {
-    if (!s.connected || amountNum <= 0) return null
-    const bal = TOKENS[s.from].balance
+    if (!s.connected || amountNum <= 0 || noFunds) return null
+    const bal = balanceOf(s.from)
     if (amountNum > bal) return `Insufficient balance. You have ${bal.toFixed(4)} ${s.from}.`
     return null
-  }, [s.connected, s.from, amountNum])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [s.connected, s.from, s.scenario, amountNum])
 
   const cta = useMemo<AppApi['cta']>(() => {
     const none = () => {}
     if (!s.connected) return { label: 'Connect wallet', disabled: false, kind: 'primary', action: () => open('connect') }
+    // a wallet with nothing in it can't swap yet: the main action becomes adding funds
+    if (noFunds) return { label: 'Add funds', disabled: false, kind: 'primary', action: () => open('addFunds') }
     if (amountNum <= 0) return { label: 'Enter an amount', disabled: true, kind: 'primary', action: none }
     if (fieldError) return { label: 'Insufficient balance', disabled: true, kind: 'disabled', action: none }
     if (s.quoting) return { label: 'Please wait…', disabled: true, kind: 'loading', action: none }
@@ -467,6 +482,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
       const amt = parseFloat(o.amount)
       if (!(amt > 0) || amt >= TOKENS[next.from].balance) next.amount = '0.5'
+      if (sc === 'noFunds') next.amount = ''
       next.networkId = sc === 'wrongNetwork' ? 'eth' : KTI_NETWORK
       if (sc === 'highImpact' || sc === 'priceUpdated' || sc === 'accountChanged') next.modal = 'review'
       return next
@@ -511,6 +527,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setNetwork,
     completeSwap: () => setS((o) => ({ ...finish(o), step: 1 })),
     openCoin,
+    balanceOf,
+    noFunds,
   }
   if (import.meta.env.DEV) (window as unknown as { __app: AppApi }).__app = api
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>

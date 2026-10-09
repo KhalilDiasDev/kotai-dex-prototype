@@ -837,3 +837,99 @@
   line-height: 16px;
   color: var(--text-tertiary);
 }
+
+/* ───────── Help button (bottom-left of the swap screen) ───────── */
+.help-fab {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 44;
+}
+.help-fab.under-modal {
+  display: none;
+}
+.help-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #fff;
+  color: #050d18;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.help-btn:hover,
+.help-btn.on {
+  transform: scale(1.06);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(127, 182, 255, 0.18);
+}
+.help-pop {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 10px);
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px;
+  border-radius: 18px;
+  background: var(--surface-overlay);
+  border: 1px solid rgba(46, 69, 115, 0.8);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
+  transform-origin: bottom left;
+  animation: navPop 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.help-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 4px 6px 8px;
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+.help-head button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: var(--text-secondary);
+}
+.help-head button:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+.help-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: left;
+  transition: background-color 0.15s;
+}
+.help-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.help-item .ext {
+  color: var(--text-tertiary);
+}
+@media (max-width: 1100px) {
+  .help-fab {
+    left: 12px;
+    bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ───────── Wallet menu · add funds (empty wallet) ───────── */
+.wm-funds {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

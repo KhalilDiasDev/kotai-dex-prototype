@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { ADDRESS, NETWORKS, TOKENS, TOKEN_LIST, WALLETS, fmt, unitPrice, usd, type TokenId } from '../data'
+import { ADDRESS, NETWORKS, TOKENS, TOKEN_LIST, WALLETS, fmt, unitPrice, usd, type HistoryItem, type TokenId } from '../data'
 import { useApp, type ModalKind } from '../store'
 import { NetworkList, SystemBody, WalletMenuBody } from './Header'
 import { HelpTip } from './SwapPanel'
@@ -305,8 +305,8 @@ function TokenSelectModal() {
               </small>
             </span>
             <span className="r">
-              <b>{t.balance > 0 ? fmt(t.balance, 4) : '0'}</b>
-              <small>{usd(t.balance * t.price)}</small>
+              <b>{a.balanceOf(t.id) > 0 ? fmt(a.balanceOf(t.id), 4) : '0'}</b>
+              <small>{usd(a.balanceOf(t.id) * t.price)}</small>
             </span>
           </button>
         ))}
@@ -737,6 +737,88 @@ function SearchOverlay() {
 }
 
 /* ───────────── History (I9) ───────────── */
+/* One swap in the history: what left and what arrived are separate blocks, each with its own amount and USD value */
+const histAmt = (n: number) => fmt(n, n < 1 ? 6 : n < 10000 ? 4 : 0)
+export function HistRow({ h, compact }: { h: HistoryItem; compact?: boolean }) {
+  const failed = h.status === 'Failed'
+  return (
+    <div className={'hrow' + (compact ? ' sm' : '') + (failed ? ' failed' : '')}>
+      <div className="hr-side">
+        <Coin id={h.from} size={compact ? 24 : 32} />
+        <span className="hr-txt">
+          <small>Sent</small>
+          <b>
+            -{histAmt(h.amountFrom)} {h.from}
+          </b>
+          <small className="hr-usd">≈ {usd(h.amountFrom * TOKENS[h.from].price)}</small>
+        </span>
+      </div>
+      <span className="hr-arr">
+        <Icon n="arrowRight" size={12} sw={2} />
+      </span>
+      <div className="hr-side">
+        <Coin id={h.to} size={compact ? 24 : 32} />
+        <span className="hr-txt">
+          <small>{failed ? 'Not received' : 'Received'}</small>
+          <b className="in">
+            {failed ? '' : '+'}
+            {histAmt(h.amountTo)} {h.to}
+          </b>
+          <small className="hr-usd">≈ {usd(h.amountTo * TOKENS[h.to].price)}</small>
+        </span>
+      </div>
+      <div className="hr-meta">
+        <span className={'st' + (failed ? ' bad' : '')}>
+          <i /> {h.status}
+        </span>
+        <small>{h.when}</small>
+      </div>
+    </div>
+  )
+}
+
+/* ───────────── Add funds (wallet without funds) ───────────── */
+export const FUND_OPTIONS: { icon: string; title: string; text: string; tone: string }[] = [
+  { icon: 'card', title: 'Buy crypto', text: 'Purchase with a debit card or a bank account.', tone: 'buy' },
+  { icon: 'arrowDown', title: 'Transfer from wallet', text: 'Move funds from another wallet.', tone: 'wallet' },
+  { icon: 'bank', title: 'Transfer from account', text: 'Move funds from a trading platform.', tone: 'account' },
+]
+export function FundOptions({ compact }: { compact?: boolean }) {
+  const a = useApp()
+  return (
+    <div className={'fund-list' + (compact ? ' sm' : '')}>
+      {FUND_OPTIONS.map((o) => (
+        <button key={o.title} className="fund-opt" onClick={() => a.toast({ tone: 'info', title: o.title, body: 'Opens this flow in the real product' })}>
+          <span className={'fund-ic ' + o.tone}>
+            <Icon n={o.icon} size={compact ? 16 : 20} sw={2} />
+          </span>
+          <span className="grow">
+            <b>{o.title}</b>
+            <small>{o.text}</small>
+          </span>
+          {compact && <Icon n="chevronR" size={16} sw={2} className="go" />}
+        </button>
+      ))}
+    </div>
+  )
+}
+function AddFundsModal() {
+  const a = useApp()
+  return (
+    <Modal
+      title={
+        <span className="t-col">
+          Welcome!
+          <small>Add funds to start trading</small>
+        </span>
+      }
+      onClose={a.close}
+    >
+      <FundOptions />
+    </Modal>
+  )
+}
+
 function HistoryPanel() {
   const a = useApp()
   useScrollLock()
@@ -749,22 +831,7 @@ function HistoryPanel() {
             <span>Wallet {ADDRESS}</span>
           </div>
           {a.history.map((h, i) => (
-            <div key={i} className="hist-row">
-              <span className="pair">
-                <Coin id={h.from} size={30} />
-                <span className="arr">
-                  <Icon n="arrowRight" size={12} sw={2} />
-                </span>
-                <Coin id={h.to} size={30} />
-              </span>
-              <span className="grow">
-                <b>{h.label}</b>
-                <small>{h.when}</small>
-              </span>
-              <span className={'st' + (h.status === 'Failed' ? ' bad' : '')}>
-                <i /> {h.status}
-              </span>
-            </div>
+            <HistRow key={i} h={h} />
           ))}
         </div>
         <button className="s-close" onClick={a.close} aria-label="Close history">
@@ -1268,6 +1335,8 @@ function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
       return <SearchOverlay />
     case 'history':
       return <HistoryPanel />
+    case 'addFunds':
+      return <AddFundsModal />
     case 'review':
       return <ReviewModal />
     case 'signing':

@@ -8,6 +8,7 @@ const GROUPS: { title: string; items: [Scenario, string][] }[] = [
   {
     title: 'Preparar a troca',
     items: [
+      ['noFunds', 'Carteira sem fundos'],
       ['wrongNetwork', 'Carteira na rede errada'],
       ['noRoute', 'Sem rota disponível'],
       ['offline', 'Sem conexão de internet'],

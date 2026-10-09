@@ -65,17 +65,20 @@ export const WALLETS: WalletOption[] = [
 export interface HistoryItem {
   from: TokenId
   to: TokenId
+  /** amounts of each side, shown separately with their USD value */
+  amountFrom: number
+  amountTo: number
   label: string
   when: string
   status: 'Completed' | 'Failed'
 }
 
 export const HISTORY: HistoryItem[] = [
-  { from: 'BNB', to: 'KTI', label: '0.5 BNB for 11,940,000 KTI', when: 'Today · 14:32', status: 'Completed' },
-  { from: 'USDT', to: 'KTI', label: '250 USDT for 9,950,000 KTI', when: 'Yesterday · 09:12', status: 'Completed' },
-  { from: 'BNB', to: 'USDT', label: '1.2 BNB for 718.2 USDT', when: 'Oct 3 · 18:47', status: 'Completed' },
-  { from: 'KTI', to: 'BNB', label: '4,000,000 KTI for 0.166 BNB', when: 'Oct 1 · 11:05', status: 'Failed' },
-  { from: 'USDT', to: 'BNB', label: '120 USDT for 0.199 BNB', when: 'Sep 28 · 20:31', status: 'Completed' },
+  { from: 'BNB', to: 'KTI', amountFrom: 0.5, amountTo: 11940000, label: '0.5 BNB for 11,940,000 KTI', when: 'Today · 14:32', status: 'Completed' },
+  { from: 'USDT', to: 'KTI', amountFrom: 250, amountTo: 9950000, label: '250 USDT for 9,950,000 KTI', when: 'Yesterday · 09:12', status: 'Completed' },
+  { from: 'BNB', to: 'USDT', amountFrom: 1.2, amountTo: 718.2, label: '1.2 BNB for 718.2 USDT', when: 'Oct 3 · 18:47', status: 'Completed' },
+  { from: 'KTI', to: 'BNB', amountFrom: 4000000, amountTo: 0.166, label: '4,000,000 KTI for 0.166 BNB', when: 'Oct 1 · 11:05', status: 'Failed' },
+  { from: 'USDT', to: 'BNB', amountFrom: 120, amountTo: 0.199, label: '120 USDT for 0.199 BNB', when: 'Sep 28 · 20:31', status: 'Completed' },
 ]
 
 export const LANGUAGES = [

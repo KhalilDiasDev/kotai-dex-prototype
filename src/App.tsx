@@ -1,6 +1,7 @@
 import { useEffect, useState, useSyncExternalStore, type ComponentType } from 'react'
 import { BottomNav } from './components/BottomNav'
 import { Header } from './components/Header'
+import { HelpFab } from './components/HelpFab'
 import { IconTips } from './components/IconTips'
 import { LandingMobile } from './components/LandingMobile'
 import { Modals } from './components/Modals'
@@ -132,6 +133,7 @@ function Shell() {
       <Modals />
       {/* every notification lands top-right, under the header */}
       <Toasts list={a.toasts} />
+      {a.view === 'swap' && <HelpFab />}
       <ProtoControls />
       <IconTips />
     </>

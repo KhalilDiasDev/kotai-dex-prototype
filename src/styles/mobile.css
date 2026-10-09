@@ -982,3 +982,14 @@ select {
     display: none;
   }
 }
+@media (max-width: 720px) {
+  /* touch: the % shortcuts keep a comfortable tap size */
+  .swap-card .field-top {
+    min-height: 30px;
+  }
+  .swap-card .field .chip {
+    height: 30px;
+    padding: 4px 12px;
+    font-size: 13px;
+  }
+}

@@ -217,7 +217,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
   })
 
   const pct = (p: number) => {
-    const v = from.balance * p
+    const v = a.balanceOf(a.from) * p
     a.setAmount(String(+v.toFixed(6)))
     setChip(p)
   }
@@ -286,7 +286,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
               {a.connected && (
                 <div className="shortcuts">
                   {[0.25, 0.5, 0.75, 1].map((p) => (
-                    <button key={p} className={'chip' + (chip === p && a.amountNum === from.balance * p ? ' on' : '')} onMouseDown={(e) => e.preventDefault()} onClick={() => pct(p)}>
+                    <button key={p} className={'chip' + (chip === p && a.amountNum === a.balanceOf(a.from) * p ? ' on' : '')} onMouseDown={(e) => e.preventDefault()} onClick={() => pct(p)}>
                       {p === 1 ? 'Max' : p * 100 + '%'}
                     </button>
                   ))}
@@ -324,7 +324,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
               <>
                 <span>≈ {usd(q.inUsd)}</span>
                 <span className="bal">
-                  <Coin id={a.from} size={14} /> Balance: {a.connected || (a.wasConnected && hasAmt) ? `${from.balance.toFixed(4)} ${a.from}` : '—'}
+                  <Coin id={a.from} size={14} /> Balance: {a.connected || (a.wasConnected && hasAmt) ? `${a.balanceOf(a.from).toFixed(4)} ${a.from}` : '—'}
                 </span>
               </>
             )}
@@ -387,7 +387,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
               )}
             </span>
             <span className="bal">
-              <Coin id={a.to} size={14} /> Balance: {to.balance === 0 ? '0' : to.balance.toFixed(4)} {a.to}
+              <Coin id={a.to} size={14} /> Balance: {a.balanceOf(a.to) === 0 ? '0' : a.balanceOf(a.to).toFixed(4)} {a.to}
             </span>
           </div>
         </div>
@@ -400,8 +400,8 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
               <button key={id} className="pb-item" onClick={() => a.openCoin(id)} aria-label={`${t.symbol} price and chart`}>
                 <Coin id={id} size={16} />
                 <span className="pb-sym">{t.symbol}</span>
-                <b>{unitPrice(t.price)}</b>
                 <span className={'pb-chg' + (t.change24h > 0 ? ' up' : t.change24h < 0 ? ' down' : '')}>{pctText(t.change24h)}</span>
+                <b>{unitPrice(t.price)}</b>
               </button>
             )
           })}

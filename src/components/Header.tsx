@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ADDRESS, CURRENCIES, LANGUAGES, NETWORKS, TOKENS, TOKEN_LIST, WALLETS, fmt, usd } from '../data'
 import { useApp, type ModalKind } from '../store'
-import { QR } from './Modals'
+import { FundOptions, HistRow, QR } from './Modals'
 import { Coin, Icon, Logo, Net, Spinner, WalletLogo, usePresence } from './ui'
 
 /** Closes the open dropdown on outside click / Escape. */
@@ -127,19 +127,7 @@ export function WalletMenuBody() {
         <WmBack onBack={home}>Swap history</WmBack>
         <div className="wm-scroll">
           {a.history.map((h, i) => (
-            <div key={i} className="wm-hist">
-              <span className="pair">
-                <Coin id={h.from} size={24} />
-                <Coin id={h.to} size={24} />
-              </span>
-              <span className="grow">
-                <b>{h.label}</b>
-                <small>{h.when}</small>
-              </span>
-              <span className={'st' + (h.status === 'Failed' ? ' bad' : '')}>
-                <i /> {h.status}
-              </span>
-            </div>
+            <HistRow key={i} h={h} compact />
           ))}
         </div>
       </div>
@@ -218,11 +206,18 @@ export function WalletMenuBody() {
       </div>
       <div className="wm-bal">
         <span className="cap12">Balance</span>
-        <b>{usd(TOKEN_LIST.reduce((sum, t) => sum + t.balance * t.price, 0))}</b>
+        <b>{usd(TOKEN_LIST.reduce((sum, t) => sum + a.balanceOf(t.id) * t.price, 0))}</b>
         <span className="cap12 hi">
-          {TOKENS.BNB.balance.toFixed(4)} BNB · {fmt(TOKENS.USDT.balance, 2)} USDT · {fmt(TOKENS.KTI.balance, 0)} KTI
+          {a.balanceOf('BNB').toFixed(4)} BNB · {fmt(a.balanceOf('USDT'), 2)} USDT · {fmt(a.balanceOf('KTI'), 0)} KTI
         </span>
       </div>
+      {/* empty wallet: the ways to add funds come first */}
+      {a.noFunds && (
+        <div className="wm-funds">
+          <span className="cap12">Add funds to start trading</span>
+          <FundOptions compact />
+        </div>
+      )}
       <div className="wm-list">
         <button className="dd-item" onClick={copy}>
           <Icon n="copy" size={18} /> Copy address
@@ -261,10 +256,6 @@ export function WalletMenuBody() {
         )}
         <button className="dd-item" onClick={() => setPage('wallets')}>
           <Icon n="flip" size={18} /> <span className="grow">Switch wallet</span>
-          <Icon n="chevronR" size={16} sw={2} className="go" />
-        </button>
-        <button className="dd-item" onClick={() => setPage('wallets')}>
-          <Icon n="plus" size={18} sw={2} /> <span className="grow">Connect another wallet</span>
           <Icon n="chevronR" size={16} sw={2} className="go" />
         </button>
         <span className="dd-sep" />
