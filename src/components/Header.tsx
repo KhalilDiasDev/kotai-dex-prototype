@@ -39,11 +39,13 @@ export function Anchor({ kinds, children, pop }: { kinds: ModalKind[]; children:
 }
 
 /* ───────── Dropdown · Rede ───────── */
-export function NetworkList({ onPick }: { onPick: (id: string) => void }) {
+export function NetworkList({ onPick, query = '' }: { onPick: (id: string) => void; query?: string }) {
   const a = useApp()
+  const list = NETWORKS.filter((n) => n.name.toLowerCase().includes(query.trim().toLowerCase()))
   return (
     <>
-      {NETWORKS.map((n) => (
+      {list.length === 0 && <p className="wm-empty">No network named “{query.trim()}”.</p>}
+      {list.map((n) => (
         <button key={n.id} className={'dd-item' + (n.id === a.networkId ? ' sel' : '') + (!n.hasKtiPool ? ' off' : '')} onClick={() => onPick(n.id)}>
           <Net id={n.id} size={22} />
           <span className="grow">{n.name}</span>
@@ -85,6 +87,7 @@ export function WalletMenuBody() {
   const [busy, setBusy] = useState(false)
   const [qr, setQr] = useState(false)
   const [wq, setWq] = useState('')
+  const [nq, setNq] = useState('')
   const copy = () => {
     navigator.clipboard?.writeText('0x7a25f3b9c8d1e6a2b4c5d7e8f9a0b1c2d3e4c3e1').catch(() => {})
     a.toast({ tone: 'success', title: 'Address copied', body: `${ADDRESS} · copied to clipboard` })
@@ -112,13 +115,26 @@ export function WalletMenuBody() {
     return (
       <div className="wm-sub">
         <WmBack onBack={home}>Select network</WmBack>
-        <NetworkList
-          onPick={(id) => {
-            a.setNetwork(id)
-            a.set({ modal: 'walletMenu' })
-            home()
-          }}
-        />
+        <label className="m-search wm-search">
+          <Icon n="search" size={16} />
+          <input placeholder="Search networks" value={nq} onChange={(e) => setNq(e.target.value)} aria-label="Search networks" />
+          {nq && (
+            <button data-notip onClick={() => setNq('')} aria-label="Clear search">
+              <Icon n="x" size={14} sw={2} />
+            </button>
+          )}
+        </label>
+        <div className="wm-scroll">
+          <NetworkList
+            query={nq}
+            onPick={(id) => {
+              a.setNetwork(id)
+              a.set({ modal: 'walletMenu' })
+              setNq('')
+              home()
+            }}
+          />
+        </div>
       </div>
     )
   }
