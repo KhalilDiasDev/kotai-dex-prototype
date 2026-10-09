@@ -1182,18 +1182,6 @@ function DoneModal() {
           </span>
         </div>
       </div>
-      <div className="m-box g14">
-        <div className="kv">
-          <span>Exchange rate</span>
-          <b>
-            1 {ls.from} = {fmt(TOKENS[ls.from].price / TOKENS[ls.to].price, 0)} {ls.to}
-          </b>
-        </div>
-        <div className="kv">
-          <span>Price impact</span>
-          <b className="green">0.08%</b>
-        </div>
-      </div>
       <div className="tx">
         <small>Transaction</small>
         <div className="hash">
@@ -1216,7 +1204,7 @@ function DoneModal() {
         <button className="btn secondary m52" onClick={() => a.open('history')}>
           View in History
         </button>
-        <button className="btn white m52" onClick={() => a.set({ amount: '', modal: null, modalStack: [] })}>
+        <button className="btn accent m52" onClick={() => a.set({ amount: '', modal: null, modalStack: [] })}>
           Finish
         </button>
       </div>
