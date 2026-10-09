@@ -901,6 +901,11 @@ function Summary() {
 
 function ReviewModal() {
   const a = useApp()
+  // leaving the review needs no extra question: it just closes and says so
+  const cancel = () => {
+    a.close()
+    a.toast({ tone: 'info', title: 'Swap cancelled' })
+  }
   const q = a.quote
   const sc = a.scenario
   const banner =
@@ -920,8 +925,8 @@ function ReviewModal() {
           <small>Check the amounts. After you confirm, your wallet will ask for a signature.</small>
         </span>
       }
-      onClose={() => a.push('cancelReview')}
-      onScrim={() => a.push('cancelReview')}
+      onClose={cancel}
+      onScrim={cancel}
     >
       {banner && <Banner tone={banner.t}>{banner.m}</Banner>}
       <Summary />
@@ -1021,7 +1026,12 @@ function SwapFlowModal({ kind }: { kind: 'signing' | 'processing' }) {
   const rejected = !processing && a.step === -2
   const slow = processing && a.scenario === 'slow'
   const wallet = a.walletId === 'kotai' ? 'Kotai Wallet' : WALLETS.find((w) => w.id === a.walletId)?.name ?? 'your wallet'
-  const dismiss = () => (rejected ? a.close() : a.push(processing ? 'closeProcessing' : 'cancelSign'))
+  // while a step is loading there is no close button, scrim or Esc: the only way out is the explicit Cancel
+  // (before the transaction is sent), which closes straight away and confirms it with a notification
+  const cancel = () => {
+    a.close()
+    a.toast({ tone: 'info', title: 'Transaction cancelled' })
+  }
   const steps: [StepState, StepState, StepState] = processing
     ? ['done', 'done', 'active']
     : approving
@@ -1055,8 +1065,8 @@ function SwapFlowModal({ kind }: { kind: 'signing' | 'processing' }) {
           </small>
         </span>
       }
-      onClose={dismiss}
-      onScrim={dismiss}
+      onClose={rejected ? a.close : undefined}
+      onScrim={rejected ? a.close : undefined}
     >
       {slow && <Banner tone="warn">Taking longer than usual. The network is congested — you can speed up this transaction.</Banner>}
       <Summary />
@@ -1116,15 +1126,17 @@ function SwapFlowModal({ kind }: { kind: 'signing' | 'processing' }) {
             <Icon n="shield" size={16} />
             <span className="swap-txt" key={processing ? 'p' : approving ? 'a' : 's'}>
               {processing
-                ? 'You can close this window. We’ll let you know when the swap lands.'
+                ? 'Sent to the network. This usually takes a few seconds — it can’t be cancelled now.'
                 : approving
                   ? `Preparing the request for ${wallet}. Keep it open.`
                   : `We sent a signature request to ${wallet}. If the amounts in your wallet are different, don’t sign.`}
             </span>
           </p>
-          <button className="btn secondary block" onClick={dismiss}>
-            {processing ? 'Close' : 'Cancel'}
-          </button>
+          {!processing && (
+            <button className="btn secondary block" onClick={cancel}>
+              Cancel
+            </button>
+          )}
         </>
       )}
     </Modal>
