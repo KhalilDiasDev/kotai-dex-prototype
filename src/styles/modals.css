@@ -2662,3 +2662,53 @@ body:has(.hist-scrim) .help-fab {
 .c-steps .cs-txt b {
   color: var(--text-primary);
 }
+
+/* ───────── Token select · search + network icon in one row, two sections ───────── */
+.tok-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tok-bar .m-search {
+  flex: 1;
+  min-width: 0;
+}
+.tok-netbtn {
+  flex: none;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px 0 11px;
+  border-radius: 12px;
+  background: var(--bg-raised);
+  border: 1px solid rgba(60, 104, 200, 0.3);
+  color: var(--text-secondary);
+  transition: background-color 0.18s, border-color 0.18s;
+}
+.tok-netbtn:hover {
+  background: var(--bg-hover);
+  border-color: rgba(60, 104, 200, 0.6);
+  color: #fff;
+}
+.tok-sec {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 8px 10px 6px;
+  background: var(--surface-overlay);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+.tok-sec:not(:first-child) {
+  margin-top: 8px;
+  border-top: 1px solid rgba(46, 69, 115, 0.3);
+  padding-top: 14px;
+}
+.tok .tok-list {
+  max-height: min(56vh, 460px);
+}

@@ -299,44 +299,60 @@ function TokenSelectModal() {
   const list = TOKEN_LIST.filter((t) => (t.name + t.symbol).toLowerCase().includes(q.toLowerCase()))
   const net = NETWORKS.find((n) => n.id === a.networkId)!
   const current = a.tokenSide === 'from' ? a.from : a.to
+  // two sections: what the wallet holds (largest value first, at most 4) and everything else
+  const mine = a.connected
+    ? list
+        .filter((t) => a.balanceOf(t.id) > 0)
+        .sort((x, y) => a.balanceOf(y.id) * y.price - a.balanceOf(x.id) * x.price)
+        .slice(0, 4)
+    : []
+  const others = list.filter((t) => !mine.includes(t))
+  const row = (t: (typeof TOKEN_LIST)[number]) => (
+    <button key={t.id} className={'tok-row' + (t.id === current ? ' on' : '')} onClick={() => a.pickToken(t.id)}>
+      <Coin id={t.id} size={36} />
+      <span className="grow">
+        <b>
+          {t.id === 'USDT' ? 'Tether' : t.name}
+        </b>
+        <small>
+          {t.networkLabel} · <span className="tok-price">{unitPrice(t.price)}</span>
+        </small>
+      </span>
+      {/* balances only exist once a wallet is connected */}
+      {a.connected && (
+        <span className="r">
+          <b>{a.balanceOf(t.id) > 0 ? fmt(a.balanceOf(t.id), 4) : '0'}</b>
+          <small>{usd(a.balanceOf(t.id) * t.price)}</small>
+        </span>
+      )}
+    </button>
+  )
   return (
     <Modal title="Select a token" onClose={a.close} className="tok gap16">
-      <label className="m-search focus">
-        <Icon n="search" size={18} />
-        <input autoFocus placeholder="Search name, symbol or paste address" value={q} onChange={(e) => setQ(e.target.value)} />
-      </label>
-      <div className="tok-net">
-        <span className="cap12">Network</span>
-        <button className="net-pill" onClick={() => a.push('network')}>
-          <Net id={a.networkId} size={14} /> {net.name} <Icon n="chevron" size={12} sw={2} />
+      {/* search and network share one row; the network is just its icon */}
+      <div className="tok-bar">
+        <label className="m-search focus">
+          <Icon n="search" size={18} />
+          <input autoFocus placeholder="Search name, symbol or paste address" value={q} onChange={(e) => setQ(e.target.value)} />
+        </label>
+        <button className="tok-netbtn" onClick={() => a.push('network')} aria-label={`Network: ${net.name}. Change network`}>
+          <Net id={a.networkId} size={22} />
+          <Icon n="chevron" size={12} sw={2} />
         </button>
       </div>
-      <div className="tok-pills">
-        {TOKEN_LIST.map((t) => (
-          <button key={t.id} className={'tok-pill' + (t.id === current ? ' on' : '')} onClick={() => a.pickToken(t.id)}>
-            <Coin id={t.id} size={20} /> {t.symbol}
-          </button>
-        ))}
-      </div>
-      <span className="m-div" />
       <div className="tok-list">
-        {list.map((t) => (
-          <button key={t.id} className={'tok-row' + (t.id === current ? ' on' : '')} onClick={() => a.pickToken(t.id)}>
-            <Coin id={t.id} size={36} />
-            <span className="grow">
-              <b>
-                {t.id === 'USDT' ? 'Tether' : t.name} {t.native && <span className="badge blue">Native</span>}
-              </b>
-              <small>
-                {t.networkLabel} · <span className="tok-price">{unitPrice(t.price)}</span>
-              </small>
-            </span>
-            <span className="r">
-              <b>{a.balanceOf(t.id) > 0 ? fmt(a.balanceOf(t.id), 4) : '0'}</b>
-              <small>{usd(a.balanceOf(t.id) * t.price)}</small>
-            </span>
-          </button>
-        ))}
+        {mine.length > 0 && (
+          <>
+            <span className="tok-sec">Your tokens</span>
+            {mine.map(row)}
+          </>
+        )}
+        {others.length > 0 && (
+          <>
+            <span className="tok-sec">{mine.length > 0 ? 'Other tokens' : 'Tokens'}</span>
+            {others.map(row)}
+          </>
+        )}
         {list.length === 0 && <p className="m-empty">No tokens found for “{q}”.</p>}
       </div>
     </Modal>
@@ -721,7 +737,7 @@ function SearchOverlay() {
                   <span className="grow">
                     <b>{t.name}</b>
                     <small>
-                      {t.native && <span className="badge blue">Native</span>} {t.sub}
+                      {t.sub}
                     </small>
                   </span>
                   <span className="r">
