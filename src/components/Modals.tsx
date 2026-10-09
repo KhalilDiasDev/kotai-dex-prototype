@@ -395,11 +395,12 @@ export function SettingsBody({ onClose }: { onClose: () => void }) {
         <span className="set-label">
           Max slippage <Icon n="info" size={14} />
         </span>
+        {/* one control: the presets and a custom value share the same pill */}
         <div className="seg">
           {['Auto', '0.1', '0.5', '1'].map((s) => (
             <button
               key={s}
-              className={a.slippage === s ? 'on' : ''}
+              className={!custom && a.slippage === s ? 'on' : ''}
               onClick={() => {
                 a.set({ slippage: s })
                 setCustom('')
@@ -409,21 +410,26 @@ export function SettingsBody({ onClose }: { onClose: () => void }) {
               {s === 'Auto' ? 'Auto' : s + '%'}
             </button>
           ))}
+          <label className={'seg-custom' + (custom ? ' on' : '')}>
+            <input
+              placeholder="Custom"
+              inputMode="decimal"
+              aria-label="Custom max slippage, in percent"
+              value={custom}
+              onChange={(e) => {
+                const v = e.target.value.replace(/[^0-9.]/g, '').slice(0, 5)
+                setCustom(v)
+                a.set({ slippage: v || 'Auto' })
+              }}
+            />
+            <span>%</span>
+          </label>
         </div>
-        <label className="set-input">
-          <input
-            placeholder="Custom"
-            inputMode="decimal"
-            value={custom}
-            onChange={(e) => {
-              const v = e.target.value.replace(/[^0-9.]/g, '')
-              setCustom(v)
-              a.set({ slippage: v || 'Auto' })
-            }}
-          />
-          %
-        </label>
-        <p className="set-note">Auto uses 0.5% for this pair. Your swap reverts if the price moves more than this.</p>
+        <p className={'set-note' + (parseFloat(custom) > 5 ? ' warn' : '')}>
+          {parseFloat(custom) > 5
+            ? 'High slippage: you may receive much less than quoted.'
+            : 'Auto uses 0.5% for this pair. Your swap reverts if the price moves more than this.'}
+        </p>
       </div>
       <div className="set-row">
         <span className="set-label">

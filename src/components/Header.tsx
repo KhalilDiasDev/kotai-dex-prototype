@@ -83,6 +83,7 @@ export function WalletMenuBody() {
   const [target, setTarget] = useState('kotai')
   const [busy, setBusy] = useState(false)
   const [qr, setQr] = useState(false)
+  const [wq, setWq] = useState('')
   const copy = () => {
     navigator.clipboard?.writeText('0x7a25f3b9c8d1e6a2b4c5d7e8f9a0b1c2d3e4c3e1').catch(() => {})
     a.toast({ tone: 'success', title: 'Address copied', body: `${ADDRESS} · copied to clipboard` })
@@ -135,11 +136,23 @@ export function WalletMenuBody() {
   }
 
   if (page === 'wallets') {
+    const ql = wq.trim().toLowerCase()
+    const list = WALLETS.filter((w) => w.name.toLowerCase().includes(ql))
     return (
       <div className="wm-sub">
         <WmBack onBack={home}>Switch wallet</WmBack>
+        {/* search: for wallets that aren't in the short list */}
+        <label className="m-search wm-search">
+          <Icon n="search" size={16} />
+          <input placeholder="Search wallets" value={wq} onChange={(e) => setWq(e.target.value)} aria-label="Search wallets" />
+          {wq && (
+            <button data-notip onClick={() => setWq('')} aria-label="Clear search">
+              <Icon n="x" size={14} sw={2} />
+            </button>
+          )}
+        </label>
         <div className="wm-scroll">
-          {WALLETS.map((w) => {
+          {list.map((w) => {
             const cur = w.id === a.walletId
             return (
               <button key={w.id} className={'dd-item wm-wallet' + (cur ? ' sel' : '')} onClick={() => (cur ? home() : startConnect(w.id))}>
@@ -150,6 +163,20 @@ export function WalletMenuBody() {
               </button>
             )
           })}
+          {/* not in the list: any other wallet connects through WalletConnect */}
+          {(list.length === 0 || ql) && (
+            <>
+              {list.length === 0 && <p className="wm-empty">No wallet named “{wq.trim()}” in this list.</p>}
+              <button className="dd-item wm-wallet wm-other" onClick={() => startConnect('walletconnect')}>
+                <WalletLogo id="walletconnect" size={28} />
+                <span className="grow">
+                  {ql ? `Connect “${wq.trim()}” with WalletConnect` : 'Other wallet'}
+                  <small>Works with 300+ wallets</small>
+                </span>
+                <Icon n="chevronR" size={16} sw={2} />
+              </button>
+            </>
+          )}
         </div>
       </div>
     )
