@@ -2651,3 +2651,14 @@ body:has(.hist-scrim) .help-fab {
 .cs-n::before {
   content: '0';
 }
+
+/* connection steps are a static guide: every step reads the same */
+.c-steps .cs-ic {
+  background: #101d36;
+  border-color: rgba(60, 104, 200, 0.3);
+  color: #9cc2fc;
+  box-shadow: none;
+}
+.c-steps .cs-txt b {
+  color: var(--text-primary);
+}

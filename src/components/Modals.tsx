@@ -125,29 +125,24 @@ function ConnectModal() {
   )
 }
 
-/* Connection steps as a small timeline: an icon per step, a line joining them, and live progress —
-   while the wallet is approving, the earlier steps tick off and the last one shows a spinner. */
+/* Connection steps as a small timeline: an icon per step and a line joining them.
+   It is a guide to read, not a progress indicator — nothing in it loads or ticks off. */
 type CStep = { icon: string; title: string; text: string }
-function ConnectSteps({ steps, busy }: { steps: CStep[]; busy: boolean }) {
+function ConnectSteps({ steps }: { steps: CStep[] }) {
   return (
-    <ol className={'c-steps' + (busy ? ' busy' : '')}>
-      {steps.map((st, i) => {
-        const done = busy && i < steps.length - 1
-        const active = busy ? i === steps.length - 1 : i === 0
-        return (
-          <li key={st.title} className={(done ? 'done' : '') + (active ? ' on' : '')} style={{ ['--i' as string]: i }}>
-            <span className="cs-ic">
-              {done ? <Icon n="check" size={16} sw={2.5} /> : <Icon n={st.icon} size={18} />}
-              {busy && active && <Spinner size={40} stroke={2} />}
-            </span>
-            <span className="cs-txt">
-              <b>{st.title}</b>
-              <small>{st.text}</small>
-            </span>
-            <span className="cs-n">{i + 1}</span>
-          </li>
-        )
-      })}
+    <ol className="c-steps">
+      {steps.map((st, i) => (
+        <li key={st.title} style={{ ['--i' as string]: i }}>
+          <span className="cs-ic">
+            <Icon n={st.icon} size={18} />
+          </span>
+          <span className="cs-txt">
+            <b>{st.title}</b>
+            <small>{st.text}</small>
+          </span>
+          <span className="cs-n">{i + 1}</span>
+        </li>
+      ))}
     </ol>
   )
 }
@@ -195,7 +190,6 @@ function KotaiWalletModal() {
         </div>
       )}
       <ConnectSteps
-        busy={busy}
         steps={
           a.isMobile
             ? [
@@ -259,7 +253,6 @@ function OtherWalletsModal() {
             )}
           </button>
           <ConnectSteps
-            busy={busy}
             steps={[
               { icon: 'tap', title: 'Open the app', text: `Tap “Open ${app === 'your wallet app' ? 'wallet app' : app}” above` },
               { icon: 'shield', title: 'Approve', text: 'Confirm the connection in the app' },
