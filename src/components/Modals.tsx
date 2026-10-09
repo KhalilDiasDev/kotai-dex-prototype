@@ -172,8 +172,8 @@ function KotaiWalletModal() {
       title="Kotai Wallet"
       icon={<WalletLogo id="kotai" size={32} radius={9} />}
       onBack={a.back}
-      onClose={() => a.push('cancelConnect')}
-      onScrim={() => a.push('cancelConnect')}
+      onClose={a.close}
+      onScrim={a.close}
       sub={a.isMobile ? 'Open the Kotai Wallet app to approve the connection. Connecting doesn’t give access to your funds: every transaction needs your approval.' : 'Scan the code with Kotai Wallet. Connecting doesn’t give access to your funds: every transaction needs your approval.'}
       className="gap24"
     >
@@ -233,8 +233,8 @@ function OtherWalletsModal() {
       title={generic ? 'Other wallets' : name}
       icon={<WalletLogo id={id} size={32} radius={id === 'ledger' ? 9 : undefined} />}
       onBack={a.back}
-      onClose={() => a.push('cancelConnect')}
-      onScrim={() => a.push('cancelConnect')}
+      onClose={a.close}
+      onScrim={a.close}
       sub={
         showQr
           ? `Scan the code with ${generic ? 'any compatible wallet' : name}. Connecting doesn’t give access to your funds: every transaction needs your approval.`
