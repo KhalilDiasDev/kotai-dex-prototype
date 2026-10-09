@@ -575,13 +575,6 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
         )}
       </div>
 
-      {/* reassurance line: only while no wallet is connected */}
-      {!a.connected && !(a.wasConnected && hasAmt) && (
-        <p className="assure">
-          <Icon n="shield" size={16} />
-          <span>Connecting doesn't move funds. Nothing leaves your wallet without your approval.</span>
-        </p>
-      )}
     </div>
   )
 }
