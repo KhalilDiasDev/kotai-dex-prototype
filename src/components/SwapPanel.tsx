@@ -325,7 +325,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                 </div>
               )}
               {/* the balance itself lives once, in the card's bottom row */}
-              {!a.connected && <span className="muted">Connect wallet to see balance</span>}
+
             </div>
           </div>
           <div className="field-mid">
@@ -362,9 +362,12 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                   <span>{fiat ? `${fmt(a.amountNum, a.amountNum < 1 ? 6 : 4)} ${a.from}` : usd(q.inUsd)}</span>
                   <Icon n="flip" size={12} sw={2} className="us-ic" />
                 </button>
-                <span className="bal">
-                  <Coin id={a.from} size={14} /> Balance: {a.connected || (a.wasConnected && hasAmt) ? `${a.balanceOf(a.from).toFixed(4)} ${a.from}` : '—'}
-                </span>
+                {/* no wallet, no balance to show */}
+                {(a.connected || (a.wasConnected && hasAmt)) && (
+                  <span className="bal">
+                    <Coin id={a.from} size={14} /> Balance: {a.balanceOf(a.from).toFixed(4)} {a.from}
+                  </span>
+                )}
               </>
             )}
           </div>
@@ -429,9 +432,11 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                 <Icon n="flip" size={12} sw={2} className="us-ic" />
               </button>
             )}
-            <span className="bal">
-              <Coin id={a.to} size={14} /> Balance: {a.balanceOf(a.to) === 0 ? '0' : a.balanceOf(a.to).toFixed(4)} {a.to}
-            </span>
+            {(a.connected || (a.wasConnected && hasAmt)) && (
+              <span className="bal">
+                <Coin id={a.to} size={14} /> Balance: {a.balanceOf(a.to) === 0 ? '0' : a.balanceOf(a.to).toFixed(4)} {a.to}
+              </span>
+            )}
           </div>
         </div>
 
