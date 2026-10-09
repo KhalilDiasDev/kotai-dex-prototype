@@ -346,7 +346,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
         <div ref={recvRef} onClick={focusReceive} className={'field gb' + (recvText !== null ? ' focus' : '')}>
           <div className="field-top">
             <span className="f-label">
-              <Icon n="download" size={16} />You receive (estimated)
+              <Icon n="download" size={16} />You receive
             </span>
             {/* quick token picks stay available after choosing a token or typing an amount */}
             {!a.isMobile && (

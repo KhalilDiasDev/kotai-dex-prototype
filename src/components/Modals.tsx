@@ -864,7 +864,7 @@ function Summary() {
       </div>
       <div className="sum-row">
         <div>
-          <small>You receive (estimated)</small>
+          <small>You receive</small>
           <b>
             {fmt(q.out, 0)} {a.to}
           </b>
