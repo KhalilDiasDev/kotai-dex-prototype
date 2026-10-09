@@ -12,7 +12,7 @@
   top: calc(100% + 8px);
   z-index: 60;
   background: var(--ink-900);
-  border: 1px solid rgba(46, 69, 115, 0.42);
+  border: 1px solid rgba(46, 69, 115, 0.24);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 40px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
@@ -233,7 +233,7 @@
   padding: 14px;
   border-radius: 14px;
   background: #101d36; /* a step lighter than the overlay surface so the card reads */
-  border: 1px solid rgba(46, 69, 115, 0.42);
+  border: 1px solid rgba(46, 69, 115, 0.24);
 }
 .wm-bal b {
   font-size: 24px;
@@ -876,7 +876,7 @@
   padding: 10px;
   border-radius: 18px;
   background: var(--surface-overlay);
-  border: 1px solid rgba(46, 69, 115, 0.42);
+  border: 1px solid rgba(46, 69, 115, 0.24);
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
   transform-origin: bottom left;
   animation: navPop 0.24s cubic-bezier(0.16, 1, 0.3, 1);
@@ -966,7 +966,7 @@
   gap: 10px;
   font-size: 14px;
   background: var(--surface-overlay);
-  border: 1px solid rgba(46, 69, 115, 0.5);
+  border: 1px solid rgba(46, 69, 115, 0.3);
   transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 .proto-toggle:hover,
@@ -1010,7 +1010,7 @@
 /* use-cases panel: solid surface so the page behind never shows through the list */
 .proto-panel {
   background: var(--surface-overlay);
-  border: 1px solid rgba(46, 69, 115, 0.5);
+  border: 1px solid rgba(46, 69, 115, 0.3);
   box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6);
 }
 

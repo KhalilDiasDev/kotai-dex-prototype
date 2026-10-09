@@ -467,7 +467,7 @@
   padding: 18px;
   border-radius: 20px;
   background: var(--bg-raised);
-  border: 1px solid rgba(46, 69, 115, 0.42);
+  border: 1px solid rgba(46, 69, 115, 0.24);
   transition: border-color 0.2s, transform 0.2s;
 }
 .lpm-card:active {
@@ -582,7 +582,7 @@
   padding: 8px;
   border-radius: 20px;
   background: #0a1424;
-  border: 1px solid rgba(46, 69, 115, 0.42);
+  border: 1px solid rgba(46, 69, 115, 0.24);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
   transform-origin: bottom right;
   animation: navPop 0.28s cubic-bezier(0.16, 1, 0.3, 1);
@@ -671,7 +671,7 @@
   gap: 2px;
   padding: 6px;
   border-radius: 16px;
-  border: 1px solid rgba(46, 69, 115, 0.42);
+  border: 1px solid rgba(46, 69, 115, 0.24);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
   transform-origin: top left;
   animation: dropIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
@@ -875,7 +875,7 @@ select {
   padding: 14px;
   border-radius: 18px;
   background: var(--bg-raised);
-  border: 1px solid rgba(46, 69, 115, 0.42);
+  border: 1px solid rgba(46, 69, 115, 0.24);
 }
 .lpm-ic {
   display: grid;
@@ -902,7 +902,7 @@ select {
   overflow: hidden;
   border-radius: 22px;
   background: var(--bg-raised);
-  border: 1px solid rgba(46, 69, 115, 0.42);
+  border: 1px solid rgba(46, 69, 115, 0.24);
 }
 .lpm-art {
   display: grid;
@@ -910,7 +910,7 @@ select {
   height: 172px;
   padding: 14px;
   background: radial-gradient(60% 70% at 50% 55%, rgba(48, 115, 214, 0.32), rgba(48, 115, 214, 0) 70%), #050c1c;
-  border-bottom: 1px solid rgba(46, 69, 115, 0.5);
+  border-bottom: 1px solid rgba(46, 69, 115, 0.3);
 }
 .lpm-art img {
   width: auto;
@@ -994,52 +994,63 @@ select {
   }
 }
 
-/* ───────── Softer outlines: swap cards, their controls and dialogs sit lighter on the page ───────── */
+/* ───────── Faint outlines: swap cards, their controls and dialogs barely trace their edges ───────── */
 .swap-card .field::before,
 .swap-card .field.gb::before {
-  opacity: 0.16; /* resting moving ring */
+  opacity: 0.08; /* resting moving ring */
 }
 .swap-card .field:hover::before {
-  opacity: 0.38;
+  opacity: 0.22;
 }
 .swap-card .field.focus::before {
-  opacity: 0.72;
+  opacity: 0.5;
+}
+.swap-card .field {
+  border-color: rgba(46, 69, 115, 0.22);
 }
 .swap-card .field:hover {
-  border-color: rgba(60, 104, 200, 0.4);
+  border-color: rgba(60, 104, 200, 0.26);
+}
+.swap-card .field.focus {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 38px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(28, 104, 217, 0.06);
 }
 .tabs,
 .tool,
 .ts-btn,
 .pb-item {
-  border-color: rgba(38, 62, 99, 0.55);
+  border-color: rgba(38, 62, 99, 0.32);
 }
 .token-sel,
 .swap-card .field .chip {
-  border-color: rgba(60, 104, 200, 0.45);
+  border-color: rgba(60, 104, 200, 0.26);
 }
 .tool:hover,
 .tool.on,
 .pb-item:hover {
-  border-color: rgba(60, 104, 200, 0.6);
+  border-color: rgba(60, 104, 200, 0.4);
 }
 .m-box,
 .wm-bal,
 .fund-opt,
 .w-tile,
-.d-extra {
-  border-color: rgba(46, 69, 115, 0.4);
+.d-extra,
+.sum {
+  border-color: rgba(46, 69, 115, 0.24);
 }
 .sq-btn,
 .pop-head button,
 .s-close,
 .cp-round {
-  border-color: rgba(46, 69, 115, 0.55);
-}
-.sum {
-  border-color: rgba(60, 104, 200, 0.4);
+  border-color: rgba(46, 69, 115, 0.32);
 }
 .modal .btn.accent::before,
 .modal .btn.secondary::before {
-  opacity: 0.75;
+  opacity: 0.55;
+}
+.swap-card .cta .btn::before {
+  opacity: 0.6;
+}
+.tab.on::before,
+.token-sel::before {
+  opacity: 0.55;
 }
