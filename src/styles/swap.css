@@ -347,28 +347,46 @@
   place-items: center;
   transition: background-color 0.2s, box-shadow 0.2s;
 }
-/* arrowheads: each one turns around and travels the whole line, end to end */
+/* arrowheads: each one turns around and travels the whole line, end to end.
+   They are separate 20×20 layers (HTML-level boxes), so plain px transforms apply — identical in Safari, Chrome and Firefox. */
 .flip .flip-ic {
-  transform: scale(0.8334); /* 24px drawing shown at 20px */
+  position: relative;
+  display: block;
+  width: 20px;
+  height: 20px;
+  transition: transform 0.12s ease;
+}
+.flip .flip-ic svg {
+  position: absolute;
+  inset: 0;
+  display: block;
 }
 .flip .hd {
-  transform-origin: 0 0; /* the head's own centre (its group is placed there) */
   transition: transform 0.5s cubic-bezier(0.65, 0, 0.25, 1);
+  will-change: transform;
 }
+/* head centres inside the 20px box: (7, 19.5) and (17, 4.5) of 24 → ×20/24 */
+.flip .hd.l {
+  transform-origin: 5.833px 16.25px;
+}
+.flip .hd.r {
+  transform-origin: 14.167px 3.75px;
+}
+/* the line runs 15 of 24 units between head positions → 12.5px here */
 .flip:hover .hd.l,
 .flip:focus-visible .hd.l {
-  transform: translate(0, -15px) scale(1, -1);
+  transform: translateY(-12.5px) scaleY(-1);
 }
 .flip:hover .hd.r,
 .flip:focus-visible .hd.r {
-  transform: translate(0, 15px) scale(1, -1);
+  transform: translateY(12.5px) scaleY(-1);
 }
 .flip:hover {
   background: var(--bg-hover);
   box-shadow: 0 0 0 4px #010308, 0 0 16px rgba(61, 139, 255, 0.35);
 }
 .flip:active .flip-ic {
-  transform: scale(0.75);
+  transform: scale(0.9);
 }
 
 /* "Detalhes da cotação" */
