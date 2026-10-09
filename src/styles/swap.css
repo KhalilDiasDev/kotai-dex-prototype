@@ -1075,3 +1075,94 @@
 .swap-card .quick {
   gap: 4px;
 }
+
+/* ───────── Token ⇄ dollars: the small line under each amount flips what you type in ───────── */
+.unit-swap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: -2px -6px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font: inherit;
+  color: inherit;
+  transition: background-color 0.18s, color 0.18s;
+}
+.unit-swap .us-ic {
+  opacity: 0;
+  transform: translateX(-3px);
+  transition: opacity 0.18s, transform 0.18s;
+}
+/* the switch shows when the pointer is over the money line or over the number itself */
+.unit-swap:hover,
+.field:has(.amount-wrap:hover) .unit-swap {
+  background: rgba(127, 182, 255, 0.1);
+  color: #fff;
+}
+.unit-swap:hover .us-ic,
+.field:has(.amount-wrap:hover) .unit-swap .us-ic,
+.unit-swap:focus-visible .us-ic {
+  opacity: 1;
+  transform: none;
+}
+@media (hover: none) {
+  .unit-swap .us-ic {
+    opacity: 0.6;
+    transform: none;
+  }
+}
+.amount-wrap .cur {
+  flex: none;
+  margin-right: 2px;
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.amount-wrap .cur.zero {
+  color: var(--text-tertiary);
+}
+
+/* ───────── Empty wallet: add-funds options inline in the swap card ───────── */
+.funds-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fi-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* ───────── Tooltip with an action (stays open while the pointer travels to it) ───────── */
+.it-pop.has-action {
+  pointer-events: auto;
+}
+.it-pop.has-action::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 12px; /* bridge between the tooltip and its icon */
+}
+.it-link {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(127, 182, 255, 0.14);
+  border: 1px solid rgba(127, 182, 255, 0.4);
+  color: #cfe3ff;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background-color 0.18s, color 0.18s;
+}
+.it-link:hover {
+  background: rgba(127, 182, 255, 0.26);
+  color: #fff;
+}

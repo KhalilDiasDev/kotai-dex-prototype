@@ -3,7 +3,7 @@ import { flushSync } from 'react-dom'
 import { TOKENS, fmt, pctText, unitPrice, usd, type TokenId } from '../data'
 import { useApp, type Tab } from '../store'
 import { Anchor } from './Header'
-import { SettingsBody } from './Modals'
+import { FundOptions, SettingsBody } from './Modals'
 import { Banner, Coin, Icon, Spinner } from './ui'
 
 const QUICK: TokenId[] = ['KTI', 'USDT', 'BNB', 'USDC', 'ETH']
@@ -55,7 +55,7 @@ export function HelpTip({ onClose }: { onClose: () => void }) {
 
 /* "?" next to a label: the description shows while the pointer (or keyboard focus) is on the icon and
    disappears the moment it leaves; on touch a tap toggles it and tapping elsewhere closes it */
-function InfoTip({ title, children }: { title: string; children: React.ReactNode }) {
+function InfoTip({ title, children, action }: { title: string; children: React.ReactNode; action?: { label: string; onClick: () => void } }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLSpanElement>(null)
   useEffect(() => {
@@ -81,9 +81,23 @@ function InfoTip({ title, children }: { title: string; children: React.ReactNode
         <Icon n="info" size={14} />
       </button>
       {open && (
-        <span className="it-pop" role="tooltip">
+        <span className={'it-pop' + (action ? ' has-action' : '')} role="tooltip">
           <b>{title}</b>
           <span>{children}</span>
+          {action && (
+            <button
+              type="button"
+              className="it-link"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.stopPropagation()
+                setOpen(false)
+                action.onClick()
+              }}
+            >
+              {action.label} <Icon n="arrowRight" size={12} sw={2} />
+            </button>
+          )}
         </span>
       )}
     </span>
@@ -162,11 +176,28 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
   const recvInputRef = useRef<HTMLInputElement>(null)
   // "You receive" is editable too: typing the amount you want back-solves what you need to send
   const [recvText, setRecvText] = useState<string | null>(null)
+  // amounts can be typed in tokens or in dollars: the small line under each number flips the two (hover shows the switch)
+  const [fiat, setFiat] = useState(false)
+  const [fiatText, setFiatText] = useState<string | null>(null)
+  const toggleFiat = () => {
+    setFiat((v) => !v)
+    setFiatText(null)
+    setRecvText(null)
+  }
+  const typeSend = (v: string) => {
+    if (!fiat) return a.setAmount(v)
+    const clean = v.replace(/,/g, '.').replace(/[^0-9.]/g, '')
+    if ((clean.match(/\./g) ?? []).length > 1) return
+    setFiatText(clean)
+    const dollars = parseFloat(clean)
+    a.setAmount(dollars > 0 ? String(+(dollars / TOKENS[a.from].price).toFixed(8)) : '')
+  }
   const typeReceive = (v: string) => {
     const clean = v.replace(/,/g, '.').replace(/[^0-9.]/g, '')
     if ((clean.match(/\./g) ?? []).length > 1) return
     setRecvText(clean)
-    const want = parseFloat(clean)
+    const typed = parseFloat(clean)
+    const want = fiat ? typed / TOKENS[a.to].price : typed
     const need = want > 0 && a.quote.rate > 0 ? want / a.quote.rate : 0
     a.setAmount(need > 0 ? String(+need.toFixed(need < 1 ? 8 : 6)) : '')
   }
@@ -195,7 +226,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
     flushSync(() => a.flip())
     if (side === 'send') {
       recvInputRef.current?.focus({ preventScroll: true })
-      setRecvText(prevSend)
+      if (!fiat) setRecvText(prevSend)
     } else if (side === 'recv') {
       inputRef.current?.focus({ preventScroll: true })
     }
@@ -220,6 +251,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
     const v = a.balanceOf(a.from) * p
     a.setAmount(String(+v.toFixed(6)))
     setChip(p)
+    setFiatText(null)
   }
   const quick = (id: TokenId) => {
     a.set({ tokenSide: 'to' })
@@ -297,19 +329,23 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
             </div>
           </div>
           <div className="field-mid">
-            <div className="amount-wrap">
+            <div className={'amount-wrap' + (fiat ? ' fiat' : '')}>
+              {fiat && <span className={'cur' + (hasAmt || fiatText ? '' : ' zero')}>$</span>}
               <input
                 ref={inputRef}
                 className={'amount' + (a.fieldError ? ' err' : '')}
                 inputMode="decimal"
                 placeholder="0"
-                value={a.amount}
+                value={fiat ? (fiatText ?? (hasAmt ? String(+q.inUsd.toFixed(2)) : '')) : a.amount}
                 onChange={(e) => {
-                  a.setAmount(e.target.value)
+                  typeSend(e.target.value)
                   setChip(null)
                 }}
                 onFocus={() => setFocus(true)}
-                onBlur={() => setFocus(false)}
+                onBlur={() => {
+                  setFocus(false)
+                  setFiatText(null)
+                }}
                 aria-label="Amount to send"
               />
             </div>
@@ -322,7 +358,10 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
               </span>
             ) : (
               <>
-                <span>≈ {usd(q.inUsd)}</span>
+                <button className="unit-swap" onMouseDown={(e) => e.preventDefault()} onClick={toggleFiat} aria-label={fiat ? `Type the amount in ${a.from}` : 'Type the amount in dollars'}>
+                  <span>{fiat ? `${fmt(a.amountNum, a.amountNum < 1 ? 6 : 4)} ${a.from}` : usd(q.inUsd)}</span>
+                  <Icon n="flip" size={12} sw={2} className="us-ic" />
+                </button>
                 <span className="bal">
                   <Coin id={a.from} size={14} /> Balance: {a.connected || (a.wasConnected && hasAmt) ? `${a.balanceOf(a.from).toFixed(4)} ${a.from}` : '—'}
                 </span>
@@ -360,14 +399,17 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
             )}
           </div>
           <div className="field-mid">
-            <div className="amount-wrap">
+            <div className={'amount-wrap' + (fiat ? ' fiat' : '')}>
+              {fiat && <span className={'cur' + (hasAmt || recvText ? '' : ' zero')}>$</span>}
               <input
                 ref={recvInputRef}
                 className={'amount' + (recvText === null && (!hasAmt || noRoute) ? ' zero' : '') + (recvText === null && a.quoting ? ' updating' : '')}
                 inputMode="decimal"
                 placeholder="0"
-                value={recvText ?? (hasAmt ? outText : '')}
-                onFocus={() => setRecvText(hasAmt && !noRoute ? String(+a.quote.out.toFixed(a.quote.out < 1 ? 6 : 2)) : '')}
+                value={recvText ?? (hasAmt ? (fiat ? (noRoute ? '—' : fmt(q.outUsd, 2)) : outText) : '')}
+                onFocus={() =>
+                  setRecvText(hasAmt && !noRoute ? (fiat ? String(+a.quote.outUsd.toFixed(2)) : String(+a.quote.out.toFixed(a.quote.out < 1 ? 6 : 2))) : '')
+                }
                 onBlur={() => setRecvText(null)}
                 onChange={(e) => typeReceive(e.target.value)}
                 aria-label="Amount to receive"
@@ -376,16 +418,17 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
             <TokenSelect id={a.to} onClick={() => a.set({ tokenSide: 'to', modal: 'tokenSelect', modalStack: [] })} />
           </div>
           <div className="field-bot">
-            <span>
-              {a.quoting && hasAmt ? (
-                'Updating estimate…'
-              ) : (
-                <>
-                  ≈ {usd(hasAmt && !noRoute ? q.outUsd : 0)}
+            {a.quoting && hasAmt ? (
+              <span>Updating estimate…</span>
+            ) : (
+              <button className="unit-swap" onMouseDown={(e) => e.preventDefault()} onClick={toggleFiat} aria-label={fiat ? `Show the amount in ${a.to}` : 'Show the amount in dollars'}>
+                <span>
+                  {fiat ? `${hasAmt && !noRoute ? outText : '0'} ${a.to}` : usd(hasAmt && !noRoute ? q.outUsd : 0)}
                   {hasAmt && !noRoute && !a.fieldError && <>&nbsp; ({q.usdDelta})</>}
-                </>
-              )}
-            </span>
+                </span>
+                <Icon n="flip" size={12} sw={2} className="us-ic" />
+              </button>
+            )}
             <span className="bal">
               <Coin id={a.to} size={14} /> Balance: {a.balanceOf(a.to) === 0 ? '0' : a.balanceOf(a.to).toFixed(4)} {a.to}
             </span>
@@ -460,7 +503,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                 <InfoTip title="Fees">Everything this swap costs: the network fee plus the KOTAI pool fee. It is already included in the amounts above.</InfoTip>
               </span>
               <span className="v">
-                {a.quoting || noRoute ? '—' : <b>≈ {usd(q.feesUsd)}</b>}
+                {a.quoting || noRoute ? '—' : <b>{usd(q.feesUsd)}</b>}
                 <Icon n="chevron" size={16} className="chev" />
               </span>
             </div>
@@ -473,7 +516,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                     <InfoTip title="Network fee">Paid in BNB to the BNB Chain validators that process the transaction. It doesn't go to KOTAI.</InfoTip>
                   </span>
                   <span className="v">
-                    ≈ {usd(q.gasUsd)} <small>{q.gasBnb} BNB</small>
+                    {usd(q.gasUsd)} <small>{q.gasBnb} BNB</small>
                   </span>
                 </div>
                 <div className="d-row sm">
@@ -482,13 +525,15 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                     <InfoTip title="KOTAI pool fee">A share of the amount paid to the liquidity providers of this pool.</InfoTip>
                   </span>
                   <span className="v">
-                    ≈ {usd(q.poolFeeUsd)} <small>{q.poolFeePct}%</small>
+                    {usd(q.poolFeeUsd)} <small>{q.poolFeePct}%</small>
                   </span>
                 </div>
                 <div className="d-row sm">
                   <span className="k">
                     <Icon n="sliders" size={14} /> Max slippage
-                    <InfoTip title="Max slippage">The most the price may move against you before the swap is cancelled. You can change it in Swap settings.</InfoTip>
+                    <InfoTip title="Max slippage" action={{ label: 'Open swap settings', onClick: () => a.open('settings') }}>
+                      The most the price may move against you before the swap is cancelled. Not sure which value to use? Auto is the safe default.
+                    </InfoTip>
                   </span>
                   <span className="v">
                     {q.slippage}% <small>{a.slippage === 'Auto' ? 'Auto' : 'Custom'}</small>
@@ -510,16 +555,24 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
 
         {a.banner && <Banner tone={a.banner.tone}>{a.banner.text}</Banner>}
 
-        <div className="cta">
-          <button
-            className={'btn accent block lg' + (a.cta.kind === 'dim' ? ' dim' : '') + (a.cta.kind === 'loading' ? ' loading' : '')}
-            disabled={a.cta.disabled}
-            onClick={a.cta.action}
-          >
-            {a.cta.kind === 'loading' && <Spinner size={18} />}
-            {a.cta.label}
-          </button>
-        </div>
+        {a.noFunds ? (
+          /* empty wallet: the ways to add funds are already here, no button in between */
+          <div className="funds-inline">
+            <span className="fi-title">Add funds to start trading</span>
+            <FundOptions compact />
+          </div>
+        ) : (
+          <div className="cta">
+            <button
+              className={'btn accent block lg' + (a.cta.kind === 'dim' ? ' dim' : '') + (a.cta.kind === 'loading' ? ' loading' : '')}
+              disabled={a.cta.disabled}
+              onClick={a.cta.action}
+            >
+              {a.cta.kind === 'loading' && <Spinner size={18} />}
+              {a.cta.label}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* reassurance line: only before an amount is typed (with an amount, the quote details speak for themselves) */}

@@ -844,7 +844,7 @@ function Summary() {
           <b>
             {fmt(a.amountNum)} {a.from}
           </b>
-          <span>≈ {usd(q.inUsd)}</span>
+          <span>{usd(q.inUsd)}</span>
         </div>
         <Coin id={a.from} size={40} />
       </div>
@@ -857,7 +857,7 @@ function Summary() {
           <b>
             {fmt(q.out, 0)} {a.to}
           </b>
-          <span>≈ {usd(q.outUsd)}</span>
+          <span>{usd(q.outUsd)}</span>
         </div>
         <Coin id={a.to} size={40} />
       </div>
@@ -910,7 +910,7 @@ function ReviewModal() {
         </div>
         <div className="kv">
           <span>Fees (network + pool)</span>
-          <b>≈ {usd(q.feesUsd)}</b>
+          <b>{usd(q.feesUsd)}</b>
         </div>
         <div className="kv">
           <span>Price impact</span>
@@ -1039,7 +1039,7 @@ function SwapFlowModal({ kind }: { kind: 'signing' | 'processing' }) {
               : processing
                 ? slow
                   ? 'Pending for 4 min · network is congested'
-                  : 'Confirming on the network · ≈ 20s left'
+                  : 'Confirming on the network · about 20s left'
                 : 'Sign the spend permission without paying extra gas'}
           </p>
         }
@@ -1131,7 +1131,7 @@ function DoneModal() {
               </b>
               <Coin id={ls.from} size={20} />
             </span>
-            <small>≈ {usd(inUsd)}</small>
+            <small>{usd(inUsd)}</small>
           </span>
         </div>
         <div className="kv tall">
@@ -1143,7 +1143,7 @@ function DoneModal() {
               </b>
               <Coin id={ls.to} size={20} />
             </span>
-            <small>≈ {usd(outUsd)}</small>
+            <small>{usd(outUsd)}</small>
           </span>
         </div>
       </div>
@@ -1208,7 +1208,7 @@ function FailedModal() {
         <b>
           Your {fmt(a.amountNum)} {a.from} is still in your wallet
         </b>
-        <p>Only the network fee (≈ $2.22) was charged, to cover processing the attempt.</p>
+        <p>Only the network fee ($2.22) was charged, to cover processing the attempt.</p>
       </div>
       <div className="m-col">
         <button
