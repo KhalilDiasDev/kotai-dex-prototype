@@ -2545,3 +2545,11 @@ body:has(.hist-scrim) .help-fab {
     line-height: 19px;
   }
 }
+/* add-funds cards: icon and text centred */
+.fund-list.cards .fund-opt {
+  align-items: center;
+  text-align: center;
+}
+.fund-list.cards .fund-opt .grow {
+  align-items: center;
+}
