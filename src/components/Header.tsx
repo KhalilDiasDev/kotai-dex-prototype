@@ -57,12 +57,31 @@ export function NetworkList({ onPick, query = '' }: { onPick: (id: string) => vo
   )
 }
 
+/** Search field + network list — every place that lists networks uses this, so they all can be searched. */
+export function NetworkPicker({ onPick }: { onPick: (id: string) => void }) {
+  const [q, setQ] = useState('')
+  return (
+    <>
+      <label className="m-search wm-search">
+        <Icon n="search" size={16} />
+        <input placeholder="Search networks" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search networks" />
+        {q && (
+          <button data-notip onClick={() => setQ('')} aria-label="Clear search">
+            <Icon n="x" size={14} sw={2} />
+          </button>
+        )}
+      </label>
+      <NetworkList query={q} onPick={onPick} />
+    </>
+  )
+}
+
 function NetworkDropdown() {
   const a = useApp()
   return (
     <div className="dropdown dd-net" role="menu">
       <div className="dd-label">Select network</div>
-      <NetworkList onPick={a.setNetwork} />
+      <NetworkPicker onPick={a.setNetwork} />
     </div>
   )
 }

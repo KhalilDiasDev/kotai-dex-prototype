@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { ADDRESS, NETWORKS, TOKENS, TOKEN_LIST, WALLETS, fmt, unitPrice, usd, type HistoryItem, type TokenId } from '../data'
 import { useApp, type ModalKind } from '../store'
-import { NetworkList, SystemBody, WalletMenuBody } from './Header'
+import { NetworkPicker, SystemBody, WalletMenuBody } from './Header'
 import { HelpTip } from './SwapPanel'
 import { Banner, Coin, Icon, Modal, Net, Spinner, WalletLogo, usePresence, useScrollLock, type CoinId } from './ui'
 
@@ -643,14 +643,26 @@ function NetFilter({ sel, setSel, onClose }: { sel: Set<string>; setSel: (s: Set
     setSel(n)
   }
   const all = sel.size === NETWORKS.length
+  const [nq, setNq] = useState('')
+  const shown = NETWORKS.filter((n) => n.name.toLowerCase().includes(nq.trim().toLowerCase()))
   return (
     <div className="net-filter" ref={ref}>
+      <label className="m-search wm-search">
+        <Icon n="search" size={16} />
+        <input placeholder="Search networks" value={nq} onChange={(e) => setNq(e.target.value)} aria-label="Search networks" />
+        {nq && (
+          <button data-notip onClick={() => setNq('')} aria-label="Clear search">
+            <Icon n="x" size={14} sw={2} />
+          </button>
+        )}
+      </label>
       <button className="nf-row all" onClick={() => setSel(all ? new Set() : new Set(NETWORKS.map((n) => n.id)))}>
         <b>All networks</b>
         <span className={'nf-box' + (all ? ' on' : '')}>{all && '✓'}</span>
       </button>
       <span className="m-div" />
-      {NETWORKS.map((n) => (
+      {shown.length === 0 && <p className="wm-empty">No network named “{nq.trim()}”.</p>}
+      {shown.map((n) => (
         <div key={n.id} className={'nf-row' + (sel.has(n.id) ? ' on' : '')} onClick={() => toggle(n.id)} role="button" tabIndex={0}>
           <Net id={n.id} size={26} />
           <span className="grow">{n.name}</span>
@@ -1414,7 +1426,7 @@ function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
       return m || a.modalStack.length ? (
         <Modal title="Select network" onBack={a.modalStack.length ? a.back : undefined} onClose={a.close} className="sheet-pop">
           <div className="dd-list">
-            <NetworkList
+            <NetworkPicker
               onPick={(id) => {
                 const from = a.modalStack[a.modalStack.length - 1]
                 a.setNetwork(id)
