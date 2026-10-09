@@ -125,6 +125,33 @@ function ConnectModal() {
   )
 }
 
+/* Connection steps as a small timeline: an icon per step, a line joining them, and live progress —
+   while the wallet is approving, the earlier steps tick off and the last one shows a spinner. */
+type CStep = { icon: string; title: string; text: string }
+function ConnectSteps({ steps, busy }: { steps: CStep[]; busy: boolean }) {
+  return (
+    <ol className={'c-steps' + (busy ? ' busy' : '')}>
+      {steps.map((st, i) => {
+        const done = busy && i < steps.length - 1
+        const active = busy ? i === steps.length - 1 : i === 0
+        return (
+          <li key={st.title} className={(done ? 'done' : '') + (active ? ' on' : '')} style={{ ['--i' as string]: i }}>
+            <span className="cs-ic">
+              {done ? <Icon n="check" size={16} sw={2.5} /> : <Icon n={st.icon} size={18} />}
+              {busy && active && <Spinner size={40} stroke={2} />}
+            </span>
+            <span className="cs-txt">
+              <b>{st.title}</b>
+              <small>{st.text}</small>
+            </span>
+            <span className="cs-n">{i + 1}</span>
+          </li>
+        )
+      })}
+    </ol>
+  )
+}
+
 function useAutoConnect(id: string) {
   const a = useApp()
   const [busy, setBusy] = useState(false)
@@ -140,7 +167,6 @@ function useAutoConnect(id: string) {
 function KotaiWalletModal() {
   const a = useApp()
   const { busy, go } = useAutoConnect('kotai')
-  const steps = ['Open Kotai Wallet on your phone', 'Tap “Scan” and point at the code', 'Approve the connection in the app']
   return (
     <Modal
       title="Kotai Wallet"
@@ -168,14 +194,22 @@ function KotaiWalletModal() {
           <b>{busy ? 'Connecting…' : 'Scan with Kotai Wallet'}</b>
         </div>
       )}
-      <ol className="m-steps">
-        {(a.isMobile ? ['Tap “Open Kotai Wallet” above', 'Approve the connection in the app', 'Come back here: we’ll continue automatically'] : steps).map((t, i) => (
-          <li key={t}>
-            <span>{i + 1}</span>
-            {t}
-          </li>
-        ))}
-      </ol>
+      <ConnectSteps
+        busy={busy}
+        steps={
+          a.isMobile
+            ? [
+                { icon: 'tap', title: 'Open the app', text: 'Tap “Open Kotai Wallet” above' },
+                { icon: 'shield', title: 'Approve', text: 'Confirm the connection in the app' },
+                { icon: 'undo', title: 'Come back', text: 'We continue here automatically' },
+              ]
+            : [
+                { icon: 'phone', title: 'Open Kotai Wallet', text: 'On your phone' },
+                { icon: 'scan', title: 'Scan the code', text: 'Tap “Scan” and point at it' },
+                { icon: 'shield', title: 'Approve', text: 'Confirm the connection in the app' },
+              ]
+        }
+      />
       <KotaiDownload />
       <Foot />
     </Modal>
@@ -224,14 +258,14 @@ function OtherWalletsModal() {
               `Open ${app === 'your wallet app' ? 'wallet app' : app}`
             )}
           </button>
-          <ol className="m-steps">
-            {[`Tap “Open ${app === 'your wallet app' ? 'wallet app' : app}” above`, 'Approve the connection in the app', 'Come back here: we’ll continue automatically'].map((t, i) => (
-              <li key={t}>
-                <span>{i + 1}</span>
-                {t}
-              </li>
-            ))}
-          </ol>
+          <ConnectSteps
+            busy={busy}
+            steps={[
+              { icon: 'tap', title: 'Open the app', text: `Tap “Open ${app === 'your wallet app' ? 'wallet app' : app}” above` },
+              { icon: 'shield', title: 'Approve', text: 'Confirm the connection in the app' },
+              { icon: 'undo', title: 'Come back', text: 'We continue here automatically' },
+            ]}
+          />
         </>
       )}
       {generic && <p className="m-text">Works with MetaMask, Trust Wallet, Rainbow and 300+ WalletConnect-compatible wallets.</p>}

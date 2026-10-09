@@ -2553,3 +2553,101 @@ body:has(.hist-scrim) .help-fab {
 .fund-list.cards .fund-opt .grow {
   align-items: center;
 }
+
+/* ───────── Connection steps · visual timeline ───────── */
+.c-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.c-steps li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 0;
+  animation: rise 0.35s ease-out backwards;
+  animation-delay: calc(var(--i) * 70ms);
+}
+/* the line joining one step's icon to the next */
+.c-steps li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: calc(50% + 20px);
+  width: 2px;
+  height: calc(100% - 40px);
+  border-radius: 1px;
+  background: repeating-linear-gradient(to bottom, rgba(143, 167, 204, 0.5) 0 4px, transparent 4px 8px);
+  transition: background 0.3s;
+}
+.c-steps li.done:not(:last-child)::after {
+  background: rgba(41, 199, 133, 0.85);
+}
+.cs-ic {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  background: #101d36;
+  border: 1px solid rgba(46, 69, 115, 0.5);
+  color: #9cc2fc;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+.cs-ic .ring-spin {
+  position: absolute;
+  inset: 0;
+}
+.c-steps li.on .cs-ic {
+  background: rgba(77, 155, 255, 0.16);
+  border-color: rgba(127, 182, 255, 0.55);
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(77, 155, 255, 0.08);
+}
+.c-steps.busy li.on .cs-ic {
+  border-color: transparent;
+}
+.c-steps li.done .cs-ic {
+  background: rgba(41, 199, 133, 0.16);
+  border-color: rgba(41, 199, 133, 0.5);
+  color: #2bf5a0;
+}
+.cs-txt {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.cs-txt b {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: color 0.3s;
+}
+.c-steps li.on .cs-txt b,
+.c-steps li.done .cs-txt b {
+  color: var(--text-primary);
+}
+.cs-txt small {
+  font-size: 13px;
+  line-height: 17px;
+  color: var(--text-tertiary);
+}
+.cs-n {
+  flex: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+.cs-n::before {
+  content: '0';
+}
