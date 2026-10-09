@@ -247,9 +247,13 @@ export function WalletMenuBody() {
       )}
       {/* the wallet in use, right above the address actions */}
       <div className="wm-kotai on wm-current">
-        <span className="kw-logo">
-          <WalletLogo id={a.walletId} size={32} radius={onKotai || a.walletId === 'ledger' ? 9 : undefined} />
-        </span>
+        {onKotai ? (
+          <span className="kw-logo">
+            <img src="img/wallet/kotai.webp" alt="" />
+          </span>
+        ) : (
+          <WalletLogo id={a.walletId} size={30} radius={a.walletId === 'ledger' ? 8 : undefined} />
+        )}
         <span className="grow">
           <b>{WALLETS.find((w) => w.id === a.walletId)?.name ?? 'Wallet'}</b>
           <small>Connected</small>
