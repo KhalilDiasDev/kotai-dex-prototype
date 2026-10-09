@@ -218,6 +218,17 @@ export function WalletMenuBody() {
           <FundOptions compact />
         </div>
       )}
+      {/* the wallet in use, right above the address actions */}
+      <div className="wm-kotai on wm-current">
+        <span className="kw-logo">
+          <WalletLogo id={a.walletId} size={32} radius={onKotai || a.walletId === 'ledger' ? 9 : undefined} />
+        </span>
+        <span className="grow">
+          <b>{WALLETS.find((w) => w.id === a.walletId)?.name ?? 'Wallet'}</b>
+          <small>Connected</small>
+        </span>
+        <Icon n="checkCircle" size={18} className="ok" />
+      </div>
       <div className="wm-list">
         <button className="dd-item" onClick={copy}>
           <Icon n="copy" size={18} /> Copy address
@@ -230,18 +241,7 @@ export function WalletMenuBody() {
           <Icon n="chevronR" size={16} sw={2} className="go" />
         </button>
         <span className="dd-sep" />
-        {onKotai ? (
-          <div className="wm-kotai on">
-            <span className="kw-logo">
-              <img src="img/wallet/kotai.webp" alt="" />
-            </span>
-            <span className="grow">
-              <b>Kotai Wallet</b>
-              <small>Connected</small>
-            </span>
-            <Icon n="checkCircle" size={18} className="ok" />
-          </div>
-        ) : (
+        {!onKotai && (
           /* runs the Kotai Wallet connection (QR → approve) right here in the menu */
           <button className="wm-kotai" onClick={() => startConnect('kotai')}>
             <span className="kw-logo">
