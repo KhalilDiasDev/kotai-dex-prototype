@@ -1217,3 +1217,28 @@
   margin-top: 12px;
   gap: 8px;
 }
+
+/* quote details · gear next to the max slippage value */
+.d-gear {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-right: -4px;
+  border-radius: 50%;
+  background: rgba(17, 32, 66, 0.45);
+  border: 1px solid rgba(60, 104, 200, 0.3);
+  color: var(--text-secondary);
+  transition: background-color 0.18s, border-color 0.18s, color 0.18s;
+}
+.d-gear svg {
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.d-gear:hover {
+  background: var(--bg-hover);
+  border-color: rgba(60, 104, 200, 0.6);
+  color: #fff;
+}
+.d-gear:hover svg {
+  transform: rotate(60deg);
+}

@@ -502,6 +502,20 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
               </span>
               <span className="v">{a.quoting || noRoute ? '—' : <b>{fmt(q.minOut, q.minOut < 1 ? 6 : q.minOut < 10000 ? 2 : 0)} {a.to}</b>}</span>
             </div>
+            {/* max slippage is always in view, with a gear right next to it to change it */}
+            <div className="d-row">
+              <span className="k">
+                Max slippage
+                <InfoTip title="Max slippage">The most the price may move against you before the swap is cancelled. Auto is the safe default.</InfoTip>
+              </span>
+              <span className="v">
+                <b>{q.slippage}%</b>
+                <small>{a.slippage === 'Auto' ? 'Auto' : 'Custom'}</small>
+                <button className="d-gear" onClick={() => a.open('settings')} aria-label="Adjust max slippage">
+                  <Icon n="gear" size={16} />
+                </button>
+              </span>
+            </div>
             <div
               className={'d-row d-more' + (more ? ' on' : '')}
               role="button"
@@ -538,17 +552,6 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
                   </span>
                   <span className="v">
                     {usd(q.poolFeeUsd)} <small>{q.poolFeePct}%</small>
-                  </span>
-                </div>
-                <div className="d-row sm">
-                  <span className="k">
-                    <Icon n="sliders" size={14} /> Max slippage
-                    <InfoTip title="Max slippage" action={{ label: 'Open swap settings', onClick: () => a.open('settings') }}>
-                      The most the price may move against you before the swap is cancelled. Not sure which value to use? Auto is the safe default.
-                    </InfoTip>
-                  </span>
-                  <span className="v">
-                    {q.slippage}% <small>{a.slippage === 'Auto' ? 'Auto' : 'Custom'}</small>
                   </span>
                 </div>
                 <div className="d-row sm">
