@@ -170,6 +170,24 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
   const a = useApp()
   const [focus, setFocus] = useState(false)
   const [more, setMore] = useState(false)
+  // where the settings popover hangs when opened from the gear in the quote details:
+  // to the right of the gear (left if there's no room), kept inside the viewport vertically
+  const [gearPos, setGearPos] = useState<{ side: 'right' | 'left'; top: number } | null>(null)
+  useEffect(() => {
+    if (a.modal !== 'settings') setGearPos(null)
+  }, [a.modal])
+  const openFromGear = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (a.modal === 'settings') return a.close()
+    if (a.isMobile) return a.open('settings')
+    const r = e.currentTarget.getBoundingClientRect()
+    const POP_W = 360
+    const POP_H = 300
+    const side = window.innerWidth - r.right >= POP_W + 24 ? 'right' : 'left'
+    const wanted = r.top + r.height / 2 - POP_H / 2
+    const y = Math.max(96, Math.min(wanted, window.innerHeight - POP_H - 16))
+    setGearPos({ side, top: y - r.top })
+    a.open('settings')
+  }
   // card swap: the two fields trade places (FLIP — content swaps, then each card slides in from the other's slot)
   const sendRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -284,7 +302,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
               ))}
             </div>
           )}
-          <Anchor kinds={['settings']} pop={<div className="popover settings" role="dialog" aria-label="Swap settings"><SettingsBody onClose={a.close} /></div>}>
+          <Anchor kinds={gearPos ? [] : ['settings']} pop={<div className="popover settings" role="dialog" aria-label="Swap settings"><SettingsBody onClose={a.close} /></div>}>
           <div className="tools">
             <button
               className={'tool' + (a.chart !== 'off' ? ' on' : '')}
@@ -511,9 +529,19 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
               <span className="v">
                 <b>{q.slippage}%</b>
                 <small>{a.slippage === 'Auto' ? 'Auto' : 'Custom'}</small>
-                <button className="d-gear" onClick={() => a.open('settings')} aria-label="Adjust max slippage">
-                  <Icon n="gear" size={16} />
-                </button>
+                {/* opened from here, the settings appear beside this button — not up at the toolbar */}
+                <Anchor
+                  kinds={gearPos ? ['settings'] : []}
+                  pop={
+                    <div className={'popover settings beside ' + (gearPos?.side ?? 'right')} style={{ top: gearPos?.top }} role="dialog" aria-label="Swap settings">
+                      <SettingsBody onClose={a.close} />
+                    </div>
+                  }
+                >
+                  <button className={'d-gear' + (gearPos && a.modal === 'settings' ? ' on' : '')} onClick={openFromGear} aria-label="Adjust max slippage">
+                    <Icon n="gear" size={16} />
+                  </button>
+                </Anchor>
               </span>
             </div>
             <div

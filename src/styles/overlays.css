@@ -1219,3 +1219,41 @@
   font-weight: 500;
   color: var(--text-tertiary);
 }
+
+/* swap settings opened from the gear in the quote details: beside the gear */
+.popover.settings.beside {
+  right: auto;
+  left: calc(100% + 14px);
+  transform-origin: left center;
+  animation: besideIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 400;
+  text-align: left;
+}
+.popover.settings.beside.left {
+  left: auto;
+  right: calc(100% + 14px);
+  transform-origin: right center;
+}
+@keyframes besideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px) scale(0.98);
+  }
+}
+.popover.settings.beside.left {
+  animation-name: besideInL;
+}
+@keyframes besideInL {
+  from {
+    opacity: 0;
+    transform: translateX(8px) scale(0.98);
+  }
+}
+.d-gear.on {
+  background: var(--bg-hover);
+  border-color: rgba(60, 104, 200, 0.6);
+  color: #fff;
+}
+.details .v .anchor {
+  display: inline-flex;
+}
