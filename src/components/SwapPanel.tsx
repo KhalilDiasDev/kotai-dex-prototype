@@ -18,8 +18,8 @@ function TokenSelect({ id, onClick }: { id: TokenId; onClick: () => void }) {
   )
 }
 
-/** "Refreshes in 30s" countdown — re-quotes when it hits zero. */
-const REFRESH_SECS = 30
+/** "Refreshes in 60s" countdown — re-quotes when it hits zero. */
+const REFRESH_SECS = 60
 function useCountdown(active: boolean, onZero: () => void) {
   const [n, setN] = useState(REFRESH_SECS)
   const cb = useRef(onZero)
