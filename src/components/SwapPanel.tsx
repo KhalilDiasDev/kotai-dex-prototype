@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { TOKENS, fmt, pctText, unitPrice, usd, type TokenId } from '../data'
 import { useApp, type Tab } from '../store'
@@ -101,30 +101,6 @@ function InfoTip({ title, children, action }: { title: string; children: React.R
         </span>
       )}
     </span>
-  )
-}
-
-/* "adjustments" icon whose knobs slide along their tracks on hover (lines are cut around each knob by a mask that moves with it) */
-const KNOBS: [number, number][] = [
-  [14, 6],
-  [8, 12],
-  [17, 18],
-]
-function SlidersIcon() {
-  const id = 'sl' + useId().replace(/:/g, '')
-  return (
-    <svg className="ic-sl" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden>
-      <mask id={id} maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
-        <rect width="24" height="24" fill="#fff" />
-        {KNOBS.map(([x, y], i) => (
-          <circle key={i} className={'k k' + i} cx={x} cy={y} r="3.1" fill="#000" stroke="none" />
-        ))}
-      </mask>
-      <path d="M4 6h16M4 12h16M4 18h16" mask={`url(#${id})`} />
-      {KNOBS.map(([x, y], i) => (
-        <circle key={i} className={'k k' + i} cx={x} cy={y} r="2" />
-      ))}
-    </svg>
   )
 }
 
@@ -317,7 +293,7 @@ export function SwapPanel({ compact }: { compact?: boolean }) {
               <Icon n="chart" size={20} />
             </button>
             <button className={'tool wide' + (a.modal === 'settings' ? ' on' : '')} aria-label="Swap settings" onClick={() => (a.modal === 'settings' ? a.close() : a.open('settings'))}>
-              <SlidersIcon />
+              <Icon n="gear" size={18} className="ic-gear" />
               {a.slippage === 'Auto' ? '0.5%' : a.slippage + '%'}
             </button>
           </div>
