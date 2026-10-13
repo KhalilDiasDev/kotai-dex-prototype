@@ -52,10 +52,14 @@ export function FeeDetails({ countdown }: { countdown?: number }) {
             Tudo o que a troca custa: a taxa da rede (paga em BNB) e a taxa do pool da KOTAI. Já está incluída nos valores acima. Toque para ver os detalhes.
           </InfoTip>
         </span>
-        <b>
-          {a.quoting ? '—' : usd(q.feesUsd)}
-          <Icon n="chevron" size={16} sw={2} className="chev" />
-        </b>
+        {/* value · thin divider · square chevron button (Figma "Valor + seta") */}
+        <span className="fee-r">
+          <b>{a.quoting ? '—' : usd(q.feesUsd)}</b>
+          <i className="fee-div" aria-hidden />
+          <span className="fee-btn" aria-hidden>
+            <Icon n="chevron" size={16} sw={2} className="chev" />
+          </span>
+        </span>
       </div>
       {open && (
         <div className="sim-fee-body">

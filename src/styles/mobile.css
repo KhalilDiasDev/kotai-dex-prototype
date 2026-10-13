@@ -1646,3 +1646,102 @@ select {
   background: #0b1428;
   box-shadow: 0 0 0 4px #010308;
 }
+
+/* ───────── "Taxa total" exactly as the Figma component ───────── */
+/* box: no fill, 24% #2e4573 outline, 16px radius; 16/20 padding closed, 18/20 open */
+.sim .sim-fee {
+  background: transparent;
+  border: 1px solid rgba(46, 69, 115, 0.24);
+  border-radius: 16px;
+}
+.sim-fee-head {
+  height: auto;
+  padding: 16px 20px;
+  color: #e6edff;
+}
+.sim-fee.open .sim-fee-head {
+  height: auto;
+  padding: 18px 20px 10px;
+}
+.sim-sheet .sim-fee-head {
+  height: auto;
+}
+.sim-fee-body {
+  padding: 0 20px 18px;
+}
+.fee-r {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.fee-r b {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fbfdff;
+}
+.fee-div {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.14);
+}
+.fee-btn {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fbfdff;
+  transition: background-color 0.15s;
+}
+.sim-fee-head:hover .fee-btn {
+  background: rgba(255, 255, 255, 0.1);
+}
+.fee-btn .chev {
+  transition: transform 0.2s;
+}
+.sim-fee.open .fee-btn .chev {
+  transform: rotate(180deg);
+}
+/* open rows: 32px, 14px labels in #e6edff, help icons in #b9caf5 */
+.sim-row {
+  min-height: 32px;
+}
+.sim-row .k {
+  color: #e6edff;
+}
+.sim-row .k .info-tip > button {
+  color: #b9caf5;
+}
+.sim-row.rate {
+  min-height: 28px;
+  margin-bottom: 6px;
+}
+.sim-row.rate small {
+  color: #b9caf5;
+  font-weight: 500;
+}
+.sim-row .badge {
+  padding: 2px 8px;
+  background: rgba(43, 245, 160, 0.16);
+  font-weight: 500;
+}
+/* Slippage: "Auto" in white, gear as a plain 16px icon */
+.sim-row .v small {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fbfdff;
+}
+.sim-row .d-gear {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  background: none !important;
+  border: 0 !important;
+  border-radius: 0;
+  color: #fbfdff;
+}
+.sim-row.rate {
+  margin-bottom: 10px;
+}
