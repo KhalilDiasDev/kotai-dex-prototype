@@ -589,14 +589,7 @@ export function SimpleWallet() {
           <span className="sc-badge" aria-hidden>
             <Icon n="x" size={26} sw={2.6} />
           </span>
-          <ul className="sc-facts">
-            <li>
-              <Icon n="shield" size={16} /> Nada foi cobrado
-            </li>
-            <li>
-              <Icon n="wallet" size={16} /> Seus {a.from} continuam na carteira
-            </li>
-          </ul>
+          <p className="sc-note">Troca cancelada. Nada foi cobrado</p>
         </div>
         <div className="m-col">
           <button
