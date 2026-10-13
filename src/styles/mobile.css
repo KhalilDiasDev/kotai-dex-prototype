@@ -1573,3 +1573,21 @@ select {
 .sim-sheet .sim-fee-head {
   height: 52px;
 }
+
+/* Troca Concluída · ID row: label + explorer link, and a clearly readable ID */
+.sim-tx {
+  align-items: stretch;
+}
+.sim-tx .tx-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.sim-tx .m-link {
+  font-size: 13px;
+}
+.sim-tx .hash .mono {
+  color: var(--text-primary);
+  opacity: 1;
+}

@@ -634,8 +634,14 @@ export function SimpleDone() {
           </span>
         </div>
       </div>
-      <div className="tx">
-        <small>ID da transação</small>
+      <div className="tx sim-tx">
+        {/* label on the left, explorer link on the right, above the ID */}
+        <div className="tx-head">
+          <small>ID da transação</small>
+          <button className="m-link sm" onClick={() => a.toast({ tone: 'info', title: 'Ver no BscScan', body: 'Opens bscscan.com in the real product' })}>
+            Ver no explorador <Icon n="ext" size={14} />
+          </button>
+        </div>
         <div className="hash">
           <span className="mono">0x9f3c2b7e5a41d8c06f93e1b2a7d4058c3e6f19a2b8d7c4e0153a96f2c8b1a71b</span>
           <button
