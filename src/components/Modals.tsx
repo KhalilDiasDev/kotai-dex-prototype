@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { ADDRESS, NETWORKS, TOKENS, TOKEN_LIST, WALLETS, fmt, unitPrice, usd, type HistoryItem, type TokenId } from '../data'
 import { useApp, type ModalKind } from '../store'
 import { NetworkPicker, SystemBody, WalletMenuBody } from './Header'
-import { SimpleDone, SimpleFailed, SimpleReview, SimpleSwapping, SimpleWallet } from './SimpleSwap'
+import { SIMPLE_FLOW, SimpleDone, SimpleFailed, SimpleReview, SimpleSwapping, SimpleWallet } from './SimpleSwap'
 import { HelpTip } from './SwapPanel'
 import { Banner, Coin, Icon, Modal, Net, Spinner, WalletLogo, usePresence, useScrollLock, type CoinId } from './ui'
 
@@ -1380,6 +1380,7 @@ export function Modals() {
 function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
   const a = useApp()
   const m = a.isMobile
+  const s = SIMPLE_FLOW
   switch (k) {
     case 'connect':
       return <ConnectModal />
@@ -1401,19 +1402,20 @@ function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
       return <AddFundsModal />
     // phones: the simplified swap proposal (conferir → confirmar na carteira → trocando → pronto)
     case 'review':
-      return m ? <SimpleReview /> : <ReviewModal />
+      return s ? <SimpleReview /> : <ReviewModal />
     case 'signing':
-      return m ? <SimpleWallet /> : <SwapFlowModal kind="signing" />
+      return s ? <SimpleWallet /> : <SwapFlowModal kind="signing" />
     case 'processing':
-      return m ? <SimpleSwapping /> : <SwapFlowModal kind="processing" />
+      return s ? <SimpleSwapping /> : <SwapFlowModal kind="processing" />
     case 'done':
-      return m ? <SimpleDone /> : <DoneModal />
+      return s ? <SimpleDone /> : <DoneModal />
     case 'failed':
-      return m ? <SimpleFailed /> : <FailedModal />
+      return s ? <SimpleFailed /> : <FailedModal />
     case 'navMenu':
       return <SheetNav />
+    // the simple flow has no toolbar popover, so settings open as a dialog on every screen size
     case 'settings':
-      return m ? (
+      return m || s ? (
         <Modal className="sheet-pop" onScrim={a.close}>
           <SettingsBody onClose={a.close} />
         </Modal>

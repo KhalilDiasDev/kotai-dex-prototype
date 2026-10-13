@@ -11,6 +11,9 @@ import { FundOptions } from './Modals'
 import { InfoTip, TabSelect, TokenSelect, useCountdown } from './SwapPanel'
 import { Coin, Icon, Modal, Spinner } from './ui'
 
+/** the simple flow runs on every screen size (desktop included) */
+export const SIMPLE_FLOW = true
+
 const TABS_PT: Record<Tab, string> = { swap: 'Trocar', limit: 'Limite', buy: 'Comprar' }
 const GAS_KEEP = 0.0003 // BNB left in the wallet for the network fee
 
@@ -148,7 +151,17 @@ export function SimpleSwapPanel() {
         <div className="swap-top">
           <TabSelect labels={TABS_PT} soon="Em breve" />
           <div className="tools">
-            <button className="tool" aria-label="Gráfico de preço" onClick={() => a.openCoin(a.to === 'KTI' || a.from !== 'KTI' ? a.to : a.from)}>
+            <button
+              className={'tool' + (!a.isMobile && a.chart !== 'off' ? ' on' : '')}
+              aria-label="Gráfico de preço"
+              onClick={() =>
+                a.isMobile
+                  ? a.openCoin(a.to === 'KTI' || a.from !== 'KTI' ? a.to : a.from)
+                  : a.view === 'home'
+                    ? a.set({ view: 'swap', chart: 'side' })
+                    : a.set({ chart: a.chart === 'off' ? 'side' : 'off' })
+              }
+            >
               <Icon n="chart" size={20} />
             </button>
             <button className="tool" aria-label="Ajustes da troca" onClick={() => a.open('settings')}>
@@ -437,27 +450,50 @@ export function SimpleWallet() {
   )
 }
 
-/* ───────── Trocando… — the two coins with the indicator between them, and a status line ───────── */
+/* ───────── Trocando… — both amounts travel into the centre indicator, which turns into a check ───────── */
 export function SimpleSwapping() {
   const a = useApp()
+  const q = a.quote
   const slow = a.scenario === 'slow'
-  const [t, setT] = useState(0)
+  // 0 sending · 1 confirming (amounts start moving in) · 2 receiving (merged) · 3 check
+  const [phase, setPhase] = useState(0)
   useEffect(() => {
-    const id = window.setInterval(() => setT((v) => v + 1), 1400)
-    return () => window.clearInterval(id)
-  }, [])
-  const status = slow ? 'Confirmando na rede' : [`Enviando seus ${a.from}`, 'Confirmando na rede', `Recebendo seus ${a.to}`][Math.min(t, 2)]
+    if (slow) return
+    const ts = [setTimeout(() => setPhase(1), 900), setTimeout(() => setPhase(2), 2300), setTimeout(() => setPhase(3), 2900)]
+    return () => ts.forEach(clearTimeout)
+  }, [slow])
+  const status = slow ? 'Confirmando na rede' : [`Enviando seus ${a.from}`, 'Confirmando na rede', `Recebendo seus ${a.to}`, 'Pronto!'][phase]
   return (
     <Modal title="Trocando…" className="sim-sheet">
-      <div className="sim-swapping">
-        <Coin id={a.from} size={72} />
-        <span className="sim-ring sm">
-          <Spinner size={64} stroke={3} />
-          <span className="ic">
-            <Icon n="swapH" size={20} />
-          </span>
+      <div className={'sim-swapping p' + phase}>
+        <div className="sw-side l">
+          <Coin id={a.from} size={56} />
+          <b>
+            {fmt(a.amountNum)} {a.from}
+          </b>
+        </div>
+        <span className="sw-center">
+          {phase < 3 ? (
+            <>
+              <Spinner size={64} stroke={3} />
+              <span className="ic">
+                <Icon n="swapH" size={20} />
+              </span>
+            </>
+          ) : (
+            <span className="ic ok">
+              <svg viewBox="0 0 28 28" width="26" height="26" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M4 14.5l6.5 6.5L24 7.5" pathLength={1} />
+              </svg>
+            </span>
+          )}
         </span>
-        <Coin id={a.to} size={72} />
+        <div className="sw-side r">
+          <Coin id={a.to} size={56} />
+          <b>
+            {fmt(q.out, 0)} {a.to}
+          </b>
+        </div>
       </div>
       <p className="sim-status" key={status}>
         {status}

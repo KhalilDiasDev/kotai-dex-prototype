@@ -1415,3 +1415,91 @@ select {
 .sim-steps + .sim-wallet b {
   margin-top: 8px;
 }
+
+/* ───────── Trocando… · amounts travel into the centre, which turns into a check ───────── */
+.sim-swapping {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 64px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0 6px;
+}
+.sw-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  transition: transform 1.3s cubic-bezier(0.6, 0, 0.3, 1), opacity 0.35s ease-in 1s;
+}
+.sw-side b {
+  max-width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* the two amounts are pulled into the indicator (distance = half a side column + gap + half the centre) */
+.sim-swapping.p1 .sw-side.l,
+.sim-swapping.p2 .sw-side.l,
+.sim-swapping.p3 .sw-side.l {
+  transform: translateX(calc(50% + 44px)) scale(0.25);
+  opacity: 0;
+}
+.sim-swapping.p1 .sw-side.r,
+.sim-swapping.p2 .sw-side.r,
+.sim-swapping.p3 .sw-side.r {
+  transform: translateX(calc(-50% - 44px)) scale(0.25);
+  opacity: 0;
+}
+.sw-center {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  transition: transform 0.4s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.sw-center .ring-spin {
+  position: absolute;
+  inset: 0;
+}
+.sw-center .ic {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #101d36;
+  border: 1px solid rgba(127, 182, 255, 0.45);
+  color: #fff;
+}
+/* absorbing: the centre swells a little as the amounts arrive */
+.sim-swapping.p2 .sw-center {
+  transform: scale(1.18);
+}
+.sim-swapping.p3 .sw-center {
+  transform: scale(1.3);
+}
+.sw-center .ic.ok {
+  width: 56px;
+  height: 56px;
+  background: rgba(41, 199, 133, 0.2);
+  border: 1.5px solid rgba(43, 245, 160, 0.75);
+  box-shadow: 0 0 0 8px rgba(41, 199, 133, 0.08), 0 0 28px rgba(43, 245, 160, 0.35);
+  animation: pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.sw-center .ic.ok path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 0.45s 0.1s ease-out forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sw-side {
+    transition: opacity 0.2s;
+  }
+}

@@ -4,7 +4,7 @@ import { TOKENS, fmt, pctText, unitPrice, usd, type TokenId } from '../data'
 import { useApp, type Tab } from '../store'
 import { Anchor } from './Header'
 import { FundOptions, SettingsBody } from './Modals'
-import { SimpleSwapPanel } from './SimpleSwap'
+import { SIMPLE_FLOW, SimpleSwapPanel } from './SimpleSwap'
 import { Banner, Coin, Icon, Spinner } from './ui'
 
 const QUICK: TokenId[] = ['KTI', 'USDT', 'BNB', 'USDC', 'ETH']
@@ -144,9 +144,9 @@ export function TabSelect({ labels = TAB_LABEL, soon = 'Soon' }: { labels?: Reco
 }
 
 export function SwapPanel({ compact }: { compact?: boolean }) {
-  const app = useApp()
-  // phones run the simplified swap proposal ("Proposta · Swap simples · Mobile")
-  if (app.isMobile) return <SimpleSwapPanel />
+  // every screen size runs the simplified swap proposal ("Proposta · Swap simples");
+  // the previous full panel stays below in case we want to bring it back
+  if (SIMPLE_FLOW) return <SimpleSwapPanel />
   return <FullSwapPanel compact={compact} />
 }
 
