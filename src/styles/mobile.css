@@ -1750,3 +1750,19 @@ select {
 .sim .flip-slot {
   margin: -12px 0;
 }
+/* "Confirme sua troca" sheet — Figma "Detalhes": #0b1428 fill, 1px #27458a outline, 16px radius, 16px padding */
+.sim-sheet .sim-fee,
+.sim-sheet .sim .sim-fee {
+  background: #0b1428;
+  border: 1px solid #27458a;
+  border-radius: 16px;
+}
+.sim-sheet .sim-fee-head {
+  padding: 16px;
+}
+.sim-sheet .sim-fee.open .sim-fee-head {
+  padding: 16px 16px 10px;
+}
+.sim-sheet .sim-fee-body {
+  padding: 0 16px 16px;
+}

@@ -494,7 +494,7 @@ export function SimpleReview() {
   }
   if (sc === 'highImpact') {
     return (
-      <Modal title="Confira sua troca" onClose={cancel} onScrim={cancel} className="sim-sheet">
+      <Modal title="Confirme sua troca" onClose={cancel} onScrim={cancel} className="sim-sheet">
         <Notice>Você receberia cerca de {Math.round(q.impact)}% a menos que o preço normal. Tente um valor menor.</Notice>
         <SumBox />
         <FeeDetails countdown={secs} />
@@ -508,7 +508,7 @@ export function SimpleReview() {
     )
   }
   return (
-    <Modal title="Confira sua troca" onClose={cancel} onScrim={cancel} className="sim-sheet">
+    <Modal title="Confirme sua troca" onClose={cancel} onScrim={cancel} className="sim-sheet">
       {sc === 'accountChanged' && <Notice>A conta ou a rede mudou na carteira. Atualizamos o valor.</Notice>}
       <SumBox />
       <FeeDetails countdown={secs} />
