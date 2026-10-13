@@ -252,7 +252,7 @@ export function SimpleSwapPanel() {
         : noRoute && hasAmt
           ? 'Não encontramos uma rota para esse valor. Tente um valor menor.'
           : needsGas
-            ? 'É preciso deixar um pouco de BNB para a taxa da rede. Podemos ajustar o valor para você.'
+            ? `Deixe um pouco de BNB para a taxa da rede. Ajustamos para ${fixed} ${GAS_TOKEN}.`
             : null
 
   // main button, in the person's words
@@ -451,17 +451,15 @@ export function SimpleSwapPanel() {
         </div>
 
         {warn && (
-          <div className="sim-warn" role="status">
-            <Icon n="warn" size={18} />
-            <span>
-              {warn}
-              {/* E1: the fix is offered right inside the warning */}
-              {needsGas && (
-                <button className="sim-warn-act" onClick={() => a.setAmount(String(fixed))}>
-                  Ajustar para {fixed} {GAS_TOKEN}
-                </button>
-              )}
-            </span>
+          <div className={'sim-warn' + (needsGas ? ' calm' : '')} role="status">
+            <Icon n={needsGas ? 'info' : 'warn'} size={18} />
+            <span>{warn}</span>
+            {/* E1: a calm note with the fix on the right, as a regular button */}
+            {needsGas && (
+              <button className="btn secondary sim-warn-act" onClick={() => a.setAmount(String(fixed))}>
+                Ajustar
+              </button>
+            )}
           </div>
         )}
 

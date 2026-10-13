@@ -1945,3 +1945,32 @@ select {
   border-radius: 0;
   color: var(--text-tertiary);
 }
+
+/* E1 · calm note (neutral, not an alarm) with a regular button on the right */
+.sim-warn.calm {
+  align-items: center;
+  background: transparent;
+  border-color: rgba(60, 104, 200, 0.6);
+  color: var(--text-primary);
+}
+.sim-warn.calm > svg {
+  color: #cfe3ff;
+  margin-top: 0;
+}
+.sim-warn.calm > span {
+  flex: 1;
+  display: block;
+}
+.sim-warn .sim-warn-act {
+  flex: none;
+  height: 34px;
+  padding: 0 16px;
+  font-size: 14px;
+  background: #112042;
+  color: var(--text-primary);
+  border: 0;
+}
+.sim-warn .sim-warn-act:hover {
+  background: #1a2f5e;
+  color: #fff;
+}
