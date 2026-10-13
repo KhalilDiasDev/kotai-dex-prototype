@@ -646,13 +646,8 @@ export function SimpleWallet() {
         <b key={'t' + a.step}>{st.title}</b>
         <span key={'s' + a.step}>{st.text}</span>
       </div>
-      <button
-        className="btn secondary block m52"
-        onClick={() => {
-          a.close()
-          a.toast({ tone: 'info', title: 'Transação cancelada' })
-        }}
-      >
+      {/* cancelling here shows the "Troca cancelada" sheet (same as a rejection in the wallet) */}
+      <button className="btn secondary block m52" onClick={() => a.set({ step: -2 })}>
         Cancelar
       </button>
     </Modal>

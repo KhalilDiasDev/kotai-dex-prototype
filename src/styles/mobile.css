@@ -2023,3 +2023,12 @@ select {
 .sim .sim-fee {
   border-color: rgba(46, 69, 115, 0.75);
 }
+
+/* Troca cancelada · grey badge (calm, not an error) */
+.sc-badge {
+  background: rgba(255, 255, 255, 0.06);
+  color: #b9caf5;
+}
+.sc-badge::after {
+  border-color: rgba(185, 202, 245, 0.3);
+}
