@@ -2019,3 +2019,7 @@ select {
 .sc-facts li svg {
   color: #2bf5a0;
 }
+/* amount screen: a little more presence for the Taxa total outline (the sheet keeps its own) */
+.sim .sim-fee {
+  border-color: rgba(46, 69, 115, 0.75);
+}
