@@ -163,7 +163,7 @@ let toastId = 1
 export function AppProvider({ children }: { children: ReactNode }) {
   const isMobile = useIsMobile()
   const [s, setS] = useState<AppState>({
-    view: 'home',
+    view: 'swap', // the prototype opens straight on the swap screen
     tab: 'swap',
     connected: false,
     wasConnected: false,
