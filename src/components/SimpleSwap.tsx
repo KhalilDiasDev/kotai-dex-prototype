@@ -576,8 +576,8 @@ export function SimpleReview() {
 
 /* ───────── 3 · Confirmar na carteira — only the current prompt (S4a/b/c) · E3 cancelou ───────── */
 const WALLET_STEPS: Record<number, { icon: string; title: string; text: string }> = {
-  0: { icon: 'wallet', title: 'Autorizar a troca', text: 'Abra a carteira e toque em Aprovar.' },
-  2: { icon: 'shield', title: 'Assinar a permissão', text: 'Assine o pedido na carteira. Não tem custo.' },
+  0: { icon: 'wallet', title: 'Autorizar a troca', text: 'Autorize a troca na carteira.' },
+  2: { icon: 'shield', title: 'Assinar a permissão', text: 'Assine o pedido na carteira.' },
   4: { icon: 'flip', title: 'Confirmar a troca', text: 'Confirme a troca na carteira.' },
 }
 export function SimpleWallet() {
