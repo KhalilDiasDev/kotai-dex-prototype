@@ -1503,3 +1503,62 @@ select {
     transition: opacity 0.2s;
   }
 }
+
+/* ───────── Simple flow · spacing and controls measured from the Figma model ───────── */
+/* Envia / Recebe closer together (8px between the cards; the flip button straddles them) */
+.sim .flip-slot {
+  margin: -12px 0;
+}
+/* "Trocar ▾" — 40px pill, card fill, gradient outline, 15px semibold */
+.sim .ts-btn {
+  height: 40px;
+  padding: 0 14px 0 18px;
+  gap: 8px;
+  background: #0f1d3d;
+  font-size: 15px;
+  font-weight: 600;
+}
+.sim .ts-btn::before {
+  opacity: 1;
+}
+/* chart + settings: 40px round, card fill, quiet outline */
+.sim .tools {
+  gap: 8px;
+}
+.sim .tools .tool {
+  width: 40px;
+  height: 40px;
+  background: #0f1d3d;
+  border: 1px solid #263e63;
+}
+.sim .tools .tool:last-child {
+  width: 42px;
+}
+/* token select inside the cards: dark pill with a clear blue outline */
+.sim .token-sel {
+  height: 42px;
+  padding: 6px 12px 6px 6px;
+  background: #070f24;
+  border: 1px solid #3c68c8;
+}
+.sim .token-sel::before {
+  opacity: 0;
+}
+/* Taxa total header: label with its help icon */
+.sim-fee-head {
+  cursor: pointer;
+  user-select: none;
+}
+.sim-fee-head .k {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sim-fee-head .info-tip .it-pop {
+  left: -14px;
+  bottom: calc(100% + 8px);
+}
+/* let the help bubble escape the fee box */
+.sim-fee {
+  overflow: visible;
+}

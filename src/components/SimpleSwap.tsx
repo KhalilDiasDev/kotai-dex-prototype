@@ -26,13 +26,25 @@ export function FeeDetails({ countdown }: { countdown?: number }) {
   const [open, setOpen] = useState(false)
   return (
     <div className={'sim-fee' + (open ? ' open' : '')}>
-      <button className="sim-fee-head" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
-        <span>Taxa total</span>
+      <div
+        className="sim-fee-head"
+        role="button"
+        tabIndex={0}
+        onClick={() => setOpen((v) => !v)}
+        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setOpen((v) => !v))}
+        aria-expanded={open}
+      >
+        <span className="k">
+          Taxa total
+          <InfoTip title="Taxa total">
+            Tudo o que a troca custa: a taxa da rede (paga em BNB) e a taxa do pool da KOTAI. Já está incluída nos valores acima. Toque para ver os detalhes.
+          </InfoTip>
+        </span>
         <b>
           {a.quoting ? '—' : usd(q.feesUsd)}
           <Icon n="chevron" size={16} sw={2} className="chev" />
         </b>
-      </button>
+      </div>
       {open && (
         <div className="sim-fee-body">
           <div className="sim-row rate">
@@ -149,7 +161,27 @@ export function SimpleSwapPanel() {
     <div className="swap-col sim">
       <div className="swap-card">
         <div className="swap-top">
-          <TabSelect labels={TABS_PT} soon="Em breve" />
+          {/* desktop keeps the original Swap / Limit / Buy tabs; phones use the compact select */}
+          {a.isMobile ? (
+            <TabSelect labels={TABS_PT} soon="Em breve" />
+          ) : (
+            <div className="tabs" role="tablist">
+              {(['swap', 'limit', 'buy'] as Tab[]).map((t) => (
+                <button
+                  key={t}
+                  role="tab"
+                  aria-selected={a.tab === t}
+                  className={'tab gb' + (a.tab === t ? ' on' : '')}
+                  onClick={() => {
+                    if (t !== 'swap') a.toast({ tone: 'info', title: t === 'limit' ? 'Limit orders' : 'Buy crypto', body: 'Not part of this prototype' })
+                    else a.set({ tab: t })
+                  }}
+                >
+                  {t[0].toUpperCase() + t.slice(1)}
+                </button>
+              ))}
+            </div>
+          )}
           <div className="tools">
             <button
               className={'tool' + (!a.isMobile && a.chart !== 'off' ? ' on' : '')}
