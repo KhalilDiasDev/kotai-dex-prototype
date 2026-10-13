@@ -657,7 +657,7 @@ export function SimpleSwapping() {
   const [phase, setPhase] = useState(0)
   useEffect(() => {
     if (slow) return
-    const ts = [setTimeout(() => setPhase(1), 350), setTimeout(() => setPhase(2), 1050), setTimeout(() => setPhase(3), 1300)]
+    const ts = [setTimeout(() => setPhase(1), 900), setTimeout(() => setPhase(2), 2100), setTimeout(() => setPhase(3), 2500)]
     return () => ts.forEach(clearTimeout)
   }, [slow])
   const status = slow ? 'Confirmando na rede' : [`Enviando seus ${a.from}`, 'Confirmando na rede', `Recebendo seus ${a.to}`, 'Pronto!'][phase]

@@ -311,19 +311,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const sc = s.scenario
     later(() => {
       setS((o) => (o.step === 0 && (o.modal === 'signing' || o.modal === 'cancelSign') ? { ...o, step: 2 } : o))
-    }, 1800)
-    // phones (simple flow) show the wallet's third prompt too — "confirm the swap" — as step 4
-    if (isMobile && sc !== 'rejected')
+    }, 2600)
+    // the simple flow shows the wallet's third prompt too — "confirm the swap" — as step 4.
+    // Each prompt stays ~2.6s so it can be followed during a presentation.
+    if (sc !== 'rejected')
       later(() => {
         setS((o) => (o.step === 2 && o.modal === 'signing' ? { ...o, step: 4 } : o))
-      }, 3400)
+      }, 5200)
     later(() => {
       setS((o) => {
         if ((o.step !== 2 && o.step !== 4) || (o.modal !== 'signing' && o.modal !== 'cancelSign')) return o
         if (sc === 'rejected') return { ...o, modal: 'signing', modalStack: [], step: -2 }
         return { ...o, modal: 'processing', modalStack: [], step: 3 }
       })
-    }, 5000)
+    }, 7800)
     if (sc === 'rejected' || sc === 'slow') return
     later(() => {
       setS((o) => {
@@ -339,7 +340,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
         return o
       })
-    }, 7600)
+    }, 11400)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [s.scenario, isMobile])
 
