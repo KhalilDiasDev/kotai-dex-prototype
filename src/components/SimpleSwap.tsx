@@ -81,8 +81,8 @@ export function FeeDetails({ countdown }: { countdown?: number }) {
           </div>
           <div className="sim-row tap" role="button" tabIndex={0} onClick={rowTap} onKeyDown={rowKey}>
             <span className="k">
-              Você recebe no mínimo
-              <InfoTip title="Você recebe no mínimo">Se o preço mudar antes da troca terminar, você recebe pelo menos isso. Se fosse menos, a troca é cancelada.</InfoTip>
+              Mínimo recebido
+              <InfoTip title="Mínimo recebido">Se o preço mudar antes da troca terminar, você recebe pelo menos isso. Se fosse menos, a troca é cancelada.</InfoTip>
             </span>
             <span className="v">
               <b>
@@ -98,13 +98,13 @@ export function FeeDetails({ countdown }: { countdown?: number }) {
             onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), a.open('settings'))}
           >
             <span className="k">
-              Proteção de preço
-              <InfoTip title="Proteção de preço">O quanto o preço pode mudar contra você antes de a troca ser cancelada. Auto é o mais seguro.</InfoTip>
+              Slippage
+              <InfoTip title="Slippage">O quanto o preço pode mudar contra você antes de a troca ser cancelada. Auto é o mais seguro.</InfoTip>
             </span>
             <span className="v">
               <b>{q.slippage}%</b>
               <small>{a.slippage === 'Auto' ? 'Auto' : 'Manual'}</small>
-              <button className="d-gear" onClick={() => a.open('settings')} aria-label="Ajustar a proteção de preço">
+              <button className="d-gear" onClick={() => a.open('settings')} aria-label="Ajustar o slippage">
                 <Icon n="gear" size={16} />
               </button>
             </span>
