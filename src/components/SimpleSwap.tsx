@@ -606,7 +606,7 @@ export function SimpleWallet() {
               window.setTimeout(a.startSwap)
             }}
           >
-            <Icon n="history" size={18} /> Tentar de novo
+            <Icon n="refresh" size={18} /> Tentar de novo
           </button>
           <button className="btn secondary block" onClick={a.close}>
             Fechar

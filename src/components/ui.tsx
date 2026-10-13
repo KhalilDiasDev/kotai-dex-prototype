@@ -4,6 +4,7 @@ import type { TokenId } from '../data'
 /* ───────── Icons · "Ícone/*" components from the Figma file (24px grid, 1.75 stroke) ───────── */
 const P: Record<string, ReactNode> = {
   menu: <path d="M4 6h16M4 12h16M4 18h16" />,
+  refresh: <path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />,
   scan: <path d="M4 7V6a2 2 0 0 1 2-2h2M4 17v1a2 2 0 0 0 2 2h2M16 4h2a2 2 0 0 1 2 2v1M16 20h2a2 2 0 0 0 2-2v-1M5 12h14" />,
   tap: <path d="M3 12h3M12 3v3M7.8 7.8 5.6 5.6M16.2 7.8l2.2-2.2M7.8 16.2l-2.2 2.2M12 12l9 3-4 2-2 4-3-9" />,
   undo: <path d="M9 14l-4-4 4-4M5 10h11a4 4 0 1 1 0 8h-1" />,

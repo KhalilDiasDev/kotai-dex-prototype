@@ -2032,3 +2032,7 @@ select {
 .sc-badge::after {
   border-color: rgba(185, 202, 245, 0.3);
 }
+.sim-cancel {
+  gap: 12px;
+  padding-top: 10px;
+}
