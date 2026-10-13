@@ -722,30 +722,24 @@ export function SimpleDone() {
           <path d="M4 14.5l6.5 6.5L24 7.5" pathLength={1} />
         </svg>
       </div>
-      <div className="m-box g14">
-        <div className="kv tall">
-          <span>Enviado</span>
-          <span className="amt">
-            <span>
-              <b className="red">
-                -{fmt(ls.amount)} {ls.from}
-              </b>
-              <Coin id={ls.from} size={20} />
-            </span>
-            <small>{usd(ls.amount * TOKENS[ls.from].price)}</small>
-          </span>
+      {/* one row: what left on the left, what arrived on the right, the swap icon between them */}
+      <div className="sim-pair">
+        <div className="sp-side">
+          <Coin id={ls.from} size={36} />
+          <b className="red">
+            -{fmt(ls.amount)} {ls.from}
+          </b>
+          <small>{usd(ls.amount * TOKENS[ls.from].price)}</small>
         </div>
-        <div className="kv tall">
-          <span>Recebido</span>
-          <span className="amt">
-            <span>
-              <b className="green">
-                +{fmt(ls.out, 0)} {ls.to}
-              </b>
-              <Coin id={ls.to} size={20} />
-            </span>
-            <small>{usd(ls.out * TOKENS[ls.to].price)}</small>
-          </span>
+        <span className="sp-ic" aria-hidden>
+          <Icon n="swapH" size={18} />
+        </span>
+        <div className="sp-side">
+          <Coin id={ls.to} size={36} />
+          <b className="green">
+            +{fmt(ls.out, 0)} {ls.to}
+          </b>
+          <small>{usd(ls.out * TOKENS[ls.to].price)}</small>
         </div>
       </div>
       <div className="tx sim-tx">

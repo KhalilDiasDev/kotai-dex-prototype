@@ -1864,3 +1864,75 @@ select {
 .sim-swapping .sw-side {
   transition: transform 1.1s cubic-bezier(0.6, 0, 0.3, 1), opacity 0.25s ease-in 0.85s;
 }
+
+/* Troca Concluída · sent ⇄ received on one row */
+.sim-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 16px 12px;
+  border-radius: 16px;
+  background: #0b1428;
+  border: 1px solid #27458a;
+  animation: doneRise 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+.sp-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  text-align: center;
+}
+.sp-side b {
+  max-width: 100%;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sp-side b.red {
+  color: #ff6685;
+}
+.sp-side b.green {
+  color: #2bf5a0;
+}
+.sp-side small {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+.sp-ic {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #101d36;
+  border: 1px solid rgba(127, 182, 255, 0.35);
+  color: #cfdcf2;
+}
+/* transaction ID: smaller and quieter */
+.sim-tx small {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+.sim-tx .hash {
+  height: 36px;
+  padding: 8px 12px;
+  background: transparent;
+  border-color: rgba(46, 69, 115, 0.3);
+}
+.sim-tx .hash .mono {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  opacity: 0.5;
+}
+.sim-tx .hash button {
+  opacity: 0.7;
+}
+.sim-tx .m-link {
+  font-size: 12px;
+}
