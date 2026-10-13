@@ -1591,3 +1591,44 @@ select {
   color: var(--text-primary);
   opacity: 1;
 }
+
+/* ───────── Dropdown triggers (buttons with a chevron): no outline anywhere ───────── */
+.token-sel,
+.sim .token-sel,
+.pill-btn,
+.wm-net,
+.tok-netbtn,
+.s-nets,
+.ts-btn,
+.sim .ts-btn,
+.cm-pick,
+.net-pill {
+  border-color: transparent !important;
+  box-shadow: none;
+}
+.token-sel::before,
+.ts-btn::before,
+.sim .ts-btn::before,
+.wm-net::before,
+.s-nets::before {
+  display: none !important;
+}
+/* without an outline they keep a distinct fill, and the hover still reads */
+.token-sel,
+.sim .token-sel,
+.wm-net,
+.tok-netbtn,
+.s-nets {
+  background: #13244a;
+}
+.token-sel:hover,
+.wm-net:hover,
+.tok-netbtn:hover,
+.s-nets:hover,
+.pill-btn:hover,
+.ts-btn:hover {
+  background: #1a2f5e;
+}
+.pill-btn.flash {
+  animation: none;
+}
