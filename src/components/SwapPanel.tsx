@@ -4,11 +4,12 @@ import { TOKENS, fmt, pctText, unitPrice, usd, type TokenId } from '../data'
 import { useApp, type Tab } from '../store'
 import { Anchor } from './Header'
 import { FundOptions, SettingsBody } from './Modals'
+import { SimpleSwapPanel } from './SimpleSwap'
 import { Banner, Coin, Icon, Spinner } from './ui'
 
 const QUICK: TokenId[] = ['KTI', 'USDT', 'BNB', 'USDC', 'ETH']
 
-function TokenSelect({ id, onClick }: { id: TokenId; onClick: () => void }) {
+export function TokenSelect({ id, onClick }: { id: TokenId; onClick: () => void }) {
   return (
     <button className="token-sel" onClick={onClick} aria-label={`Select token, ${id}`}>
       <Coin id={id} size={28} />
@@ -20,7 +21,7 @@ function TokenSelect({ id, onClick }: { id: TokenId; onClick: () => void }) {
 
 /** "Refreshes in 60s" countdown — re-quotes when it hits zero. */
 const REFRESH_SECS = 60
-function useCountdown(active: boolean, onZero: () => void) {
+export function useCountdown(active: boolean, onZero: () => void) {
   const [n, setN] = useState(REFRESH_SECS)
   const cb = useRef(onZero)
   cb.current = onZero
@@ -55,7 +56,7 @@ export function HelpTip({ onClose }: { onClose: () => void }) {
 
 /* "?" next to a label: the description shows while the pointer (or keyboard focus) is on the icon and
    disappears the moment it leaves; on touch a tap toggles it and tapping elsewhere closes it */
-function InfoTip({ title, children, action }: { title: string; children: React.ReactNode; action?: { label: string; onClick: () => void } }) {
+export function InfoTip({ title, children, action }: { title: string; children: React.ReactNode; action?: { label: string; onClick: () => void } }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLSpanElement>(null)
   useEffect(() => {
@@ -106,7 +107,7 @@ function InfoTip({ title, children, action }: { title: string; children: React.R
 
 /* Mobile: Swap / Limit / Buy as a compact select, so the row never crowds the chart + settings buttons */
 const TAB_LABEL: Record<Tab, string> = { swap: 'Swap', limit: 'Limit', buy: 'Buy' }
-function TabSelect() {
+export function TabSelect({ labels = TAB_LABEL, soon = 'Soon' }: { labels?: Record<Tab, string>; soon?: string }) {
   const a = useApp()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -124,15 +125,15 @@ function TabSelect() {
   return (
     <div className="tab-select" ref={ref}>
       <button className={'ts-btn gb' + (open ? ' on' : '')} onClick={() => setOpen((v) => !v)} aria-haspopup="listbox" aria-expanded={open}>
-        {TAB_LABEL[a.tab]}
+        {labels[a.tab]}
         <Icon n="chevron" size={16} className="chev" />
       </button>
       {open && (
         <div className="ts-list" role="listbox">
           {(['swap', 'limit', 'buy'] as Tab[]).map((t) => (
             <button key={t} role="option" aria-selected={a.tab === t} className={'ts-opt' + (a.tab === t ? ' on' : '')} onClick={() => pick(t)}>
-              <span className="grow">{TAB_LABEL[t]}</span>
-              {t !== 'swap' && <small>Soon</small>}
+              <span className="grow">{labels[t]}</span>
+              {t !== 'swap' && <small>{soon}</small>}
               {a.tab === t && <Icon n="check" size={16} sw={2.5} />}
             </button>
           ))}
@@ -143,6 +144,13 @@ function TabSelect() {
 }
 
 export function SwapPanel({ compact }: { compact?: boolean }) {
+  const app = useApp()
+  // phones run the simplified swap proposal ("Proposta · Swap simples · Mobile")
+  if (app.isMobile) return <SimpleSwapPanel />
+  return <FullSwapPanel compact={compact} />
+}
+
+function FullSwapPanel({ compact }: { compact?: boolean }) {
   const a = useApp()
   const [focus, setFocus] = useState(false)
   const [more, setMore] = useState(false)

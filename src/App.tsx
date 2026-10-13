@@ -144,7 +144,7 @@ function Shell() {
       <Modals />
       {/* every notification lands top-right, under the header */}
       <Toasts list={a.toasts} />
-      {a.view === 'swap' && <HelpFab />}
+      {a.view === 'swap' && !(a.isMobile && a.amountNum > 0) && <HelpFab />}
       <ProtoControls />
       <IconTips />
     </>

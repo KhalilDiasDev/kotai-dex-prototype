@@ -1,0 +1,552 @@
+/* ─────────────────────────────────────────────────────────────
+   Proposta · Swap simples · Mobile  (Figma page "08 · Proposta · Swap simples · Mobile")
+   Para quem nunca fez um swap: valor → conferir → confirmar. Each screen shows only what's needed,
+   and warnings appear only when something could hurt the person. Phones only — desktop keeps the full flow.
+   ───────────────────────────────────────────────────────────────── */
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { flushSync } from 'react-dom'
+import { GAS_TOKEN, NETWORKS, TOKENS, WALLETS, fmt, usd } from '../data'
+import { useApp, type Tab } from '../store'
+import { FundOptions } from './Modals'
+import { InfoTip, TabSelect, TokenSelect, useCountdown } from './SwapPanel'
+import { Coin, Icon, Modal, Spinner } from './ui'
+
+const TABS_PT: Record<Tab, string> = { swap: 'Trocar', limit: 'Limite', buy: 'Comprar' }
+const GAS_KEEP = 0.0003 // BNB left in the wallet for the network fee
+
+const amt = (n: number) => fmt(n, n < 1 ? 6 : n < 10000 ? 4 : 0)
+
+/* ───────── "Taxa total" — one number; tapping it opens the details (V2 / V3) ───────── */
+export function FeeDetails({ countdown }: { countdown?: number }) {
+  const a = useApp()
+  const q = a.quote
+  const [open, setOpen] = useState(false)
+  return (
+    <div className={'sim-fee' + (open ? ' open' : '')}>
+      <button className="sim-fee-head" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
+        <span>Taxa total</span>
+        <b>
+          {a.quoting ? '—' : usd(q.feesUsd)}
+          <Icon n="chevron" size={16} sw={2} className="chev" />
+        </b>
+      </button>
+      {open && (
+        <div className="sim-fee-body">
+          <div className="sim-row rate">
+            <b>
+              1 {a.from} = {fmt(q.rate, q.rate < 1 ? 8 : 0)} {a.to}
+            </b>
+            {countdown !== undefined && (
+              <small>
+                <Icon n="clock" size={14} /> Atualiza em {countdown}s
+              </small>
+            )}
+          </div>
+          <div className="sim-row">
+            <span className="k">
+              Efeito no preço
+              <InfoTip title="Efeito no preço">Quanto a sua própria troca muda o preço do pool. Baixo é o normal.</InfoTip>
+            </span>
+            <span className="v">
+              <span className={'badge' + (q.impactLevel === 'High' ? ' high' : '')}>{q.impactLevel === 'High' ? 'Alto' : 'Baixo'}</span>
+              <b>{q.impact.toFixed(2)}%</b>
+            </span>
+          </div>
+          <div className="sim-row">
+            <span className="k">
+              Você recebe no mínimo
+              <InfoTip title="Você recebe no mínimo">Se o preço mudar antes da troca terminar, você recebe pelo menos isso. Se fosse menos, a troca é cancelada.</InfoTip>
+            </span>
+            <span className="v">
+              <b>
+                {amt(q.minOut)} {a.to}
+              </b>
+            </span>
+          </div>
+          <div className="sim-row">
+            <span className="k">
+              Proteção de preço
+              <InfoTip title="Proteção de preço">O quanto o preço pode mudar contra você antes de a troca ser cancelada. Auto é o mais seguro.</InfoTip>
+            </span>
+            <span className="v">
+              <b>{q.slippage}%</b>
+              <small>{a.slippage === 'Auto' ? 'Auto' : 'Manual'}</small>
+              <button className="d-gear" onClick={() => a.open('settings')} aria-label="Ajustar a proteção de preço">
+                <Icon n="gear" size={16} />
+              </button>
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ───────── 1 · Valor ───────── */
+export function SimpleSwapPanel() {
+  const a = useApp()
+  const q = a.quote
+  const hasAmt = a.amountNum > 0
+  const [focus, setFocus] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const sendRef = useRef<HTMLDivElement>(null)
+  const recvRef = useRef<HTMLDivElement>(null)
+  const bal = a.balanceOf(a.from)
+  const noRoute = a.connected && a.scenario === 'noRoute'
+  // E1 · the whole BNB balance leaves nothing for the network fee — offer the corrected amount
+  const needsGas = a.connected && !a.noFunds && a.from === GAS_TOKEN && hasAmt && Math.abs(a.amountNum - bal) < 1e-9 && !a.quoting
+  const fixed = +(bal - GAS_KEEP).toFixed(4)
+  const showBal = a.connected && (focus || needsGas)
+  const secs = useCountdown(hasAmt && a.connected && !a.quoting && a.modal === null, () => {
+    a.set({ quoting: true })
+    window.setTimeout(() => a.set({ quoting: false }), 900)
+  })
+
+  const flip = () => {
+    const sEl = sendRef.current
+    const rEl = recvRef.current
+    const d = sEl && rEl ? rEl.getBoundingClientRect().top - sEl.getBoundingClientRect().top : 0
+    flushSync(() => a.flip())
+    if (!sEl || !rEl || !d || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const opt = { duration: 420, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }
+    sEl.animate([{ transform: `translateY(${d}px) scale(0.97)`, opacity: 0.6 }, { transform: 'none', opacity: 1 }], opt)
+    rEl.animate([{ transform: `translateY(${-d}px) scale(0.97)`, opacity: 0.6 }, { transform: 'none', opacity: 1 }], opt)
+  }
+
+  // warnings only when something would hurt the person
+  const net = NETWORKS.find((n) => n.id === a.networkId)?.name
+  const warn: string | null = !a.connected
+    ? a.wasConnected && hasAmt
+      ? 'A carteira foi desconectada. Seus valores foram mantidos.'
+      : null
+    : a.networkId !== 'bnb' || a.scenario === 'wrongNetwork'
+      ? `Sua carteira está na rede ${net}. A KTI só existe na BNB Chain.`
+      : a.scenario === 'offline' && hasAmt
+        ? 'Sem conexão com a internet. Nada foi enviado.'
+        : noRoute && hasAmt
+          ? 'Não encontramos uma rota para esse valor. Tente um valor menor.'
+          : needsGas
+            ? 'É preciso deixar um pouco de BNB para a taxa da rede. Podemos ajustar o valor para você.'
+            : null
+
+  // main button, in the person's words
+  let cta: { label: ReactNode; disabled?: boolean; loading?: boolean; onClick?: () => void }
+  if (!a.connected) cta = { label: 'Conectar carteira', onClick: () => a.open('connect') }
+  else if (a.noFunds) cta = { label: 'Adicionar fundos', disabled: true }
+  else if (a.networkId !== 'bnb' || a.scenario === 'wrongNetwork') cta = { label: 'Mudar para BNB Chain', onClick: a.cta.action }
+  else if (!hasAmt) cta = { label: 'Digite um valor', disabled: true }
+  else if (a.fieldError) cta = { label: 'Saldo insuficiente', disabled: true }
+  else if (a.quoting) cta = { label: 'Atualizando…', disabled: true, loading: true }
+  else if (a.scenario === 'offline') cta = { label: 'Aguardando conexão', disabled: true }
+  else if (noRoute) cta = { label: 'Sem rota para esse valor', disabled: true }
+  else if (needsGas) cta = { label: `Usar ${fixed} ${GAS_TOKEN}`, onClick: () => a.setAmount(String(fixed)) }
+  else cta = { label: 'Continuar', onClick: a.cta.action }
+
+  return (
+    <div className="swap-col sim">
+      <div className="swap-card">
+        <div className="swap-top">
+          <TabSelect labels={TABS_PT} soon="Em breve" />
+          <div className="tools">
+            <button className="tool" aria-label="Gráfico de preço" onClick={() => a.openCoin(a.to === 'KTI' || a.from !== 'KTI' ? a.to : a.from)}>
+              <Icon n="chart" size={20} />
+            </button>
+            <button className="tool" aria-label="Ajustes da troca" onClick={() => a.open('settings')}>
+              <Icon n="gear" size={20} className="ic-gear" />
+            </button>
+          </div>
+        </div>
+
+        {/* Envia */}
+        <div ref={sendRef} className={'field gb' + (focus ? ' focus' : '') + (a.fieldError ? ' error' : '')} onClick={(e) => !(e.target as HTMLElement).closest('button, input') && inputRef.current?.focus()}>
+          <div className="field-top">
+            <span className="f-label">
+              <Icon n="upload" size={16} />
+              Envia
+            </span>
+            {/* balance shortcuts only while the field is selected (V1) */}
+            {a.connected && focus && !a.noFunds && (
+              <div className="shortcuts">
+                {[0.25, 0.5, 0.75, 1].map((p) => (
+                  <button key={p} className="chip" onMouseDown={(e) => e.preventDefault()} onClick={() => a.setAmount(String(+(bal * p).toFixed(6)))}>
+                    {p === 1 ? 'Máx' : p * 100 + '%'}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="field-mid">
+            <div className="amount-wrap">
+              <input
+                ref={inputRef}
+                className={'amount' + (a.fieldError ? ' err' : '')}
+                inputMode="decimal"
+                placeholder="0"
+                value={a.amount}
+                onChange={(e) => a.setAmount(e.target.value)}
+                onFocus={() => setFocus(true)}
+                onBlur={() => setFocus(false)}
+                aria-label="Valor a enviar"
+              />
+            </div>
+            <TokenSelect id={a.from} onClick={() => a.set({ tokenSide: 'from', modal: 'tokenSelect', modalStack: [] })} />
+          </div>
+          <div className="field-bot">
+            {a.fieldError ? (
+              <span className="field-err">
+                <Icon n="warn" size={16} /> Saldo insuficiente. Você tem {bal.toFixed(4)} {a.from}.
+              </span>
+            ) : (
+              <>
+                <span>{usd(q.inUsd)}</span>
+                {showBal && (
+                  <span className="bal">
+                    <Coin id={a.from} size={14} /> Saldo: {bal.toFixed(4)} {a.from}
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="flip-slot">
+          <button className="flip" onMouseDown={(e) => e.preventDefault()} onClick={flip} aria-label="Inverter moedas">
+            <span className="flip-ic" aria-hidden>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M7 21V3M17 3v18" />
+              </svg>
+              <svg className="hd l" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10 18l-3 3-3-3" />
+              </svg>
+              <svg className="hd r" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 6l-3-3-3 3" />
+              </svg>
+            </span>
+          </button>
+        </div>
+
+        {/* Recebe */}
+        <div ref={recvRef} className="field gb" onClick={() => inputRef.current?.focus()}>
+          <div className="field-top">
+            <span className="f-label">
+              <Icon n="download" size={16} />
+              Recebe
+            </span>
+          </div>
+          <div className="field-mid">
+            <div className="amount-wrap">
+              <span className={'amount ro-val' + (!hasAmt || noRoute ? ' zero' : '') + (a.quoting ? ' updating' : '')}>{hasAmt && !noRoute ? fmt(q.out, q.out < 1 ? 6 : 0) : '0'}</span>
+            </div>
+            <TokenSelect id={a.to} onClick={() => a.set({ tokenSide: 'to', modal: 'tokenSelect', modalStack: [] })} />
+          </div>
+          <div className="field-bot">
+            <span>{a.quoting && hasAmt ? 'Atualizando…' : usd(hasAmt && !noRoute ? q.outUsd : 0)}</span>
+            {needsGas && (
+              <span className="bal">
+                <Coin id={a.to} size={14} /> Saldo: {fmt(a.balanceOf(a.to), 4)} {a.to}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {warn && (
+          <div className="sim-warn" role="status">
+            <Icon n="warn" size={18} />
+            <span>{warn}</span>
+          </div>
+        )}
+
+        {a.connected && hasAmt && !a.fieldError && !noRoute && !needsGas && !a.noFunds && <FeeDetails countdown={secs} />}
+
+        <div className="cta">
+          <button className={'btn accent block lg' + (cta.loading ? ' loading' : '')} disabled={cta.disabled} onClick={cta.onClick}>
+            {cta.loading && <Spinner size={18} />}
+            {cta.label}
+          </button>
+        </div>
+        {a.noFunds && <FundOptions cards />}
+      </div>
+    </div>
+  )
+}
+
+/* ───────── shared: Envia / Recebe summary ───────── */
+function SumBox({ out, outUsd }: { out?: number; outUsd?: number }) {
+  const a = useApp()
+  const q = a.quote
+  return (
+    <div className="sum">
+      <div className="sum-row">
+        <div>
+          <small>Envia</small>
+          <b>
+            {fmt(a.amountNum)} {a.from}
+          </b>
+          <span>{usd(q.inUsd)}</span>
+        </div>
+        <Coin id={a.from} size={40} />
+      </div>
+      <div className="sum-arrow">
+        <Icon n="arrowDown" size={16} />
+      </div>
+      <div className="sum-row">
+        <div>
+          <small>Recebe</small>
+          <b>
+            {fmt(out ?? q.out, 0)} {a.to}
+          </b>
+          <span>{usd(outUsd ?? q.outUsd)}</span>
+        </div>
+        <Coin id={a.to} size={40} />
+      </div>
+    </div>
+  )
+}
+
+const Notice = ({ children }: { children: ReactNode }) => (
+  <div className="sim-warn soft" role="status">
+    <Icon n="warn" size={18} />
+    <span>{children}</span>
+  </div>
+)
+
+/* ───────── 2 · Conferir (+ E2 preço mudou, E4 valor alto demais) ───────── */
+export function SimpleReview() {
+  const a = useApp()
+  const q = a.quote
+  const sc = a.scenario
+  const cancel = () => {
+    a.close()
+    a.toast({ tone: 'info', title: 'Troca cancelada' })
+  }
+  const go = () => {
+    if (sc !== 'none') a.set({ scenario: 'none' })
+    a.startSwap()
+  }
+  if (sc === 'priceUpdated') {
+    const before = a.amountNum * (TOKENS[a.from].price / TOKENS[a.to].price)
+    return (
+      <Modal title="O preço mudou" onClose={cancel} onScrim={cancel} className="sim-sheet">
+        <Notice>
+          Agora você recebe {fmt(q.out, 0)} {a.to} em vez de {fmt(before, 0)} {a.to}.
+        </Notice>
+        <SumBox />
+        <FeeDetails />
+        <button className="btn accent block m52" onClick={go}>
+          Continuar com o novo valor
+        </button>
+      </Modal>
+    )
+  }
+  if (sc === 'highImpact') {
+    return (
+      <Modal title="Confira sua troca" onClose={cancel} onScrim={cancel} className="sim-sheet">
+        <Notice>Você receberia cerca de {Math.round(q.impact)}% a menos que o preço normal. Tente um valor menor.</Notice>
+        <SumBox />
+        <FeeDetails />
+        <button className="btn accent block m52" onClick={a.close}>
+          Mudar o valor
+        </button>
+        <button className="sim-link" onClick={go}>
+          Trocar mesmo assim
+        </button>
+      </Modal>
+    )
+  }
+  return (
+    <Modal title="Confira sua troca" onClose={cancel} onScrim={cancel} className="sim-sheet">
+      {sc === 'accountChanged' && <Notice>A conta ou a rede mudou na carteira. Atualizamos o valor.</Notice>}
+      <SumBox />
+      <FeeDetails />
+      <button className="btn accent block m52" onClick={go}>
+        Confirmar
+      </button>
+    </Modal>
+  )
+}
+
+/* ───────── 3 · Confirmar na carteira — only the current prompt (S4a/b/c) · E3 cancelou ───────── */
+const WALLET_STEPS: Record<number, { icon: string; title: string; text: string }> = {
+  0: { icon: 'wallet', title: 'Autorizar a troca', text: 'Abra a carteira e toque em Aprovar.' },
+  2: { icon: 'shield', title: 'Assinar a permissão', text: 'Assine o pedido na carteira. Não tem custo.' },
+  4: { icon: 'flip', title: 'Confirmar a troca', text: 'Confirme a troca na carteira.' },
+}
+export function SimpleWallet() {
+  const a = useApp()
+  const wallet = WALLETS.find((w) => w.id === a.walletId)?.name ?? 'carteira'
+  if (a.step === -2) {
+    return (
+      <Modal title="Você cancelou" sub={`Nada foi cobrado. Seus ${a.from} não saíram da carteira.`} onClose={a.close} onScrim={a.close} className="sim-sheet">
+        <div className="m-col">
+          <button
+            className="btn accent block m52"
+            onClick={() => {
+              a.set({ scenario: 'none' })
+              window.setTimeout(a.startSwap)
+            }}
+          >
+            Tentar de novo
+          </button>
+          <button className="btn secondary block" onClick={a.close}>
+            Fechar
+          </button>
+        </div>
+      </Modal>
+    )
+  }
+  const st = WALLET_STEPS[a.step] ?? WALLET_STEPS[0]
+  return (
+    <Modal title="Confirme na carteira" className="sim-sheet">
+      <div className="sim-wallet">
+        <span className="sim-ring">
+          <Spinner size={76} stroke={3} />
+          <span className="ic" key={a.step}>
+            <Icon n={st.icon} size={22} />
+          </span>
+        </span>
+        <b key={'t' + a.step}>{st.title}</b>
+        <span key={'s' + a.step}>{st.text}</span>
+      </div>
+      <div className="m-col">
+        <button className="btn accent block m52" onClick={() => a.toast({ tone: 'info', title: `Abrir ${wallet}`, body: 'Opens the wallet in the real product' })}>
+          Abrir {wallet}
+        </button>
+        <button
+          className="btn secondary block"
+          onClick={() => {
+            a.close()
+            a.toast({ tone: 'info', title: 'Transação cancelada' })
+          }}
+        >
+          Cancelar
+        </button>
+      </div>
+    </Modal>
+  )
+}
+
+/* ───────── Trocando… — the two coins with the indicator between them, and a status line ───────── */
+export function SimpleSwapping() {
+  const a = useApp()
+  const slow = a.scenario === 'slow'
+  const [t, setT] = useState(0)
+  useEffect(() => {
+    const id = window.setInterval(() => setT((v) => v + 1), 1400)
+    return () => window.clearInterval(id)
+  }, [])
+  const status = slow ? 'Confirmando na rede' : [`Enviando seus ${a.from}`, 'Confirmando na rede', `Recebendo seus ${a.to}`][Math.min(t, 2)]
+  return (
+    <Modal title="Trocando…" className="sim-sheet">
+      <div className="sim-swapping">
+        <Coin id={a.from} size={72} />
+        <span className="sim-ring sm">
+          <Spinner size={64} stroke={3} />
+          <span className="ic">
+            <Icon n="swapH" size={20} />
+          </span>
+        </span>
+        <Coin id={a.to} size={72} />
+      </div>
+      <p className="sim-status" key={status}>
+        {status}
+      </p>
+      {slow && (
+        <>
+          <Notice>A rede está mais lenta que o normal. Isso pode levar alguns minutos.</Notice>
+          <button className="btn accent block m52" onClick={() => window.setTimeout(a.completeSwap, 1200)}>
+            Acelerar
+          </button>
+        </>
+      )}
+    </Modal>
+  )
+}
+
+/* ───────── Pronto ───────── */
+export function SimpleDone() {
+  const a = useApp()
+  const ls = a.lastSwap ?? { amount: a.amountNum, out: a.quote.out, from: a.from, to: a.to }
+  const [copied, setCopied] = useState(false)
+  const reset = () => a.set({ amount: '', modal: null, modalStack: [] })
+  return (
+    <Modal title="Troca Concluída" onClose={reset} onScrim={reset} className="sim-sheet done-modal">
+      <div className="big-check">
+        <svg viewBox="0 0 28 28" width="28" height="28" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M4 14.5l6.5 6.5L24 7.5" pathLength={1} />
+        </svg>
+      </div>
+      <div className="m-box g14">
+        <div className="kv tall">
+          <span>Enviado</span>
+          <span className="amt">
+            <span>
+              <b className="red">
+                -{fmt(ls.amount)} {ls.from}
+              </b>
+              <Coin id={ls.from} size={20} />
+            </span>
+            <small>{usd(ls.amount * TOKENS[ls.from].price)}</small>
+          </span>
+        </div>
+        <div className="kv tall">
+          <span>Recebido</span>
+          <span className="amt">
+            <span>
+              <b className="green">
+                +{fmt(ls.out, 0)} {ls.to}
+              </b>
+              <Coin id={ls.to} size={20} />
+            </span>
+            <small>{usd(ls.out * TOKENS[ls.to].price)}</small>
+          </span>
+        </div>
+      </div>
+      <div className="tx">
+        <small>ID da transação</small>
+        <div className="hash">
+          <span className="mono">0x9f3c2b7e5a41d8c06f93e1b2a7d4058c3e6f19a2b8d7c4e0153a96f2c8b1a71b</span>
+          <button
+            onClick={() => {
+              setCopied(true)
+              a.toast({ tone: 'success', title: 'ID copiado' })
+            }}
+            aria-label="Copiar ID da transação"
+          >
+            <Icon n={copied ? 'check' : 'copy'} size={16} />
+          </button>
+        </div>
+      </div>
+      <div className="m-row2 g10">
+        <button className="btn accent m52" onClick={reset}>
+          Trocar de novo
+        </button>
+        <button className="btn secondary m52" onClick={reset}>
+          Concluir
+        </button>
+      </div>
+    </Modal>
+  )
+}
+
+/* ───────── A troca não foi concluída ───────── */
+export function SimpleFailed() {
+  const a = useApp()
+  return (
+    <Modal title="A troca não foi concluída" sub={`Por segurança, a rede cancelou a troca. Seus ${a.from} voltaram para a carteira; só a taxa da rede foi cobrada.`} onClose={a.close} onScrim={a.close} className="sim-sheet">
+      <div className="m-col">
+        <button
+          className="btn accent block m52"
+          onClick={() => {
+            a.set({ scenario: 'none' })
+            window.setTimeout(a.startSwap)
+          }}
+        >
+          Tentar de novo
+        </button>
+        <button className="btn secondary block" onClick={a.close}>
+          Fechar
+        </button>
+      </div>
+    </Modal>
+  )
+}

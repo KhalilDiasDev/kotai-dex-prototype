@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { ADDRESS, NETWORKS, TOKENS, TOKEN_LIST, WALLETS, fmt, unitPrice, usd, type HistoryItem, type TokenId } from '../data'
 import { useApp, type ModalKind } from '../store'
 import { NetworkPicker, SystemBody, WalletMenuBody } from './Header'
+import { SimpleDone, SimpleFailed, SimpleReview, SimpleSwapping, SimpleWallet } from './SimpleSwap'
 import { HelpTip } from './SwapPanel'
 import { Banner, Coin, Icon, Modal, Net, Spinner, WalletLogo, usePresence, useScrollLock, type CoinId } from './ui'
 
@@ -1398,16 +1399,17 @@ function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
       return <HistoryPanel />
     case 'addFunds':
       return <AddFundsModal />
+    // phones: the simplified swap proposal (conferir → confirmar na carteira → trocando → pronto)
     case 'review':
-      return <ReviewModal />
+      return m ? <SimpleReview /> : <ReviewModal />
     case 'signing':
-      return <SwapFlowModal kind="signing" />
+      return m ? <SimpleWallet /> : <SwapFlowModal kind="signing" />
     case 'processing':
-      return <SwapFlowModal kind="processing" />
+      return m ? <SimpleSwapping /> : <SwapFlowModal kind="processing" />
     case 'done':
-      return <DoneModal />
+      return m ? <SimpleDone /> : <DoneModal />
     case 'failed':
-      return <FailedModal />
+      return m ? <SimpleFailed /> : <FailedModal />
     case 'navMenu':
       return <SheetNav />
     case 'settings':

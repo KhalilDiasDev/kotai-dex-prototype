@@ -12,8 +12,8 @@ export function BottomNav() {
   const menuOpen = a.modal === 'navMenu'
   const ktiOn = a.modal === 'coin' && a.coinToken === 'KTI'
   const items = [
-    { key: 'home', label: 'Home', icon: <Icon n="home" size={22} />, on: a.view === 'home' && !a.modal, act: () => go('home') },
-    { key: 'swap', label: 'Swap', icon: <Icon n="flip" size={22} />, on: a.view === 'swap' && !a.modal, act: () => go('swap') },
+    { key: 'home', label: a.isMobile ? 'Início' : 'Home', icon: <Icon n="home" size={22} />, on: a.view === 'home' && !a.modal, act: () => go('home') },
+    { key: 'swap', label: a.isMobile ? 'Trocar' : 'Swap', icon: <Icon n="flip" size={22} />, on: a.view === 'swap' && !a.modal, act: () => go('swap') },
     { key: 'kti', label: 'KTI Coin', icon: <span className="bn-coin"><Coin id="KTI" size={22} /></span>, on: ktiOn, act: () => a.openCoin('KTI') },
     { key: 'menu', label: 'Menu', icon: <Icon n={menuOpen ? 'x' : 'grid'} size={22} />, on: menuOpen, act: () => (menuOpen ? a.close() : a.open('navMenu')) },
   ]

@@ -312,9 +312,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     later(() => {
       setS((o) => (o.step === 0 && (o.modal === 'signing' || o.modal === 'cancelSign') ? { ...o, step: 2 } : o))
     }, 1800)
+    // phones (simple flow) show the wallet's third prompt too — "confirm the swap" — as step 4
+    if (isMobile && sc !== 'rejected')
+      later(() => {
+        setS((o) => (o.step === 2 && o.modal === 'signing' ? { ...o, step: 4 } : o))
+      }, 3400)
     later(() => {
       setS((o) => {
-        if (o.step !== 2 || (o.modal !== 'signing' && o.modal !== 'cancelSign')) return o
+        if ((o.step !== 2 && o.step !== 4) || (o.modal !== 'signing' && o.modal !== 'cancelSign')) return o
         if (sc === 'rejected') return { ...o, modal: 'signing', modalStack: [], step: -2 }
         return { ...o, modal: 'processing', modalStack: [], step: 3 }
       })
@@ -336,7 +341,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       })
     }, 9200)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [s.scenario])
+  }, [s.scenario, isMobile])
 
   const noFunds = s.connected && s.scenario === 'noFunds'
   const balanceOf = (id: TokenId) => (s.scenario === 'noFunds' ? 0 : TOKENS[id].balance)
