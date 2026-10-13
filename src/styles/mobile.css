@@ -1610,3 +1610,9 @@ select {
   color: var(--text-secondary);
   opacity: 0.6;
 }
+/* "Taxa total" on the amount screen — Figma "Custo total": 1px #2e4573 outline, no fill, 16px radius */
+.sim .sim-fee {
+  background: transparent;
+  border: 1px solid #2e4573;
+  border-radius: 16px;
+}
