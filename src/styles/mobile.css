@@ -1562,3 +1562,14 @@ select {
 .sim-fee {
   overflow: visible;
 }
+
+/* "Confira sua troca": the summary and the Taxa total box share the Figma surface — #0b1428 with a clear blue outline */
+.sim-sheet .sum,
+.sim-sheet .sim-fee {
+  background: #0b1428;
+  border: 1px solid #27458a;
+  border-radius: 16px;
+}
+.sim-sheet .sim-fee-head {
+  height: 52px;
+}

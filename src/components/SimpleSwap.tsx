@@ -5,7 +5,7 @@
    ───────────────────────────────────────────────────────────────── */
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { flushSync } from 'react-dom'
-import { GAS_TOKEN, NETWORKS, TOKENS, fmt, usd } from '../data'
+import { GAS_TOKEN, NETWORKS, TOKENS, fmt, usd, type TokenId } from '../data'
 import { useApp, type Tab } from '../store'
 import { FundOptions } from './Modals'
 import { InfoTip, TabSelect, TokenSelect, useCountdown } from './SwapPanel'
@@ -14,6 +14,7 @@ import { Coin, Icon, Modal, Spinner } from './ui'
 /** the simple flow runs on every screen size (desktop included) */
 export const SIMPLE_FLOW = true
 
+const QUICK: TokenId[] = ['KTI', 'USDT', 'BNB', 'USDC', 'ETH']
 const TABS_PT: Record<Tab, string> = { swap: 'Trocar', limit: 'Limite', buy: 'Comprar' }
 const GAS_KEEP = 0.0003 // BNB left in the wallet for the network fee
 
@@ -104,6 +105,22 @@ export function SimpleSwapPanel() {
   const hasAmt = a.amountNum > 0
   const [focus, setFocus] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const recvInputRef = useRef<HTMLInputElement>(null)
+  // "Recebe" is editable too: typing the amount you want back-solves what you need to send
+  const [recvText, setRecvText] = useState<string | null>(null)
+  const typeReceive = (v: string) => {
+    const clean = v.replace(/,/g, '.').replace(/[^0-9.]/g, '')
+    if ((clean.match(/\./g) ?? []).length > 1) return
+    setRecvText(clean)
+    const want = parseFloat(clean)
+    const need = want > 0 && q.rate > 0 ? want / q.rate : 0
+    a.setAmount(need > 0 ? String(+need.toFixed(need < 1 ? 8 : 6)) : '')
+  }
+  // quick token picks for what you receive
+  const quick = (id: TokenId) => {
+    a.set({ tokenSide: 'to' })
+    a.pickToken(id)
+  }
   const sendRef = useRef<HTMLDivElement>(null)
   const recvRef = useRef<HTMLDivElement>(null)
   const bal = a.balanceOf(a.from)
@@ -121,7 +138,14 @@ export function SimpleSwapPanel() {
     const sEl = sendRef.current
     const rEl = recvRef.current
     const d = sEl && rEl ? rEl.getBoundingClientRect().top - sEl.getBoundingClientRect().top : 0
+    // the selection follows the value: typing in one card and flipping selects the other card, where that value now is
+    const side = document.activeElement === inputRef.current ? 'send' : document.activeElement === recvInputRef.current ? 'recv' : null
+    const prevSend = a.amount
     flushSync(() => a.flip())
+    if (side === 'send') {
+      recvInputRef.current?.focus({ preventScroll: true })
+      setRecvText(prevSend)
+    } else if (side === 'recv') inputRef.current?.focus({ preventScroll: true })
     if (!sEl || !rEl || !d || matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const opt = { duration: 420, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }
     sEl.animate([{ transform: `translateY(${d}px) scale(0.97)`, opacity: 0.6 }, { transform: 'none', opacity: 1 }], opt)
@@ -271,16 +295,40 @@ export function SimpleSwapPanel() {
         </div>
 
         {/* Recebe */}
-        <div ref={recvRef} className="field gb" onClick={() => inputRef.current?.focus()}>
+        <div
+          ref={recvRef}
+          className={'field gb' + (recvText !== null ? ' focus' : '')}
+          onClick={(e) => !(e.target as HTMLElement).closest('button, input') && recvInputRef.current?.focus()}
+        >
           <div className="field-top">
             <span className="f-label">
               <Icon n="download" size={16} />
               Recebe
             </span>
+            {/* quick picks: on hover/focus on desktop, while the field is selected on phones */}
+            {(!a.isMobile || recvText !== null) && (
+              <div className="quick" aria-label="Moedas rápidas">
+                {QUICK.map((id) => (
+                  <button key={id} className={a.to === id ? 'on' : ''} onMouseDown={(e) => e.preventDefault()} onClick={() => quick(id)} aria-label={`Receber ${id}`}>
+                    <Coin id={id} size={24} />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <div className="field-mid">
             <div className="amount-wrap">
-              <span className={'amount ro-val' + (!hasAmt || noRoute ? ' zero' : '') + (a.quoting ? ' updating' : '')}>{hasAmt && !noRoute ? fmt(q.out, q.out < 1 ? 6 : 0) : '0'}</span>
+              <input
+                ref={recvInputRef}
+                className={'amount' + (recvText === null && (!hasAmt || noRoute) ? ' zero' : '') + (recvText === null && a.quoting ? ' updating' : '')}
+                inputMode="decimal"
+                placeholder="0"
+                value={recvText ?? (hasAmt ? (noRoute ? '—' : fmt(q.out, q.out < 1 ? 6 : 0)) : '')}
+                onFocus={() => setRecvText(hasAmt && !noRoute ? String(+q.out.toFixed(q.out < 1 ? 6 : 2)) : '')}
+                onBlur={() => setRecvText(null)}
+                onChange={(e) => typeReceive(e.target.value)}
+                aria-label="Valor a receber"
+              />
             </div>
             <TokenSelect id={a.to} onClick={() => a.set({ tokenSide: 'to', modal: 'tokenSelect', modalStack: [] })} />
           </div>
@@ -360,6 +408,11 @@ export function SimpleReview() {
   const a = useApp()
   const q = a.quote
   const sc = a.scenario
+  // the quote keeps refreshing while the person checks it (same "Atualiza em 60s" as the amount screen)
+  const secs = useCountdown(a.modal === 'review', () => {
+    a.set({ quoting: true })
+    window.setTimeout(() => a.set({ quoting: false }), 900)
+  })
   const cancel = () => {
     a.close()
     a.toast({ tone: 'info', title: 'Troca cancelada' })
@@ -376,7 +429,7 @@ export function SimpleReview() {
           Agora você recebe {fmt(q.out, 0)} {a.to} em vez de {fmt(before, 0)} {a.to}.
         </Notice>
         <SumBox />
-        <FeeDetails />
+        <FeeDetails countdown={secs} />
         <button className="btn accent block m52" onClick={go}>
           Continuar com o novo valor
         </button>
@@ -388,7 +441,7 @@ export function SimpleReview() {
       <Modal title="Confira sua troca" onClose={cancel} onScrim={cancel} className="sim-sheet">
         <Notice>Você receberia cerca de {Math.round(q.impact)}% a menos que o preço normal. Tente um valor menor.</Notice>
         <SumBox />
-        <FeeDetails />
+        <FeeDetails countdown={secs} />
         <button className="btn accent block m52" onClick={a.close}>
           Mudar o valor
         </button>
@@ -402,7 +455,7 @@ export function SimpleReview() {
     <Modal title="Confira sua troca" onClose={cancel} onScrim={cancel} className="sim-sheet">
       {sc === 'accountChanged' && <Notice>A conta ou a rede mudou na carteira. Atualizamos o valor.</Notice>}
       <SumBox />
-      <FeeDetails />
+      <FeeDetails countdown={secs} />
       <button className="btn accent block m52" onClick={go}>
         Confirmar
       </button>
