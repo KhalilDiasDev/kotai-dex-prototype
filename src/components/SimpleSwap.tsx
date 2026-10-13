@@ -252,7 +252,7 @@ export function SimpleSwapPanel() {
         : noRoute && hasAmt
           ? 'Não encontramos uma rota para esse valor. Tente um valor menor.'
           : needsGas
-            ? `Deixe um pouco de BNB para a taxa da rede. Ajustamos para ${fixed} ${GAS_TOKEN}.`
+            ? `É necessário ajustar o valor para pagar a taxa da rede. Sugerimos ${fixed} ${GAS_TOKEN}.`
             : null
 
   // main button, in the person's words
