@@ -584,7 +584,20 @@ export function SimpleWallet() {
   const a = useApp()
   if (a.step === -2) {
     return (
-      <Modal title="Você cancelou" sub={`Nada foi cobrado. Seus ${a.from} não saíram da carteira.`} onClose={a.close} onScrim={a.close} className="sim-sheet">
+      <Modal title="Troca cancelada" onClose={a.close} onScrim={a.close} className="sim-sheet">
+        <div className="sim-cancel">
+          <span className="sc-badge" aria-hidden>
+            <Icon n="x" size={26} sw={2.6} />
+          </span>
+          <ul className="sc-facts">
+            <li>
+              <Icon n="shield" size={16} /> Nada foi cobrado
+            </li>
+            <li>
+              <Icon n="wallet" size={16} /> Seus {a.from} continuam na carteira
+            </li>
+          </ul>
+        </div>
         <div className="m-col">
           <button
             className="btn accent block m52"
@@ -593,7 +606,7 @@ export function SimpleWallet() {
               window.setTimeout(a.startSwap)
             }}
           >
-            Tentar de novo
+            <Icon n="history" size={18} /> Tentar de novo
           </button>
           <button className="btn secondary block" onClick={a.close}>
             Fechar

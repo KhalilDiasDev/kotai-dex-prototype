@@ -1974,3 +1974,48 @@ select {
   background: #1a2f5e;
   color: #fff;
 }
+
+/* Troca cancelada · neutral badge (same shape as the done check) + two reassuring facts */
+.sim-cancel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 4px 0 4px;
+}
+.sc-badge {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 102, 133, 0.12);
+  color: #ff8fa5;
+  animation: checkPop 0.3s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.sc-badge::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 102, 133, 0.45);
+}
+.sc-facts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sc-facts li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.sc-facts li svg {
+  color: #2bf5a0;
+}
