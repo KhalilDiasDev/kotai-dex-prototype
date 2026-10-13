@@ -1936,3 +1936,12 @@ select {
 .sim-tx .m-link {
   font-size: 12px;
 }
+/* the swap icon between the two amounts is just an icon (no circle — it isn't a button) */
+.sp-ic {
+  width: auto;
+  height: auto;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  color: var(--text-tertiary);
+}
