@@ -260,7 +260,7 @@ export function SimpleSwapPanel() {
   if (!a.connected) cta = { label: 'Conectar carteira', onClick: () => a.open('connect') }
   else if (a.noFunds) cta = { label: 'Adicionar fundos', disabled: true }
   else if (a.networkId !== 'bnb' || a.scenario === 'wrongNetwork') cta = { label: 'Mudar para BNB Chain', onClick: a.cta.action }
-  else if (!hasAmt) cta = { label: 'Digite um valor', disabled: true }
+  else if (!hasAmt) cta = { label: 'Continuar', disabled: true }
   else if (a.fieldError) cta = { label: 'Saldo insuficiente', disabled: true }
   else if (a.quoting) cta = { label: 'Atualizando…', disabled: true, loading: true }
   else if (a.scenario === 'offline') cta = { label: 'Aguardando conexão', disabled: true }
