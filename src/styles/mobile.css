@@ -1339,3 +1339,79 @@ select {
   color: var(--text-secondary);
   animation: swapTxt 0.35s ease-out;
 }
+
+/* wallet prompts as a row: done (green + check) — current (spinning) — pending (outline), joined by connectors */
+.sim-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0 0;
+}
+.sim-step-wrap {
+  display: flex;
+  align-items: center;
+}
+.sim-conn {
+  width: 28px;
+  height: 0;
+  margin: 0 10px;
+  border-top: 1.5px dashed #8fa7cc;
+}
+.sim-conn.done {
+  border-top: 2px solid rgba(41, 199, 133, 0.85);
+}
+.sim-step {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  flex: none;
+}
+.sim-step .c {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid #27458a;
+  color: #cfdcf2;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+.sim-step.on .c {
+  background: #0b1428;
+  color: #fff;
+}
+.sim-step.todo .c {
+  border-width: 2px;
+  color: #cfdcf2;
+}
+.sim-step.done .c {
+  background: rgba(41, 199, 133, 0.16);
+  border-color: rgba(41, 199, 133, 0.85);
+  color: #2bf5a0;
+}
+.sim-step .ring-spin {
+  position: absolute;
+  inset: 0;
+}
+.sim-step .badge-ok {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #29c785;
+  border: 2px solid #0a1424;
+  color: #fff;
+  animation: pop 0.3s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.sim-steps + .sim-wallet {
+  padding-top: 0;
+}
+.sim-steps + .sim-wallet b {
+  margin-top: 8px;
+}

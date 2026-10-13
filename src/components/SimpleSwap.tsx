@@ -5,7 +5,7 @@
    ───────────────────────────────────────────────────────────────── */
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { flushSync } from 'react-dom'
-import { GAS_TOKEN, NETWORKS, TOKENS, WALLETS, fmt, usd } from '../data'
+import { GAS_TOKEN, NETWORKS, TOKENS, fmt, usd } from '../data'
 import { useApp, type Tab } from '../store'
 import { FundOptions } from './Modals'
 import { InfoTip, TabSelect, TokenSelect, useCountdown } from './SwapPanel'
@@ -373,7 +373,6 @@ const WALLET_STEPS: Record<number, { icon: string; title: string; text: string }
 }
 export function SimpleWallet() {
   const a = useApp()
-  const wallet = WALLETS.find((w) => w.id === a.walletId)?.name ?? 'carteira'
   if (a.step === -2) {
     return (
       <Modal title="Você cancelou" sub={`Nada foi cobrado. Seus ${a.from} não saíram da carteira.`} onClose={a.close} onScrim={a.close} className="sim-sheet">
@@ -394,33 +393,46 @@ export function SimpleWallet() {
       </Modal>
     )
   }
-  const st = WALLET_STEPS[a.step] ?? WALLET_STEPS[0]
+  const order = [0, 2, 4]
+  const cur = Math.max(0, order.indexOf(a.step))
+  const st = WALLET_STEPS[order[cur]]
   return (
     <Modal title="Confirme na carteira" className="sim-sheet">
+      {/* the three prompts stay in view as a row of icons; the current one spins, finished ones turn green */}
+      <div className="sim-steps" aria-label={`Passo ${cur + 1} de 3`}>
+        {order.map((k, i) => {
+          const state = i < cur ? 'done' : i === cur ? 'on' : 'todo'
+          return (
+            <span key={k} className="sim-step-wrap">
+              {i > 0 && <span className={'sim-conn' + (i <= cur ? ' done' : '')} />}
+              <span className={'sim-step ' + state}>
+                <span className="c">
+                  <Icon n={WALLET_STEPS[k].icon} size={18} />
+                </span>
+                {state === 'on' && <Spinner size={56} stroke={3} />}
+                {state === 'done' && (
+                  <span className="badge-ok">
+                    <Icon n="check" size={10} sw={3.2} />
+                  </span>
+                )}
+              </span>
+            </span>
+          )
+        })}
+      </div>
       <div className="sim-wallet">
-        <span className="sim-ring">
-          <Spinner size={76} stroke={3} />
-          <span className="ic" key={a.step}>
-            <Icon n={st.icon} size={22} />
-          </span>
-        </span>
         <b key={'t' + a.step}>{st.title}</b>
         <span key={'s' + a.step}>{st.text}</span>
       </div>
-      <div className="m-col">
-        <button className="btn accent block m52" onClick={() => a.toast({ tone: 'info', title: `Abrir ${wallet}`, body: 'Opens the wallet in the real product' })}>
-          Abrir {wallet}
-        </button>
-        <button
-          className="btn secondary block"
-          onClick={() => {
-            a.close()
-            a.toast({ tone: 'info', title: 'Transação cancelada' })
-          }}
-        >
-          Cancelar
-        </button>
-      </div>
+      <button
+        className="btn secondary block m52"
+        onClick={() => {
+          a.close()
+          a.toast({ tone: 'info', title: 'Transação cancelada' })
+        }}
+      >
+        Cancelar
+      </button>
     </Modal>
   )
 }
