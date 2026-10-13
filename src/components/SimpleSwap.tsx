@@ -538,12 +538,9 @@ export function SimpleReview() {
     a.startSwap()
   }
   if (sc === 'priceUpdated') {
-    const before = a.amountNum * (TOKENS[a.from].price / TOKENS[a.to].price)
     return (
       <Modal title="O preço mudou" onClose={cancel} onScrim={cancel} className="sim-sheet">
-        <Notice>
-          Agora você recebe {fmt(q.out, 0)} {a.to} em vez de {fmt(before, 0)} {a.to}.
-        </Notice>
+        <Notice>O valor foi atualizado.</Notice>
         <SumBox />
         <FeeDetails countdown={secs} />
         <button className="btn accent block m52" onClick={go}>

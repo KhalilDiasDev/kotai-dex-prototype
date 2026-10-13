@@ -1851,3 +1851,11 @@ select {
   background: rgba(255, 199, 77, 0.24);
   color: #fff;
 }
+/* info notice inside the sheets (E2 "O valor foi atualizado") — Figma: no fill, blue outline, 13px text */
+.sim-warn.soft {
+  background: transparent;
+  border-color: rgba(60, 104, 200, 0.6);
+  font-size: 13px;
+  line-height: 18px;
+  align-items: center;
+}
