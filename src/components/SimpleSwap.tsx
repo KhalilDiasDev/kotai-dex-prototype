@@ -125,11 +125,28 @@ export function SimpleSwapPanel() {
   const recvInputRef = useRef<HTMLInputElement>(null)
   // "Recebe" is editable too: typing the amount you want back-solves what you need to send
   const [recvText, setRecvText] = useState<string | null>(null)
+  // amounts can be typed in tokens or in dollars: the small line under each number flips the two
+  const [fiat, setFiat] = useState(false)
+  const [fiatText, setFiatText] = useState<string | null>(null)
+  const toggleFiat = () => {
+    setFiat((v) => !v)
+    setFiatText(null)
+    setRecvText(null)
+  }
+  const typeSend = (v: string) => {
+    if (!fiat) return a.setAmount(v)
+    const clean = v.replace(/,/g, '.').replace(/[^0-9.]/g, '')
+    if ((clean.match(/\./g) ?? []).length > 1) return
+    setFiatText(clean)
+    const dollars = parseFloat(clean)
+    a.setAmount(dollars > 0 ? String(+(dollars / TOKENS[a.from].price).toFixed(8)) : '')
+  }
   const typeReceive = (v: string) => {
     const clean = v.replace(/,/g, '.').replace(/[^0-9.]/g, '')
     if ((clean.match(/\./g) ?? []).length > 1) return
     setRecvText(clean)
-    const want = parseFloat(clean)
+    const typed = parseFloat(clean)
+    const want = fiat ? typed / TOKENS[a.to].price : typed
     const need = want > 0 && q.rate > 0 ? want / q.rate : 0
     a.setAmount(need > 0 ? String(+need.toFixed(need < 1 ? 8 : 6)) : '')
   }
@@ -161,7 +178,7 @@ export function SimpleSwapPanel() {
     flushSync(() => a.flip())
     if (side === 'send') {
       recvInputRef.current?.focus({ preventScroll: true })
-      setRecvText(prevSend)
+      if (!fiat) setRecvText(prevSend)
     } else if (side === 'recv') inputRef.current?.focus({ preventScroll: true })
     if (!sEl || !rEl || !d || matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const opt = { duration: 420, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }
@@ -262,16 +279,20 @@ export function SimpleSwapPanel() {
             )}
           </div>
           <div className="field-mid">
-            <div className="amount-wrap">
+            <div className={'amount-wrap' + (fiat ? ' fiat' : '')}>
+              {fiat && <span className={'cur' + (hasAmt || fiatText ? '' : ' zero')}>$</span>}
               <input
                 ref={inputRef}
                 className={'amount' + (a.fieldError ? ' err' : '')}
                 inputMode="decimal"
                 placeholder="0"
-                value={a.amount}
-                onChange={(e) => a.setAmount(e.target.value)}
+                value={fiat ? (fiatText ?? (hasAmt ? String(+q.inUsd.toFixed(2)) : '')) : a.amount}
+                onChange={(e) => typeSend(e.target.value)}
                 onFocus={() => setFocus(true)}
-                onBlur={() => setFocus(false)}
+                onBlur={() => {
+                  setFocus(false)
+                  setFiatText(null)
+                }}
                 aria-label="Valor a enviar"
               />
             </div>
@@ -284,7 +305,10 @@ export function SimpleSwapPanel() {
               </span>
             ) : (
               <>
-                <span>{usd(q.inUsd)}</span>
+                <button className="unit-swap" onMouseDown={(e) => e.preventDefault()} onClick={toggleFiat} aria-label={fiat ? `Digitar em ${a.from}` : 'Digitar em dólares'}>
+                  <span>{fiat ? `${fmt(a.amountNum, a.amountNum < 1 ? 6 : 4)} ${a.from}` : usd(q.inUsd)}</span>
+                  <Icon n="flip" size={12} sw={2} className="us-ic" />
+                </button>
                 {showBal && (
                   <span className="bal">
                     <Coin id={a.from} size={14} /> Saldo: {bal.toFixed(4)} {a.from}
@@ -334,14 +358,17 @@ export function SimpleSwapPanel() {
             )}
           </div>
           <div className="field-mid">
-            <div className="amount-wrap">
+            <div className={'amount-wrap' + (fiat ? ' fiat' : '')}>
+              {fiat && <span className={'cur' + (hasAmt || recvText ? '' : ' zero')}>$</span>}
               <input
                 ref={recvInputRef}
                 className={'amount' + (recvText === null && (!hasAmt || noRoute) ? ' zero' : '') + (recvText === null && a.quoting ? ' updating' : '')}
                 inputMode="decimal"
                 placeholder="0"
-                value={recvText ?? (hasAmt ? (noRoute ? '—' : fmt(q.out, q.out < 1 ? 6 : 0)) : '')}
-                onFocus={() => setRecvText(hasAmt && !noRoute ? String(+q.out.toFixed(q.out < 1 ? 6 : 2)) : '')}
+                value={recvText ?? (hasAmt ? (noRoute ? '—' : fiat ? fmt(q.outUsd, 2) : fmt(q.out, q.out < 1 ? 6 : 0)) : '')}
+                onFocus={() =>
+                  setRecvText(hasAmt && !noRoute ? (fiat ? String(+q.outUsd.toFixed(2)) : String(+q.out.toFixed(q.out < 1 ? 6 : 2))) : '')
+                }
                 onBlur={() => setRecvText(null)}
                 onChange={(e) => typeReceive(e.target.value)}
                 aria-label="Valor a receber"
@@ -350,7 +377,14 @@ export function SimpleSwapPanel() {
             <TokenSelect id={a.to} onClick={() => a.set({ tokenSide: 'to', modal: 'tokenSelect', modalStack: [] })} />
           </div>
           <div className="field-bot">
-            <span>{a.quoting && hasAmt ? 'Atualizando…' : usd(hasAmt && !noRoute ? q.outUsd : 0)}</span>
+            {a.quoting && hasAmt ? (
+              <span>Atualizando…</span>
+            ) : (
+              <button className="unit-swap" onMouseDown={(e) => e.preventDefault()} onClick={toggleFiat} aria-label={fiat ? `Mostrar em ${a.to}` : 'Mostrar em dólares'}>
+                <span>{fiat ? `${hasAmt && !noRoute ? fmt(q.out, q.out < 1 ? 6 : 0) : '0'} ${a.to}` : usd(hasAmt && !noRoute ? q.outUsd : 0)}</span>
+                <Icon n="flip" size={12} sw={2} className="us-ic" />
+              </button>
+            )}
             {needsGas && (
               <span className="bal">
                 <Coin id={a.to} size={14} /> Saldo: {fmt(a.balanceOf(a.to), 4)} {a.to}
