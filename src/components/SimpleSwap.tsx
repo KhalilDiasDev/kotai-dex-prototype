@@ -20,6 +20,17 @@ const GAS_KEEP = 0.0003 // BNB left in the wallet for the network fee
 
 const amt = (n: number) => fmt(n, n < 1 ? 6 : n < 10000 ? 4 : 0)
 
+/* a whole detail row answers the tap: it opens that row's explanation (or runs its action) */
+const rowTap = (e: React.MouseEvent<HTMLDivElement>) => {
+  if ((e.target as HTMLElement).closest('button')) return
+  e.currentTarget.querySelector<HTMLButtonElement>('.info-tip > button')?.click()
+}
+const rowKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  if (e.key !== 'Enter' && e.key !== ' ') return
+  e.preventDefault()
+  e.currentTarget.querySelector<HTMLButtonElement>('.info-tip > button')?.click()
+}
+
 /* ───────── "Taxa total" — one number; tapping it opens the details (V2 / V3) ───────── */
 export function FeeDetails({ countdown }: { countdown?: number }) {
   const a = useApp()
@@ -58,7 +69,7 @@ export function FeeDetails({ countdown }: { countdown?: number }) {
               </small>
             )}
           </div>
-          <div className="sim-row">
+          <div className="sim-row tap" role="button" tabIndex={0} onClick={rowTap} onKeyDown={rowKey}>
             <span className="k">
               Efeito no preço
               <InfoTip title="Efeito no preço">Quanto a sua própria troca muda o preço do pool. Baixo é o normal.</InfoTip>
@@ -68,7 +79,7 @@ export function FeeDetails({ countdown }: { countdown?: number }) {
               <b>{q.impact.toFixed(2)}%</b>
             </span>
           </div>
-          <div className="sim-row">
+          <div className="sim-row tap" role="button" tabIndex={0} onClick={rowTap} onKeyDown={rowKey}>
             <span className="k">
               Você recebe no mínimo
               <InfoTip title="Você recebe no mínimo">Se o preço mudar antes da troca terminar, você recebe pelo menos isso. Se fosse menos, a troca é cancelada.</InfoTip>
@@ -79,7 +90,13 @@ export function FeeDetails({ countdown }: { countdown?: number }) {
               </b>
             </span>
           </div>
-          <div className="sim-row">
+          <div
+            className="sim-row tap"
+            role="button"
+            tabIndex={0}
+            onClick={(e) => !(e.target as HTMLElement).closest('button') && a.open('settings')}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), a.open('settings'))}
+          >
             <span className="k">
               Proteção de preço
               <InfoTip title="Proteção de preço">O quanto o preço pode mudar contra você antes de a troca ser cancelada. Auto é o mais seguro.</InfoTip>

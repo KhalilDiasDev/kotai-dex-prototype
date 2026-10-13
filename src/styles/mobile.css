@@ -1632,3 +1632,20 @@ select {
 .pill-btn.flash {
   animation: none;
 }
+
+/* detail rows are tap targets as a whole */
+.sim-row.tap {
+  margin: 0 -10px;
+  padding: 0 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.sim-row.tap:hover,
+.sim-row.tap:focus-visible {
+  background: rgba(255, 255, 255, 0.04);
+  outline: none;
+}
+.sim-row.tap:active {
+  background: rgba(255, 255, 255, 0.07);
+}
