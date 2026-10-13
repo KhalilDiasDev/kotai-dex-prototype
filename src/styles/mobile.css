@@ -1766,3 +1766,53 @@ select {
 .sim-sheet .sim-fee-body {
   padding: 0 16px 16px;
 }
+
+/* ───────── Trocando → Concluída: one check, fast ───────── */
+.sim-swapping .sw-side {
+  transition: transform 0.7s cubic-bezier(0.6, 0, 0.3, 1), opacity 0.2s ease-in 0.5s;
+}
+.sim-swapping.p2 .sw-center,
+.sim-swapping.p3 .sw-center {
+  transform: none;
+}
+/* in the swapping sheet the check pops and draws quickly; its ring appears with it */
+.sw-center .big-check {
+  margin: 0;
+  animation: checkPop 0.25s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.sw-center .big-check path {
+  animation: draw 0.28s 0.05s ease-out forwards;
+}
+.sw-center .big-check::after {
+  animation: ringIn 0.25s ease-out backwards;
+}
+/* the done sheet keeps that check exactly as it was left (no second animation); only the rest rises in, quickly */
+.sim-done .big-check,
+.sim-done .big-check::after {
+  animation: none;
+}
+.sim-done .big-check path {
+  animation: none;
+  stroke-dashoffset: 0;
+}
+.sim-done > .m-box,
+.sim-done > .tx,
+.sim-done > .m-row2 {
+  animation: doneRise 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+.sim-done > .tx {
+  animation-delay: 0.05s;
+}
+.sim-done > .m-row2 {
+  animation-delay: 0.1s;
+}
+/* desktop: every swap dialog of the simple flow sits in the centre of the screen */
+@media (min-width: 721px) {
+  .scrim:has(> .modal.sim-sheet) {
+    align-items: center !important;
+    padding-top: 16px !important;
+  }
+  .scrim:has(> .modal.sim-sheet) > .modal {
+    max-height: calc(100vh - 32px);
+  }
+}

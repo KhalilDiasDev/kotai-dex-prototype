@@ -339,7 +339,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
         return o
       })
-    }, 9200)
+    }, 7600)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [s.scenario, isMobile])
 

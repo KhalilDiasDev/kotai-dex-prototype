@@ -600,7 +600,7 @@ export function SimpleSwapping() {
   const [phase, setPhase] = useState(0)
   useEffect(() => {
     if (slow) return
-    const ts = [setTimeout(() => setPhase(1), 900), setTimeout(() => setPhase(2), 2300), setTimeout(() => setPhase(3), 2900)]
+    const ts = [setTimeout(() => setPhase(1), 350), setTimeout(() => setPhase(2), 1050), setTimeout(() => setPhase(3), 1300)]
     return () => ts.forEach(clearTimeout)
   }, [slow])
   const status = slow ? 'Confirmando na rede' : [`Enviando seus ${a.from}`, 'Confirmando na rede', `Recebendo seus ${a.to}`, 'Pronto!'][phase]
@@ -622,8 +622,9 @@ export function SimpleSwapping() {
               </span>
             </>
           ) : (
-            <span className="ic ok">
-              <svg viewBox="0 0 28 28" width="26" height="26" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            /* the very same check the "Troca Concluída" sheet shows next */
+            <span className="big-check">
+              <svg viewBox="0 0 28 28" width="28" height="28" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M4 14.5l6.5 6.5L24 7.5" pathLength={1} />
               </svg>
             </span>
@@ -658,7 +659,7 @@ export function SimpleDone() {
   const [copied, setCopied] = useState(false)
   const reset = () => a.set({ amount: '', modal: null, modalStack: [] })
   return (
-    <Modal title="Troca Concluída" onClose={reset} onScrim={reset} className="sim-sheet done-modal">
+    <Modal title="Troca Concluída" onClose={reset} onScrim={reset} className="sim-sheet sim-done">
       <div className="big-check">
         <svg viewBox="0 0 28 28" width="28" height="28" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="M4 14.5l6.5 6.5L24 7.5" pathLength={1} />
