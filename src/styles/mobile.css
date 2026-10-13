@@ -2041,3 +2041,24 @@ select {
   font-size: 14px;
   color: var(--text-secondary);
 }
+
+/* Taxa total · slimmer closed box (Figma: 46px tall, 10px vertical padding, 24px button, 16px divider) */
+.sim-fee-head {
+  padding: 10px 20px;
+}
+.sim-fee.open .sim-fee-head {
+  padding: 12px 20px 10px;
+}
+.sim-sheet .sim-fee-head {
+  padding: 10px 16px;
+}
+.sim-sheet .sim-fee.open .sim-fee-head {
+  padding: 12px 16px 10px;
+}
+.fee-btn {
+  width: 24px;
+  height: 24px;
+}
+.fee-div {
+  height: 16px;
+}
