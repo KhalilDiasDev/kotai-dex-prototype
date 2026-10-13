@@ -1745,3 +1745,8 @@ select {
 .sim-row.rate {
   margin-bottom: 10px;
 }
+
+/* Envia / Recebe 8px apart (closer than the Figma's 16px, on request); flip button straddles the joint */
+.sim .flip-slot {
+  margin: -12px 0;
+}

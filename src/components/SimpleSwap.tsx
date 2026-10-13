@@ -389,7 +389,8 @@ export function SimpleSwapPanel() {
                 <Icon n="flip" size={12} sw={2} className="us-ic" />
               </button>
             )}
-            {needsGas && (
+            {/* wallet balance of the token you receive, while this card is selected */}
+            {a.connected && (needsGas || recvText !== null) && (
               <span className="bal">
                 <Coin id={a.to} size={14} /> Saldo: {fmt(a.balanceOf(a.to), 4)} {a.to}
               </span>
