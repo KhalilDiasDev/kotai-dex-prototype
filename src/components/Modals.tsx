@@ -1413,9 +1413,9 @@ function ModalSwitch({ k }: { k: Exclude<ModalKind, null> }) {
       return s ? <SimpleFailed /> : <FailedModal />
     case 'navMenu':
       return <SheetNav />
-    // the simple flow has no toolbar popover, so settings open as a dialog on every screen size
+    // desktop: settings are dropdowns anchored to their gear (toolbar or Slippage row); phones: a sheet
     case 'settings':
-      return m || s ? (
+      return m ? (
         <Modal className="sheet-pop" onScrim={a.close}>
           <SettingsBody onClose={a.close} />
         </Modal>

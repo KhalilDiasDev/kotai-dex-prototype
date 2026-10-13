@@ -1816,3 +1816,38 @@ select {
     max-height: calc(100vh - 32px);
   }
 }
+
+/* settings dropdown opened from the Slippage gear: fixed beside it (never clipped by a dialog) */
+.popover.settings.beside.fixed {
+  z-index: 70;
+  animation: dropIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sim .tools .anchor {
+  display: flex;
+}
+.sim-row .d-gear.on {
+  color: #7fb6ff;
+}
+
+/* action inside a warning (E1 · adjust the amount) */
+.sim-warn > span {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.sim-warn-act {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 199, 77, 0.14);
+  border: 1px solid rgba(255, 199, 77, 0.5);
+  color: #ffd27a;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background-color 0.15s, color 0.15s;
+}
+.sim-warn-act:hover {
+  background: rgba(255, 199, 77, 0.24);
+  color: #fff;
+}

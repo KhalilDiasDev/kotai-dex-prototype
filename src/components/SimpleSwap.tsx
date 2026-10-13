@@ -7,7 +7,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { flushSync } from 'react-dom'
 import { GAS_TOKEN, NETWORKS, TOKENS, fmt, usd, type TokenId } from '../data'
 import { useApp, type Tab } from '../store'
-import { FundOptions } from './Modals'
+import { FundOptions, SettingsBody } from './Modals'
 import { InfoTip, TabSelect, TokenSelect, useCountdown } from './SwapPanel'
 import { Coin, Icon, Modal, Spinner } from './ui'
 
@@ -31,11 +31,56 @@ const rowKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
   e.currentTarget.querySelector<HTMLButtonElement>('.info-tip > button')?.click()
 }
 
+/* Swap settings as a dropdown on desktop, opened by its own gear with local state — so it can open on top of
+   another dialog (the check-your-swap sheet) without closing it. Phones keep the settings sheet. */
+function useSettingsDrop() {
+  const a = useApp()
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLSpanElement>(null)
+  useEffect(() => {
+    if (!open) return
+    const down = (e: MouseEvent) => ref.current && !ref.current.contains(e.target as Node) && setOpen(false)
+    const key = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      e.stopPropagation()
+      setOpen(false)
+    }
+    const t = window.setTimeout(() => document.addEventListener('mousedown', down))
+    window.addEventListener('keydown', key, true)
+    return () => {
+      window.clearTimeout(t)
+      document.removeEventListener('mousedown', down)
+      window.removeEventListener('keydown', key, true)
+    }
+  }, [open])
+  const toggle = () => (a.isMobile ? a.open('settings') : setOpen((v) => !v))
+  const close = () => setOpen(false)
+  return { open: open && !a.isMobile, toggle, close, ref }
+}
+const SettingsPop = ({ style, className = '', onClose }: { style?: React.CSSProperties; className?: string; onClose: () => void }) => (
+  <div className={'popover settings ' + className} style={style} role="dialog" aria-label="Swap settings">
+    <SettingsBody onClose={onClose} />
+  </div>
+)
+
 /* ───────── "Taxa total" — one number; tapping it opens the details (V2 / V3) ───────── */
 export function FeeDetails({ countdown }: { countdown?: number }) {
   const a = useApp()
   const q = a.quote
   const [open, setOpen] = useState(false)
+  const own = useSettingsDrop()
+  const [pos, setPos] = useState<React.CSSProperties>({})
+  const gearClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!a.isMobile && !own.open) {
+      const r = e.currentTarget.getBoundingClientRect()
+      const W = 360
+      const H = 300
+      const right = window.innerWidth - r.right >= W + 24
+      const top = Math.max(16, Math.min(r.top + r.height / 2 - H / 2, window.innerHeight - H - 16))
+      setPos({ position: 'fixed', top, left: right ? r.right + 14 : r.left - 14 - W, right: 'auto' })
+    }
+    own.toggle()
+  }
   return (
     <div className={'sim-fee' + (open ? ' open' : '')}>
       <div
@@ -98,8 +143,8 @@ export function FeeDetails({ countdown }: { countdown?: number }) {
             className="sim-row tap"
             role="button"
             tabIndex={0}
-            onClick={(e) => !(e.target as HTMLElement).closest('button') && a.open('settings')}
-            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), a.open('settings'))}
+            onClick={(e) => !(e.target as HTMLElement).closest('button, .popover') && e.currentTarget.querySelector<HTMLButtonElement>('.d-gear')?.click()}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), e.currentTarget.querySelector<HTMLButtonElement>('.d-gear')?.click())}
           >
             <span className="k">
               Slippage
@@ -108,9 +153,12 @@ export function FeeDetails({ countdown }: { countdown?: number }) {
             <span className="v">
               <b>{q.slippage}%</b>
               <small>{a.slippage === 'Auto' ? 'Auto' : 'Manual'}</small>
-              <button className="d-gear" onClick={() => a.open('settings')} aria-label="Ajustar o slippage">
-                <Icon n="gear" size={16} />
-              </button>
+              <span className="anchor" ref={own.ref}>
+                <button className={'d-gear' + (own.open ? ' on' : '')} onClick={gearClick} aria-label="Ajustar o slippage">
+                  <Icon n="gear" size={16} />
+                </button>
+                {own.open && <SettingsPop style={pos} className="beside fixed" onClose={own.close} />}
+              </span>
             </span>
           </div>
         </div>
@@ -123,6 +171,7 @@ export function FeeDetails({ countdown }: { countdown?: number }) {
 export function SimpleSwapPanel() {
   const a = useApp()
   const q = a.quote
+  const topSettings = useSettingsDrop()
   const hasAmt = a.amountNum > 0
   const [focus, setFocus] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -216,7 +265,7 @@ export function SimpleSwapPanel() {
   else if (a.quoting) cta = { label: 'Atualizando…', disabled: true, loading: true }
   else if (a.scenario === 'offline') cta = { label: 'Aguardando conexão', disabled: true }
   else if (noRoute) cta = { label: 'Sem rota para esse valor', disabled: true }
-  else if (needsGas) cta = { label: `Usar ${fixed} ${GAS_TOKEN}`, onClick: () => a.setAmount(String(fixed)) }
+  else if (needsGas) cta = { label: `${GAS_TOKEN} insuficiente para a taxa`, disabled: true }
   else cta = { label: 'Continuar', onClick: a.cta.action }
 
   return (
@@ -258,9 +307,12 @@ export function SimpleSwapPanel() {
             >
               <Icon n="chart" size={20} />
             </button>
-            <button className="tool" aria-label="Ajustes da troca" onClick={() => a.open('settings')}>
-              <Icon n="gear" size={20} className="ic-gear" />
-            </button>
+            <span className="anchor" ref={topSettings.ref}>
+              <button className={'tool' + (topSettings.open ? ' on' : '')} aria-label="Ajustes da troca" onClick={topSettings.toggle}>
+                <Icon n="gear" size={20} className="ic-gear" />
+              </button>
+              {topSettings.open && <SettingsPop onClose={topSettings.close} />}
+            </span>
           </div>
         </div>
 
@@ -401,7 +453,15 @@ export function SimpleSwapPanel() {
         {warn && (
           <div className="sim-warn" role="status">
             <Icon n="warn" size={18} />
-            <span>{warn}</span>
+            <span>
+              {warn}
+              {/* E1: the fix is offered right inside the warning */}
+              {needsGas && (
+                <button className="sim-warn-act" onClick={() => a.setAmount(String(fixed))}>
+                  Ajustar para {fixed} {GAS_TOKEN}
+                </button>
+              )}
+            </span>
           </div>
         )}
 
