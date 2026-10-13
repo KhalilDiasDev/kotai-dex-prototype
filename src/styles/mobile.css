@@ -1616,3 +1616,33 @@ select {
   border: 1px solid #2e4573;
   border-radius: 16px;
 }
+/* ───────── Simple flow · values and the flip button exactly as in the Figma model ───────── */
+/* label row 20px (shortcuts shrink to fit), so the value sits where the model puts it */
+.sim .field-top {
+  min-height: 20px;
+  height: 20px;
+}
+.sim .field .shortcuts .chip,
+.sim .quick button {
+  height: 22px;
+}
+.sim .quick button {
+  width: 22px;
+  padding: 0;
+}
+.sim .quick button img {
+  width: 20px;
+  height: 20px;
+}
+/* cards 16px apart, flip button (40px, 14px radius, 4px page-colour ring) centred in the gap */
+.sim .flip-slot {
+  margin: -8px 0;
+}
+.sim .flip {
+  top: -20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: #0b1428;
+  box-shadow: 0 0 0 4px #010308;
+}

@@ -2,32 +2,23 @@ import { useEffect, useRef } from 'react'
 import { useApp, type Scenario } from '../store'
 import { Icon } from './ui'
 
-/* Use cases of the prototype, grouped by the step of the swap they belong to */
+/* Use cases shown for the presentation: only the swap flow from the Figma proposal ("Proposta · Swap simples").
+   The other cases are kept commented out below so they can be switched back on. */
 const GROUPS: { title: string; items: [Scenario, string][] }[] = [
   { title: 'Fluxo principal', items: [['none', 'Troca normal, do início ao fim']] },
   {
-    title: 'Preparar a troca',
+    title: 'Avisos do swap',
     items: [
-      ['noFunds', 'Carteira sem fundos'],
-      ['wrongNetwork', 'Carteira na rede errada'],
-      ['noRoute', 'Sem rota disponível'],
-      ['offline', 'Sem conexão de internet'],
-    ],
-  },
-  {
-    title: 'Revisão',
-    items: [
-      ['highImpact', 'Impacto de preço alto'],
-      ['priceUpdated', 'Preço atualizado'],
-      ['accountChanged', 'Conta ou rede alterada'],
-    ],
-  },
-  { title: 'Assinatura', items: [['rejected', 'Recusada na carteira']] },
-  {
-    title: 'Resultado',
-    items: [
-      ['slow', 'Transação demorando'],
-      ['failed', 'Troca não concluída'],
+      ['priceUpdated', 'O preço mudou'],
+      ['highImpact', 'Valor alto demais'],
+      ['rejected', 'Cancelou na carteira'],
+      // ['noFunds', 'Carteira sem fundos'],
+      // ['wrongNetwork', 'Carteira na rede errada'],
+      // ['noRoute', 'Sem rota disponível'],
+      // ['offline', 'Sem conexão de internet'],
+      // ['accountChanged', 'Conta ou rede alterada'],
+      // ['slow', 'Transação demorando'],
+      // ['failed', 'Troca não concluída'],
     ],
   },
 ]
@@ -81,11 +72,12 @@ export function ProtoControls() {
           ))}
           <div>
             <h4>Atalhos</h4>
+            <button className="opt" onClick={() => shortcut({ view: 'swap', from: 'BNB', to: 'KTI', networkId: 'bnb', amount: '3', connected: true, wasConnected: true, scenario: 'none', modal: null })}>
+              Falta BNB para a taxa (3 BNB)
+            </button>
+            {/* other shortcuts, kept for later:
             <button className="opt" onClick={() => shortcut({ view: 'swap', from: 'BNB', to: 'KTI', networkId: 'bnb', amount: '4.5', connected: true, wasConnected: true, scenario: 'none', modal: null })}>
               Saldo insuficiente (4,5 BNB)
-            </button>
-            <button className="opt" onClick={() => shortcut({ view: 'swap', from: 'BNB', to: 'KTI', networkId: 'bnb', amount: '3', connected: true, wasConnected: true, scenario: 'none', modal: null })}>
-              BNB insuficiente para taxas (3 BNB)
             </button>
             <button className="opt" onClick={() => shortcut({ view: 'swap', connected: false, wasConnected: true, amount: '0.5', scenario: 'none', modal: null })}>
               Carteira desconectada (valores mantidos)
@@ -96,6 +88,7 @@ export function ProtoControls() {
             <button className="opt" onClick={() => shortcut({ view: 'home', modal: null })}>
               Ir para a Home
             </button>
+            */}
           </div>
         </div>
       )}
